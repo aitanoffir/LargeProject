@@ -1,0 +1,54 @@
+# Node modules (Never commit this)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Logs
+logs
+*.log
+npm-debug.log
+yarn-debug.log
+pnpm-debug.log
+lerna-debug.log
+.log
+log/
+debug.log
+error.log
+
+# Environment variables (Prevents exposing secrets)
+.env
+.env.local
+.env.development
+.env.production
+.env.test
+
+# Build output
+dist/
+build/
+
+# Cache files
+.cache/
+.vscode/
+.idea/
+.DS_Store
+*.swp
+*.swo
+*.swn
+*.bak
+*.tmp
+
+# Dependency lockfiles (optional, but generally you should commit package-lock.json or yarn.lock)
+# Uncomment one if you don’t want to commit it
+# package-lock.json
+# yarn.lock
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Misc
+*.log
+*.pid
+*.seed
+*.pid.lock
+coverage/
