@@ -25,6 +25,7 @@
   --dl-color-theme-secondary1: #FFFFFF;
   --dl-color-theme-secondary2: #FBF1EB;
   --dl-space-space-threeunits: 48px;
+  --dl-color-buttons-secondary: rgba(124, 201, 247, 1);
   --dl-color-default-falseblack: rgba(63, 63, 63, 1);
   --dl-color-theme-neutral-dark: #191818;
   --dl-radius-radius-cardradius: 8px;
@@ -566,6 +567,24 @@
   font-weight: 400px;
   font-stretch: normal;
   letter-spacing: 0em;
+}
+ 
+.BodyBase {
+  font-size: 16px;
+  font-style: normal;
+  font-family: Inter;
+  font-weight: 400px;
+  font-stretch: normal;
+  letter-spacing: 0em;
+}
+ 
+.M3labellarge {
+  font-size: 14px;
+  font-style: normal;
+  font-family: Roboto;
+  font-weight: 500px;
+  font-stretch: normal;
+  letter-spacing: 0.10000000149011612px;
 }
  
 @media(max-width: 991px) {
