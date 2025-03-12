@@ -65,6 +65,7 @@ function Login() {
             <input type="submit" id="loginButton" className="buttons" value="Do It"
                 onClick={doLogin} />
             <span id="loginResult">{message}</span>
+            <p>Don't have an account? <a href="/register">Register here</a></p>
         </div>
     );
 };
