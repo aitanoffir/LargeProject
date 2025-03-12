@@ -63,6 +63,48 @@ app.post('/api/login', async (req, res, next) => {
     res.status(200).json(ret);
 });
 
+app.post('/api/register', async (req, res, next) => {
+    // incoming: username, password, firstName, lastName
+    // outgoing: success message or error
+
+    const { username, password, firstName, lastName } = req.body;
+
+    if (!username || !password || !firstName || !lastName) {
+        return res.status(400).json({ error: "All fields are required" });
+    }
+
+    const db = client.db("COP4331");
+    const usersCollection = db.collection('Users');
+
+    try {
+        // Check if the username already exists
+        const existingUser = await usersCollection.findOne({ Login: username });
+        if (existingUser) {
+            return res.status(400).json({ error: "Username already exists" });
+        }
+
+        // Insert new user
+        const newUser = {
+            Login: username,
+            Password: password,  // Consider hashing the password before storing
+            FirstName: firstName,
+            LastName: lastName
+        };
+
+        const result = await usersCollection.insertOne(newUser);
+
+        if (result.acknowledged) {
+            return res.status(201).json({ message: "User registered successfully" });
+        } else {
+            return res.status(500).json({ error: "Failed to register user" });
+        }
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ error: "Internal server error" });
+    }
+});
+
+
 app.post('/api/searchcards', async (req, res, next) => {
     // incoming: userId, search
     // outgoing: results[], error
