@@ -1,9 +1,11 @@
-import Account from "../models/accounts.model.js";
+import TrainerInfo from "../models/trainerInfo.model.js";
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import {verifyJwt} from '../helpers.js';
 
-export const login = async (req, res) => {
+//TODO: Implement this function
+export const getTrainerAccountInfo = async (req, res) => {
     const { username, password } = req.body;
     try {
         //account.password = bcrypt.hashSync(account.password, 10);
@@ -41,40 +43,33 @@ export const login = async (req, res) => {
     }
 };
 
-export const signUp = async (req, res) => {
-    const account = req.body; //user will send this data
-    const { username, password, firstName, lastName } = req.body;
-    if (!account.username || !account.password || !account.firstName || !account.lastName) {
-        return res.status(400).json({ success: false, message: "Please provide all fields" });
+
+export const addTrainerAccountInfo = async (req, res) => {
+    const trainer = req.body; //user will send this data
+    const validToken = verifyJwt(req.headers.authorization);
+    if (!validToken) {
+        console.log("Invalid Token");
+        console.log(req.headers.authorization);
+        return res.status(401).json({ success: false, message: "Invalid Token" });
     }
 
-    account.password = bcrypt.hashSync(account.password, 10);
-
-    const newAccount = new Account(account);
-
     try{
-        const existingAccount = await Account.findOne({ username });
-        if (existingAccount) {
+        const exisitingTrainer = await TrainerInfo.findOne({ email: trainer.email });
+        if (exisitingTrainer) {
             return res.status(409).json({ 
                 success: false, 
-                message: "Account with this username already exists" 
+                message: "Trainer with this email already exists" 
             });
         }
-
-        await newAccount.save();
-
-        const payload = {
-            name:username
-        }
-        const secret = process.env.JWT_SECRET;
-        const token = jwt.sign(payload, secret, {
-            expiresIn: '1h'
-        })
+        const newTrainerInfo = new TrainerInfo(trainer);
+        await newTrainerInfo.save();
         
-        res.status(201).json({ success: true, data: newAccount, jwt: token });
+        res.status(201).json({ success: true, data: newTrainerInfo});
     } catch (error) {
-        console.error("Error in Create product: ", error);
+        console.error("Error in Add Trainer Info: ", error);
         res.status(500).json({ success: false, message: "Server Error" });
     }
 
 };
+
+
