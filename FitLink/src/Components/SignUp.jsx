@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "../index.css";
-import sign_up_picture from '../assets/jonathan-borba-R0y_bEUjiOM-unsplash.jpg'
+import sign_up_picture from "../assets/jonathan-borba-R0y_bEUjiOM-unsplash.jpg";
 
 const SignUp = () => {
   const [formData, setFormData] = useState({
