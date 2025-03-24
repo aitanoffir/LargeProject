@@ -36,4 +36,11 @@
   .btn-secondary {
     @apply bg-secondary hover:bg-blue-300 text-black;
   }
+
+  .menu-item {
+    @apply relative flex items-center gap-2 p-2;
+  }
+  .menu-text {
+    @apply absolute right-0 transform translate-x-full text-white whitespace-nowrap;
+  }
 }

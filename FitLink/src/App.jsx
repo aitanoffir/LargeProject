@@ -6,7 +6,7 @@ import HomePage from "./Components/HomePage";
 import SideBar from "./Components/SideBar";
 
 function App() {
-  return <SideBar />;
+  return <SignIn />;
 }
 
 export default App;
