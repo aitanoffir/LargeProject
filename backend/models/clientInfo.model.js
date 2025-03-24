@@ -86,7 +86,7 @@ const clientInfoSchema = new mongoose.Schema({
     sessions: [
         {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "SessionInfo"
+            ref: "SessionNotes"
         }
     ],
     bio: {
