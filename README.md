@@ -46,7 +46,7 @@ npm install
 ```
 
 ### **3️⃣ Setup Environment Variables**
-Create a **`.env`** file in the `/backend` directory and add:
+Create a **`.env`** file in the `/LargeProject` directory and add:
 ```
 MONGO_URI=mongodb+srv://<your_mongodb_url>
 JWT_SECRET=your_secret_key
@@ -55,7 +55,7 @@ PORT=7000
 
 ### **4️⃣ Start the Server**
 ```sh
-npm start
+npm run dev
 ```
 The backend should now be running at:
 ```
