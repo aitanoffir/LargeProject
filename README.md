@@ -20,6 +20,7 @@ The project is organized as follows:
 │── README.md           # Project overview
 │── .gitignore          # Ignore unnecessary files in Git
 │── package.json        # Project dependencies and scripts
+│── .env                # Environemnt variables
 ```
 
 ---
@@ -72,17 +73,34 @@ http://localhost:7000/
 | POST   | `/api/accounts/login` | Trainer login |
 
 ### **🔹 Trainer Management**
-| Method | Endpoint          | Description                    |
-|--------|------------------|--------------------------------|
-| POST   | `/api/accounts/trainer` | Add trainer account info |
+| Method | Endpoint                  | Description                   |
+|-------:|---------------------------|-------------------------------|
+| POST   | `/api/accounts/trainer`  | Add trainer account info      |
+| GET    | `/api/accounts/trainer`  | Get trainer account info      |
 
 ### **🔹 Client Management**
-| Method | Endpoint         | Description                   |
-|--------|-----------------|-------------------------------|
-| POST   | `/api/accounts/client` | Add client info |
-| GET    | `/api/accounts/client?id=605c72adfc13ae61d40001b1` | Get client by ID |
-| GET    | `/api/accounts/client?lastName=Smith` | Search clients |
+| Method | Endpoint                        | Description                                    |
+|-------:|---------------------------------|------------------------------------------------|
+| POST   | `/api/accounts/client`          | Add client info                                |
+| GET    | `/api/accounts/client?id=ID`    | Get client by ID (e.g., `?id=605c72ad...`)     |
+| GET    | `/api/accounts/client?lastName=Smith` | Search clients by last name                 |
+| DELETE | `/api/accounts/client/:id`      | Delete a client by ID                          |
+| PUT    | `/api/accounts/client/:id`      | Update a client by ID                          |
 
+### **🔹 Session Management**
+| Method | Endpoint                | Description                            |
+|-------:|-------------------------|----------------------------------------|
+| POST   | `/api/accounts/session` | Add session notes info                 |
+| GET    | `/api/accounts/session` | Retrieve session notes info            |
+| DELETE | `/api/accounts/session/:id` | Delete a session by ID             |
+| PUT    | `/api/accounts/session/:id`   | Update a session by ID             |
+
+### **🔹 Google OAuth**
+| Method | Endpoint                                 | Description                             |
+|-------:|------------------------------------------|-----------------------------------------|
+| GET    | `/api/accounts/auth/google`              | Start Google Login flow                 |
+| GET    | `/api/accounts/auth/google/callback`     | Google OAuth callback URI               |
+| GET    | `/api/accounts/auth/google/logout`       | Google OAuth Logout URI                 |
 ---
 
 ### **📧 Contact & Contributors**
