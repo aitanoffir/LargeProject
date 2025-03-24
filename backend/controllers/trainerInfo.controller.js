@@ -4,7 +4,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import {verifyJwt} from '../helpers.js';
 
-//TODO: Implement this function
+//TODO: Implement this function?
 export const getTrainerAccountInfo = async (req, res) => {
     const { username, password } = req.body;
     try {
@@ -46,6 +46,8 @@ export const getTrainerAccountInfo = async (req, res) => {
 
 export const addTrainerAccountInfo = async (req, res) => {
     const trainer = req.body; //user will send this data
+
+    //verfiy JWT
     const validToken = verifyJwt(req.headers.authorization);
     if (!validToken) {
         console.log("Invalid Token");
@@ -53,6 +55,7 @@ export const addTrainerAccountInfo = async (req, res) => {
         return res.status(401).json({ success: false, message: "Invalid Token" });
     }
 
+    //check for required fields
     try{
         const exisitingTrainer = await TrainerInfo.findOne({ email: trainer.email });
         if (exisitingTrainer) {
@@ -63,7 +66,7 @@ export const addTrainerAccountInfo = async (req, res) => {
         }
         const newTrainerInfo = new TrainerInfo(trainer);
         await newTrainerInfo.save();
-        
+        //return scuccess and the new trainer info
         res.status(201).json({ success: true, data: newTrainerInfo});
     } catch (error) {
         console.error("Error in Add Trainer Info: ", error);

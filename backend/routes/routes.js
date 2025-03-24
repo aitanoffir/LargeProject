@@ -2,7 +2,7 @@ import express from "express";
 
 import { signUp, login } from "../controllers/accounts.controller.js";
 import { addTrainerAccountInfo, getTrainerAccountInfo } from "../controllers/trainerInfo.controller.js";
-import { addClientAccountInfo, getClientAccountInfo, deleteClientAccountInfo } from "../controllers/clientInfo.controller.js";
+import { addClientAccountInfo, getClientAccountInfo, deleteClientAccountInfo, updateClientAccountInfo } from "../controllers/clientInfo.controller.js";
 import { googleLoginResponse, googleLoginCallback, googleLogout } from "../controllers/google.controller.js";
 
 const router = express.Router();
@@ -14,6 +14,7 @@ router.get("/trainer", getTrainerAccountInfo); //gets trainer account info  STIL
 router.post("/client", addClientAccountInfo); //where we add client account info
 router.get("/client", getClientAccountInfo); //gets trainer client info
 router.delete("/client/:id", deleteClientAccountInfo); // deleted a client by _id
+router.put("/client/:id", updateClientAccountInfo); //updates a client by _id
 router.get("/auth/google", googleLoginResponse);
 router.get("/auth/google/callback", googleLoginCallback);
 router.get("/auth/google/logout", googleLogout);

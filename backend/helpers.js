@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
-import dotenv from 'dotenv';
 
+//helper function to verify the JWT
 export function verifyJwt(token) {
     try{
         const secret = process.env.JWT_SECRET;

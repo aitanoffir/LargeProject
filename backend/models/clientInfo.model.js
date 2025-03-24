@@ -1,6 +1,11 @@
 import mongoose from "mongoose";
 
 const clientInfoSchema = new mongoose.Schema({
+    trainer: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'trainerInfo', //this matches the model name, not the collection name
+            required: true,
+        },
     email: {
         type: String,
         required: true,

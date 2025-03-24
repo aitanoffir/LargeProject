@@ -8,12 +8,13 @@ import accountRoutes from './routes/routes.js';
 
 dotenv.config();
 
+//start on port from .env file
 const app = express();
 const PORT = process.env.PORT || 5000;
 
 app.use(express.json()); //allows us to accept JSON data in the req.body
 //^ middleware
-
+//api endpoint
 app.use("/api/accounts", accountRoutes);
 
 //Postman
