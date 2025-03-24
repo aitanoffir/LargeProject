@@ -79,4 +79,33 @@ export const addClientAccountInfo = async (req, res) => {
 
 };
 
+export const deleteClientAccountInfo = async (req, res) => {
+    const validToken = verifyJwt(req.headers.authorization);
+    if (!validToken) {
+        return res.status(401).json({ success: false, message: "Invalid Token" });
+    }
+
+    const clientId = req.params.id;
+
+    if (!mongoose.Types.ObjectId.isValid(clientId)) {
+        return res.status(400).json({ success: false, message: "Invalid client ID" });
+    }
+
+    try {
+        const deletedClient = await ClientInfo.findByIdAndDelete(clientId);
+
+        if (!deletedClient) {
+            return res.status(404).json({ success: false, message: "Client not found" });
+        }
+
+        res.status(200).json({
+            success: true,
+            message: "Client deleted successfully",
+            deletedClient
+        });
+    } catch (error) {
+        console.error("Error deleting client:", error.message);
+        res.status(500).json({ success: false, message: "Server Error" });
+    }
+};
 
