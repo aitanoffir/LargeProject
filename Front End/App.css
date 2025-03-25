@@ -24,7 +24,6 @@ body {
 .NavBarList .row {
   width: 100%;
   height: 180px;
-  border: 1px solid white;
   list-style-type: none;
   margin: 0%;
   display: flex;
