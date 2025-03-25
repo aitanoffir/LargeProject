@@ -6,27 +6,27 @@ import GroupIcon from '@mui/icons-material/Group';
 import SettingsIcon from '@mui/icons-material/Settings';
 export const NavBarData = [
 {
-    icon: <HomeIcon />,
+    icon: <HomeIcon style = {{ fontSize: 75 }} />,
     link: "/home"
 },
 
 {
-    icon: <CalendarMonthIcon />,
+    icon: <CalendarMonthIcon style = {{ fontSize: 75 }}  />,
     link: "/calender"
 },
 
 {
-    icon: <GroupIcon />,
+    icon: <GroupIcon style = {{ fontSize: 75 }}  />,
     link: "/clients"
 },
 
 {
-    icon: <PostAddIcon />,
+    icon: <PostAddIcon style = {{ fontSize: 75 }}  />,
     link: "/programs"
 },
 
 {
-    icon: <SettingsIcon />,
+    icon: <SettingsIcon style = {{ fontSize: 75 }}  />,
     link: "/settings"
 },
 
