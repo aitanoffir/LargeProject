@@ -10,7 +10,7 @@ const router = express.Router();
 
 //signup and login routes
 router.post("/", signUp); //sign up creates a trainer account
-router.get("/", login); //login logs a trainer in
+router.post("/login", login); //login logs a trainer in
 
 //trainer accounts info (optional)
 router.post("/trainer", addTrainerAccountInfo); //where we add trainer account info

@@ -19,15 +19,9 @@ const SignIn = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
   
-    // Simple password match check (optional)
-    if (formData.password !== formData.confirm_password) {
-      alert("Passwords do not match!");
-      return;
-    }
-  
     try {
-      const response = await fetch("http://localhost:7000/api/accounts/", {
-        method: "GET",
+      const response = await fetch("http://localhost:7000/api/accounts/login", {
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
@@ -44,7 +38,7 @@ const SignIn = () => {
       } else {
         const data = await response.json();
         console.log("Signup successful:", data);
-        alert("Signup successful!");
+        alert("Sign In successful!");
       }
     } catch (error) {
       console.error("Error during signup:", error);
