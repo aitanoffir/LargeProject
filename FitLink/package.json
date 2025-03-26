@@ -4,7 +4,8 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon -L backend/server.js"
+    "dev": "nodemon -L backend/server.js",
+    "frontend": "vite"
   },
   "keywords": [],
   "author": "",
@@ -22,7 +23,8 @@
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.15.0",
     "mongoose": "^8.13.0",
-    "uuid": "^11.1.0"
+    "uuid": "^11.1.0",
+    "vite": "^6.2.3"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
@@ -32,7 +34,11 @@
     "@types/helmet": "^0.0.48",
     "@types/http-status-codes": "^1.2.0",
     "@types/uuid": "^10.0.0",
+    "@vitejs/plugin-react": "^4.3.4",
+    "autoprefixer": "^10.4.21",
     "nodemon": "^3.1.9",
+    "postcss": "^8.5.3",
+    "tailwindcss": "^4.0.17",
     "typescript": "^5.8.2"
   }
 }
