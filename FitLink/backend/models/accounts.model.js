@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 const accountSignUp = mongoose.Schema({
     username:{
         type: String,
-        required: true
+        required: false
     },
     password:{
         type: String,
@@ -16,11 +16,11 @@ const accountSignUp = mongoose.Schema({
     },
     firstName:{
         type: String,
-        required: true
+        required: false
     },
     lastName:{
         type: String,
-        required: true
+        required: false
     },
 }, 
 {

@@ -17,10 +17,45 @@ const SignUp = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData);
+  
+    // Simple password match check (optional)
+    if (formData.password !== formData.confirm_password) {
+      alert("Passwords do not match!");
+      return;
+    }
+    console.log("from handleSubmit");
+    try {
+      console.log("before POST");
+      const response = await fetch("http://localhost:7000/api/accounts/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password,
+        }),
+      });
+
+      console.log("API Failed");
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Signup failed:", errorData);
+        alert("Signup failed. Please try again.");
+      } else {
+        const data = await response.json();
+        console.log("Signup successful:", data);
+        alert("Signup successful!");
+      }
+    } catch (error) {
+      console.error("Error during signup:", error);
+      alert("An error occurred. Please try again later.");
+    }
   };
+  
 
   return (
     <div className="flex h-screen items-center justify-center">

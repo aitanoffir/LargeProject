@@ -6,10 +6,10 @@ import jwt from 'jsonwebtoken';
 //login function
 export const login = async (req, res) => {
     //get username and password from request body
-    const { username, password } = req.body;
+    const { email, password } = req.body;
     try {
         //find matching username
-        const account = await Account.findOne({ username });
+        const account = await Account.findOne({ email });
         //if no account found return invalid credentials
         if (!account) {
             return res.status(401).json({ 
@@ -27,7 +27,7 @@ export const login = async (req, res) => {
         }
         //create JWT token
         const payload = {
-            name:username
+            name:email
         }
         const secret = process.env.JWT_SECRET;
         const token = jwt.sign(payload, secret, {
@@ -45,8 +45,8 @@ export const login = async (req, res) => {
 //sign up function
 export const signUp = async (req, res) => {
     const account = req.body; //user will send this data
-    const { username, password, firstName, lastName } = req.body; //required fields in sign up
-    if (!account.username || !account.password || !account.firstName || !account.lastName) {
+    const { email, password  } = req.body; //required fields in sign up
+    if (!account.email || !account.password) {
         return res.status(400).json({ success: false, message: "Please provide all fields" });
     }
 
@@ -55,11 +55,11 @@ export const signUp = async (req, res) => {
     const newAccount = new Account(account);
     //try to save new account
     try{
-        const existingAccount = await Account.findOne({ username });
-        if (existingAccount) { //check if account already exists by username
+        const existingAccount = await Account.findOne({ email });
+        if (existingAccount) { //check if account already exists by email
             return res.status(409).json({ 
                 success: false, 
-                message: "Account with this username already exists" 
+                message: "Account with this email already exists" 
             });
         }
         //save new account to database
@@ -67,7 +67,7 @@ export const signUp = async (req, res) => {
 
         //generate and return JWT 
         const payload = {
-            name:username
+            name:email
         }
         const secret = process.env.JWT_SECRET;
         const token = jwt.sign(payload, secret, {
