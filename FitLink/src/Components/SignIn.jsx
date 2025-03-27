@@ -20,7 +20,7 @@ const SignIn = () => {
     e.preventDefault();
   
     try {
-      const response = await fetch("http://localhost:7000/api/accounts/login", {
+      const response = await fetch("http://fit-link.xyz:7000/api/accounts/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

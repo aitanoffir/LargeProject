@@ -28,7 +28,7 @@ const SignUp = () => {
     console.log("from handleSubmit");
     try {
       console.log("before POST");
-      const response = await fetch("http://localhost:7000/api/accounts/", {
+      const response = await fetch("http://fit-link.xyz:7000/api/accounts/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
