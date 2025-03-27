@@ -21,6 +21,10 @@ app.use(express.json()); //allows us to accept JSON data in the req.body
 //api endpoint
 app.use("/api/accounts", accountRoutes);
 
+//catch all undefined routes
+app.all("*", (req, res) => {
+    res.status(404).json({ error: "Route not found" });
+  });
 //Postman
 
 // Connect to the database before starting the server
@@ -31,3 +35,5 @@ connectDB().then(() => {
 }).catch(err => {
     console.error('Database connection failed:', err);
 });
+
+
