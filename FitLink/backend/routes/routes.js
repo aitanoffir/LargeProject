@@ -5,6 +5,7 @@ import { addTrainerAccountInfo, getTrainerAccountInfo } from "../controllers/tra
 import { addClientAccountInfo, getClientAccountInfo, deleteClientAccountInfo, updateClientAccountInfo } from "../controllers/clientInfo.controller.js";
 import { googleLoginResponse, googleLoginCallback, googleLogout } from "../controllers/google.controller.js";
 import { addSessionNotesInfo, getSessionNotesInfo, deleteSessionNotesInfo, updateSessionNotesInfo } from "../controllers/sessionNotes.controller.js";
+import { generateWorkoutPlan } from "../controllers/gpt.controller.js";
 
 const router = express.Router();
 
@@ -32,6 +33,9 @@ router.put("/session/:id", updateSessionNotesInfo); //updates a session by _id
 router.get("/auth/google", googleLoginResponse);
 router.get("/auth/google/callback", googleLoginCallback);
 router.get("/auth/google/logout", googleLogout);
+
+// Add this route to handle GPT-based workout plan generation
+router.post("/generate-workout", generateWorkoutPlan);
 
 export default router;
 
