@@ -1,6 +1,20 @@
 import React from 'react'
 
 const AddClient = () => {
+
+  const [formData, setFormData] = useState({
+      name: "",
+      email: "",
+      DOB: "",
+      phone: "",
+      weight: "",
+      goalWeight: "",
+      height: "",
+      activity: "",
+      sex: "",
+    });
+
+
   return (
     <div className = "flex flex-col items-center p-8">
       <h1 className = "test-3xl font-bold mb-4">Add a Client</h1>
@@ -11,45 +25,45 @@ const AddClient = () => {
         
         <form className = "grid grid-cols-2 gap-4">
           <div>
-            <label className = "block">Name:</label>
+            <label for="name" className = "input-label">Name:</label>
             <input type = "text" className = "w-full border rounded-md p-2" />
           </div>
           <div>
-            <label className = "block">Email:</label>
+            <label for="email" className="input-label">Email</label>
             <input type = "email" className = "w-full border rounded-md p-2" />
           </div>
           <div>
-            <label className = "block">Date of Birth: (mm/dd/year)</label>
+            <label for="DOB" className = "input-label">Date of Birth: (mm/dd/year)</label>
             <input type = "text" className = "w-full border rounded-md p-2" />
           </div>
           <div>
-            <label className = "block">Phone Number:</label>
+            <label for="phone" className = "input-label">Phone Number:</label>
             <input type = "text" className = "w-full border rounded-md p-2" />
           </div>
           <div>
-            <label className = "block">Weight (in pounds):</label>
+            <label for="weight" className = "input-label">Weight (in pounds):</label>
             <input type = "number" className = "w-full border rounded-md p-2" />
           </div>
           <div>
-            <label className = "block">Goal Weight:</label>
+            <label for="goalWeight" className = "input-label">Goal Weight:</label>
             <select className = "w-full border rounded-md p-2">
               <option>Select -Goal Weight-</option>
             </select>
           </div>
           <div>
-            <label className = "block">Height (in inches):</label>
+            <label for="height" className = "block">Height (in inches):</label>
             <select className = "w-full border rounded-md p-2">
               <option>Select -Height-</option>
             </select>
           </div>
           <div>
-            <label className = "block">Activity Level:</label>
+            <label for="activity" className = "block">Activity Level:</label>
             <select className = "w-full border rounded-md p-2">
               <option>Select -Activity Level-</option>
             </select>
           </div>
           <div>
-            <label className = "block">Sex:</label>
+            <label for="sex" className = "block">Sex:</label>
             <select className = "w-full border rounded-md p-2">
               <option>Select -Fitness Experience-</option>
             </select>
