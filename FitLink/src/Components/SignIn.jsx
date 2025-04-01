@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import sign_up_picture from "../assets/jonathan-borba-R0y_bEUjiOM-unsplash.jpg";
 
 const SignIn = () => {
@@ -7,6 +8,8 @@ const SignIn = () => {
     password: "",
     confirm_password: "",
   });
+
+  const navigate = useNavigate();
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -38,7 +41,8 @@ const SignIn = () => {
       } else {
         const data = await response.json();
         console.log("Signup successful:", data);
-        alert("Sign In successful!");
+        // Navigate to AddClient page for now until we have landing page
+        navigate("/addclient");
       }
     } catch (error) {
       console.error("Error during signup:", error);
@@ -89,7 +93,12 @@ const SignIn = () => {
               >
                 Sign In
               </button>
-              <p className="text-sm ">Don't have an account yet? Sign Up</p>
+              <p className="text-sm ">
+                Don't have an account yet?{" "}
+                <Link to="/signup" className="text-primary font-bold">
+                  Sign Up
+                </Link>
+              </p>
             </form>
           </div>
         </div>

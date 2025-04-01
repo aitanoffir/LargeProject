@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "../index.css";
+import { Link, useNavigate } from "react-router-dom";
 import sign_up_picture from "../assets/jonathan-borba-R0y_bEUjiOM-unsplash.jpg";
 
 const SignUp = () => {
@@ -8,6 +9,8 @@ const SignUp = () => {
     password: "",
     confirm_password: "",
   });
+
+  const navigate = useNavigate();
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -48,7 +51,8 @@ const SignUp = () => {
       } else {
         const data = await response.json();
         console.log("Signup successful:", data);
-        alert("Signup successful!");
+        // Navigate to signin page after successful signup
+        navigate("/signin")
       }
     } catch (error) {
       console.error("Error during signup:", error);
@@ -110,7 +114,10 @@ const SignUp = () => {
                 Submit
               </button>
               <p className="text-sm">
-                Already have an account? <a>Log In</a>
+                Already have an account?{" "}
+                <Link to="/signin" className="text-primary font-bold">
+                  Sign In
+                </Link>
               </p>
             </form>
           </div>
