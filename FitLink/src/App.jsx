@@ -4,6 +4,7 @@ import './App.css';
 import SignUp from './Components/SignUp';
 import SignIn from './Components/SignIn';
 import AddClient from './Components/AddClient';
+import NavBar from './Components/NavBar';
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
         <Route path="/SignUp" element={<SignUp />} />
         <Route path="/SignIn" element={<SignIn />} />
         <Route path="/AddClient" element={<AddClient />} />
+        <Route path="/NavBar" element={<NavBar />} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </Router>
