@@ -36,13 +36,16 @@ const SignIn = () => {
   
       if (!response.ok) {
         const errorData = await response.json();
-        console.error("Signup failed:", errorData);
-        alert("Signup failed. Please try again.");
+        console.error("Sign-in failed:", errorData);
+        alert("Sign-in failed. Please try again.");
       } else {
         const data = await response.json();
-        console.log("Signup successful:", data);
-        // Navigate to AddClient page for now until we have landing page
-        navigate("/addclient");
+        console.log("Sign-in successful:", data);
+
+        localStorage.setItem("token", data.jwt);
+
+        // Navigate to Home Page
+        navigate("/Home");
       }
     } catch (error) {
       console.error("Error during signup:", error);

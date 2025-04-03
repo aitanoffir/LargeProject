@@ -5,6 +5,7 @@ import SignUp from './Components/SignUp';
 import SignIn from './Components/SignIn';
 import AddClient from './Components/AddClient';
 import NavBar from './Components/NavBar';
+import HomePage from './Components/HomePage';
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         <Route path="/SignIn" element={<SignIn />} />
         <Route path="/AddClient" element={<AddClient />} />
         <Route path="/NavBar" element={<NavBar />} />
+        <Route path="/Home" element={<HomePage />} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </Router>
