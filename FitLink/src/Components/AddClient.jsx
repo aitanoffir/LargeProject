@@ -81,9 +81,7 @@ const AddClient = () => {
               <input style={{...columnItemStyle, boxShadow: '0px 1px 3px #2e2e2e', backgroundColor: "#CCCCCC", borderColor: "#734BF4", borderWidth: "2px", fontFamily: 'Inter, sans-serif'}} type = "text" className = "w-65 rounded-lg p-2"/>
 
               <label for="height" className = "input-label" style = {{fontFamily: 'Inter, sans-serif'}}>Height (in inches):</label>
-              <select style={{...columnItemStyle, boxShadow: '0px 1px 3px #2e2e2e', backgroundColor: "#CCCCCC", borderColor: "#734BF4", borderWidth: "2px", fontFamily: 'Inter, sans-serif'}} type = "text" className = "w-65 rounded-lg p-2">
-                <option>Select -Height-</option>
-              </select>
+              <input style={{...columnItemStyle, boxShadow: '0px 1px 3px #2e2e2e', backgroundColor: "#CCCCCC", borderColor: "#734BF4", borderWidth: "2px", fontFamily: 'Inter, sans-serif'}} type = "text" className = "w-65 rounded-lg p-2"/>
 
               <label for="sex" className = "input-label" style = {{fontFamily: 'Inter, sans-serif'}}>Sex:</label>
               <select style={{...columnItemStyle, boxShadow: '0px 1px 3px #2e2e2e', backgroundColor: "#CCCCCC", borderColor: "#734BF4", borderWidth: "2px", fontFamily: 'Inter, sans-serif'}} type = "text" className = "w-65 rounded-lg p-2">
@@ -95,26 +93,25 @@ const AddClient = () => {
 
             </div>
             <div style={rightColumnStyle}>
-              <label for="email" className="input-label" style = {{fontFamily: 'Inter, sans-serif'}}>Email</label>
+              <label for="email" className="input-label" style = {{fontFamily: 'Inter, sans-serif'}}>Email:</label>
               <input style={{...columnItemStyle, boxShadow: '0px 1px 3px #2e2e2e', backgroundColor: "#CCCCCC", borderColor: "#734BF4", borderWidth: "2px", fontFamily: 'Inter, sans-serif'}} type = "text" className = "w-65 rounded-lg p-2"/>
 
               <label for="phone" className = "input-label" style = {{fontFamily: 'Inter, sans-serif'}}>Phone Number:</label>
               <input style={{...columnItemStyle, boxShadow: '0px 1px 3px #2e2e2e', backgroundColor: "#CCCCCC", borderColor: "#734BF4", borderWidth: "2px", fontFamily: 'Inter, sans-serif'}} type = "text" className = "w-65 rounded-lg p-2"/>
 
               <label for="goalWeight" className = "input-label" style = {{fontFamily: 'Inter, sans-serif'}}>Goal Weight:</label>
-              <select style={{...columnItemStyle, boxShadow: '0px 1px 3px #2e2e2e', backgroundColor: "#CCCCCC", borderColor: "#734BF4", borderWidth: "2px", fontFamily: 'Inter, sans-serif'}} type = "text" className = "w-65 rounded-lg p-2">
-                <option>Select -Goal Weight-</option>
-              </select>
+              <input style={{...columnItemStyle, boxShadow: '0px 1px 3px #2e2e2e', backgroundColor: "#CCCCCC", borderColor: "#734BF4", borderWidth: "2px", fontFamily: 'Inter, sans-serif'}} type = "text" className = "w-65 rounded-lg p-2"/>
 
               <label for="activity" className = "input-label" style = {{fontFamily: 'Inter, sans-serif'}}>Activity Level:</label>
               <select style={{...columnItemStyle, boxShadow: '0px 1px 3px #2e2e2e', backgroundColor: "#CCCCCC", borderColor: "#734BF4", borderWidth: "2px", fontFamily: 'Inter, sans-serif'}} type = "text" className = "w-65 rounded-lg p-2">
                 <option>Select -Activity Level-</option>
+                <option>Sedentary</option>
+                <option>Slightly active</option>
+                <option>Moderately active</option>
+                <option>Very active</option>
               </select>
 
-              <label for="fitness" className = "input-label" style = {{fontFamily: 'Inter, sans-serif'}}>Fitness Experience</label>
-              <select style={{...columnItemStyle, boxShadow: '0px 1px 3px #2e2e2e', backgroundColor: "#CCCCCC", borderColor: "#734BF4", borderWidth: "2px", fontFamily: 'Inter, sans-serif'}} type = "text" className = "w-65 rounded-lg p-2">
-                <option>Select -Fitness Experience-</option>
-              </select>
+              
 
             </div>
           </div>
@@ -147,6 +144,13 @@ const AddClient = () => {
 export default AddClient;
 
 
-/* <div style={rectangleStyle}>
+/* 
+ Fitness Experience
+<label for="fitness" className = "input-label" style = {{fontFamily: 'Inter, sans-serif'}}>Fitness Experience:</label>
+              <select style={{...columnItemStyle, boxShadow: '0px 1px 3px #2e2e2e', backgroundColor: "#CCCCCC", borderColor: "#734BF4", borderWidth: "2px", fontFamily: 'Inter, sans-serif'}} type = "text" className = "w-65 rounded-lg p-2">
+                <option>Select -Fitness Experience-</option>
+              </select>
+
+<div style={rectangleStyle}>
         <label className = "input-label text-right mr-3 mt-2" style = {{fontFamily: 'Inter, sans-serif'}}>Edit Color</label>
       </div>*/
