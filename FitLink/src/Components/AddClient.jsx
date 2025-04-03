@@ -131,8 +131,11 @@ const AddClient = () => {
       
       <div style={circleStyle}>
         <div style={rectangleStyle}>
-          <img src={pencil_icon}></img>
-          <label className = "input-label text-black text-right mr-3 mt-2" style = {{fontFamily: 'Inter, sans-serif'}}>Edit Color</label>
+          
+          <label className = "input-label text-black text-right mr-3 mt-2" style = {{fontFamily: 'Inter, sans-serif'}}>Edit Color
+            <img className="h-7 w-7  relative top-[-27px] right-[-10px]" src={pencil_icon}></img>
+          </label>
+          
         </div>
       </div>
       
