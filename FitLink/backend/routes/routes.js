@@ -6,6 +6,8 @@ import { addClientAccountInfo, getClientAccountInfo, deleteClientAccountInfo, up
 import { googleLoginResponse, googleLoginCallback, googleLogout } from "../controllers/google.controller.js";
 import { addSessionNotesInfo, getSessionNotesInfo, deleteSessionNotesInfo, updateSessionNotesInfo } from "../controllers/sessionNotes.controller.js";
 import { generateWorkoutPlan } from "../controllers/gpt.controller.js";
+import { createWorkout, updateWorkout, getWorkoutByClientId, deleteWorkout } from "../controllers/workout.controller.js";
+  
 
 const router = express.Router();
 
@@ -36,6 +38,11 @@ router.get("/auth/google/logout", googleLogout);
 
 // Add this route to handle GPT-based workout plan generation
 router.post("/generate-workout", generateWorkoutPlan);
+
+router.post("/workouts", createWorkout); // Create a new workout
+router.put("/workouts/:workoutId", updateWorkout); // Update an existing workout
+router.get("/workouts/client/:clientId", getWorkoutByClientId); // Get a workout by clientId
+router.delete("/workouts/:workoutId", deleteWorkout); // Delete a workout
 
 export default router;
 
