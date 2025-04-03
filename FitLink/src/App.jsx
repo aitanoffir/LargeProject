@@ -6,6 +6,7 @@ import SignIn from './Components/SignIn';
 import AddClient from './Components/AddClient';
 import NavBar from './Components/NavBar';
 import HomePage from './Components/HomePage';
+import ProgramPage from './Pages/ProgramPage';
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <Route path="/" element={<SignIn />} />
         <Route path="/SignUp" element={<SignUp />} />
         <Route path="/SignIn" element={<SignIn />} />
+        <Route path="/ProgramPage" element={<ProgramPage />} />
         <Route path="/AddClient" element={<AddClient />} />
         <Route path="/NavBar" element={<NavBar />} />
         <Route path="/Home" element={<HomePage />} />
