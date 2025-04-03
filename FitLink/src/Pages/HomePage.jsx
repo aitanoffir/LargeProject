@@ -1,6 +1,6 @@
 // HomePage.jsx
 import { useEffect, useState } from 'react';
-import NavBar from './NavBar';
+import NavBar from '../Components/NavBar';
 import { FaDumbbell, FaUsers } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 

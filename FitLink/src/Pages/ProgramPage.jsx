@@ -32,10 +32,12 @@ const ProgramPage = () => {
                 <ProgramCard key={index} title={program.title} />
               ))}
             </Section>
-            <Section title="Create New  ">
+            <Section title="New Program">
                 <ProgramCard title="Add" color="blue" onClick={() => setShowModal(true)} />
                 {showModal && (
                   <ProgramModal 
+                    title="Create New Program"
+                    message="Are you sure you want to add a new program?"
                     onConfirm={handleAddProgram}
                     onClose={() => setShowModal(false)}
                   />

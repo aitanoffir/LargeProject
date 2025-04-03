@@ -5,7 +5,7 @@ import SignUp from './Components/SignUp';
 import SignIn from './Components/SignIn';
 import AddClient from './Components/AddClient';
 import NavBar from './Components/NavBar';
-import HomePage from './Components/HomePage';
+import HomePage from './Pages/HomePage';
 import ProgramPage from './Pages/ProgramPage';
 
 function App() {
