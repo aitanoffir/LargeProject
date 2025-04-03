@@ -116,15 +116,12 @@ const AddClient = () => {
                 <option>Moderately active</option>
                 <option>Very active</option>
               </select>
-
-              
-
             </div>
           </div>
         </div>
         <div className = "flex justify-between mt-6">
-          <button className = "bg-black text-right text-white px-4 py-2 rounded-xl">
-            <img className="h-7 w-7 mr-2" src={left_arrow}></img>
+          <button className = "bg-black text-right text-white px-4 py-2 rounded-xl flex items-left">
+            <img className= "h-5 w-5 mr-2 mt-1" src={left_arrow}></img>
             Back
           </button>
           
