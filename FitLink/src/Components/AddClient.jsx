@@ -17,8 +17,8 @@ const AddClient = () => {
 
   return (
     <div className = "flex flex-col p-8">
-      <h1 className = "text-4xl font-bold mb-6 text-left">Add a Client</h1>
-      <h2 className = "text-2xl font-bold mb-4 text-left">Enter Client Information</h2>
+      <h1 className = "text-4xl font-bold mb-20 text-left">Add a Client</h1>
+      <h2 className = "text-2xl font-bold mb-1 text-left">Enter Client Information</h2>
 
 
       <div className = "w-3/4 bg-white p-8 rounded-lg shadow-lg">
