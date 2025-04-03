@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import "../index.css";
 import { FaBorderAll } from "react-icons/fa";
 import pencil_icon from "../assets/Pencil Icon.png";
-import plus_circle from "../asset/plusCircleWhite.png";
+import plus_circle from "../assets/plusCircleWhite.png";
+import left_arrow from "../assets/leftArrowWhite.png";
 
 const AddClient = () => {
 
@@ -122,9 +123,14 @@ const AddClient = () => {
           </div>
         </div>
         <div className = "flex justify-between mt-6">
-          <button className = "bg-black text-right text-white px-4 py-2 rounded-xl">Back</button>
-          <button className = "bg-black text-left text-white px-8 py-2 rounded-xl">Add Client
-            <img src={plus_circle}></img>
+          <button className = "bg-black text-right text-white px-4 py-2 rounded-xl">
+            <img className="h-7 w-7 mr-2" src={left_arrow}></img>
+            Back
+          </button>
+          
+          <button className = "bg-black text-white px-4 py-2 rounded-xl flex items-left">
+            <img className="h-7 w-7 mr-2" src={plus_circle}></img>
+            Add Client
           </button>
         </div>
       </div>  
