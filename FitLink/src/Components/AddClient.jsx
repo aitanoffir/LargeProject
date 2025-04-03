@@ -70,8 +70,8 @@ const AddClient = () => {
   return (
     <div className = "flex flex-col p-8">
       <div style={{zindex: 0, backgroundColor: '#F8F8F8', alignItems: 'center',position: "absolute",top: 0, left: 0, width: "100vw", height: "150px", marginLeft: 0, paddingLeft: 0 }}></div>
-      <h1 className= "text-4xl font-bold text-left mb-20 mt-9" style = {{position:'relative', zindex: 1, fontFamily: 'Inter, sans-serif'}}>Add a Client</h1>
-      <h2 className = "text-2xl font-bold mb-1 text-left" style ={{fontFamily: 'Inter, sans-serif'}}>Enter Client Information</h2>
+      <h1 className= "text-5xl font-bold text-left mb-20 mt-9" style = {{position:'relative', zindex: 1, fontFamily: 'Inter, sans-serif'}}>Add a Client</h1>
+      <h2 className = "text-3xl font-bold mb-1 text-left" style ={{fontFamily: 'Inter, sans-serif'}}>Enter Client Information</h2>
 
       <div className = "w-3/4 bg-white p-8 rounded-lg shadow-lg">
         <div className = "ml-12">
