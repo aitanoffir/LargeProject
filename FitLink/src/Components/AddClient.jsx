@@ -120,12 +120,12 @@ const AddClient = () => {
           </div>
         </div>
         <div className = "flex justify-between mt-6">
-          <button className = "bg-black text-right text-white px-4 py-2 rounded-xl flex items-left">
+          <button className = " cursor-pointer bg-black text-right text-white px-4 py-2 rounded-xl flex items-left">
             <img className= "h-5 w-5 mr-2 mt-1" src={left_arrow}></img>
             Back
           </button>
           
-          <button className = "bg-black text-white px-4 py-2 rounded-xl flex items-left">
+          <button className = "cursor-pointer bg-black text-white px-4 py-2 rounded-xl flex items-left">
             <img className="h-7 w-7 mr-2" src={plus_circle}></img>
             Add Client
           </button>
@@ -134,7 +134,7 @@ const AddClient = () => {
       
       <div style={circleStyle}>
         <button style={rectangleStyle}>
-          <label className = "input-label text-black text-right mr-3 mt-2" style = {{fontFamily: 'Inter, sans-serif'}}>Edit Color
+          <label className = "cursor-pointer input-label text-black text-right mr-3 mt-2" style = {{fontFamily: 'Inter, sans-serif'}}>Edit Color
             <img className="h-7 w-7  relative top-[-27px] right-[-10px]" src={pencil_icon}></img>
           </label>
           
