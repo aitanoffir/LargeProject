@@ -8,7 +8,6 @@ const NavBar = () => {
         <FaCalendarAlt className="text-white text-4xl cursor-pointer" />
         <FaUserFriends className="text-white text-4xl cursor-pointer" />
         <FaRegEdit className="text-white text-4xl cursor-pointer" onClick={() => navigate("/ProgramPage")} />
-        <FaCog className="text-white text-4xl cursor-pointer" />
       </div>
       <div className="mb-4">
         <FaUserCircle className="text-white text-4xl cursor-pointer" />
