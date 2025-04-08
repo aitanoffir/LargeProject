@@ -35,7 +35,7 @@ const AddClientModal = ({ onClose }) => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Authorization: /*`Bearer ${localStorage.getItem("token")}`*/ token, // API controller just expects the token, not the Bearer prefix
         },
         body: JSON.stringify(form),
       });

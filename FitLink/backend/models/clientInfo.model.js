@@ -6,6 +6,14 @@ const clientInfoSchema = new mongoose.Schema({
             ref: 'trainerInfo', //this matches the model name, not the collection name
             required: true,
         },
+    firstName: {
+        type: String,
+        required: true
+    },
+    lastName: {
+        type: String,
+        required: true
+    },
     email: {
         type: String,
         required: true,
@@ -15,73 +23,31 @@ const clientInfoSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    firstName: {
+    dob: {
+        type: Date,
+        required: false
+    },
+    weight: {
+        type: Number,
+        required: false
+    },
+    goalWeight: {
+        type: Number,
+        required: false
+    },
+    height: {
+        type: Number,
+        required: false
+    },
+    activityLevel: {
         type: String,
-        required: true
+        enum: ['Sedentary', 'Slightly active', 'Moderately active', 'Very active'],
+        required: false
     },
-    lastName: {
+    sex: {
         type: String,
-        required: true
-    },
-    country: {
-        type: String,
-        required: true
-    },
-    state: {
-        type: String,
-        required: true
-    },
-    county: {
-        type: String
-    },
-    city: {
-        type: String,
-        required: true
-    },
-    fitnessGoals: {
-        type: [String],
-        default: []
-    },
-    medicalConditions: {
-        type: [String],
-        default: []
-    },
-    schedulingPreferences: {
-        Monday: { type: [Object], default: [] },
-        Tuesday: { type: [Object], default: [] },
-        Wednesday: { type: [Object], default: [] },
-        Thursday: { type: [Object], default: [] },
-        Friday: { type: [Object], default: [] },
-        Saturday: { type: [Object], default: [] },
-        Sunday: { type: [Object], default: [] }
-    },
-    preferredTrainers: [
-        {
-            trainer_id: {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: "TrainerInfo"
-            },
-            trainerName: { type: String }
-        }
-    ],
-    progress: {
-        weight: {
-            current: { type: Number },
-            goal: { type: Number },
-            unit: { type: String, default: "lbs" }
-        },
-        bodyFatPercentage: {
-            current: { type: Number },
-            goal: { type: Number }
-        },
-        strengthMetrics: [
-            {
-                exercise: { type: String, required: true },
-                currentPR: { type: Number, required: true },
-                goalPR: { type: Number, required: true },
-                unit: { type: String, default: "lbs" }
-            }
-        ]
+        enum: ['Male', 'Female', 'N/A'],
+        required: false,
     },
     sessions: [
         {
