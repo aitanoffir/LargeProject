@@ -58,7 +58,7 @@ const HomePage = () => {
             {/* My Workouts box */}
             <div 
               className="bg-white rounded-lg shadow-md p-6 cursor-pointer hover:shadow-lg transition-shadow duration-300"
-              onClick={() => console.log('Navigate to workouts')} //replace later with page route
+              onClick={() => navigate("/ProgramPage")} //replace later with page route
             >
               <div className="flex items-center">
                 <div className="p-3 rounded-full bg-blue-100 text-blue-600 mr-4">
