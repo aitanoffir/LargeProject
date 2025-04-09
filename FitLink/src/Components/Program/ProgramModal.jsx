@@ -5,7 +5,7 @@ import CalenderForm from "./CalenderForm";
 const ProgramModal = ({ title, message, onConfirm, onClose }) => {
   const [formData, setFormData] = useState({
     program_name: "",
-    duration: "",
+    days: "",
     comments: "",
     client_name: "",
     selected_days: [],
@@ -102,24 +102,24 @@ const ProgramModal = ({ title, message, onConfirm, onClose }) => {
 
 
             {/* Duration */}
-            <label for="duration" className="input-label font-bold">
-              Duration:
+            <label for="days" className="input-label font-bold">
+              Days:
             </label>
             <input
               type="number"
-              name="duration"
-              value={formData.duration}
+              name="days"
+              value={formData.days}
               onChange={(e) =>
-                setFormData({ ...formData, duration: e.target.value })
+                setFormData({ ...formData, days: e.target.value })
               }
               className="w-full border rounded-md p-2"
             />
 
             {/*Calender*/}
-            <label for="duration" className="input-label font-bold">
+            {/* <label for="duration" className="input-label font-bold">
               Calender:
             </label>
-            <CalenderForm />
+            <CalenderForm /> */}
 
             <label for="comments" className="input-label font-bold block mt-4">
               Additional Comments:
