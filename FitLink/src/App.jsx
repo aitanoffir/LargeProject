@@ -11,6 +11,7 @@ import ClientsPage from './Pages/ClientsPage';
 import Notes from './Pages/Notes';
 import CreateNote from './Components/CreateNote';
 import ViewNote from './Components/ViewNote';
+import EditProfile from './Pages/EditProfile';
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
         <Route path="/Notes" element={<Notes />} />
         <Route path="/ViewNote/:id" element={<ViewNote />} />
         <Route path="*" element={<Navigate to="/" />} />
+        <Route path="/EditProfile" element={<EditProfile />} />
       </Routes>
     </Router>
   );
