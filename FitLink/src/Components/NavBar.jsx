@@ -1,8 +1,15 @@
-import { FaHome, FaCalendarAlt, FaUserFriends, FaSignOutAlt, FaUserCircle, FaRegEdit } from 'react-icons/fa';
+import {
+  FaHome,
+  FaCalendarAlt,
+  FaUserFriends,
+  FaSignOutAlt,
+  FaUserCircle,
+  FaRegEdit
+} from 'react-icons/fa';
+import { FaDumbbell } from 'react-icons/fa6'; // ✅ Dumbbell icon from fa6
 import { Link, useNavigate } from 'react-router-dom';
 import SignOutConfirm from '../Components/SignOutConfirm';
 import React, { useState } from "react";
-
 
 const NavBar = () => {
   const [showConfirmation, setShowConfirmation] = useState(false);
@@ -19,21 +26,27 @@ const NavBar = () => {
         <Link to="/Home">
           <FaHome className="text-white text-4xl cursor-pointer" />
         </Link>
-        <FaCalendarAlt className="text-white text-4xl cursor-pointer" />
+        <Link to="/Calendar">
+          <FaCalendarAlt className="text-white text-4xl cursor-pointer" />
+        </Link>
         <Link to="/Clients">
           <FaUserFriends className="text-white text-4xl cursor-pointer" />
         </Link>
-
         <Link to="/Notes">
           <FaRegEdit className="text-white text-4xl cursor-pointer" />
+        </Link>
+        <Link to="/MyProgram">
+          <FaDumbbell className="text-white text-4xl cursor-pointer" />
         </Link>
       </div>
       <div className="mb-4">
         <Link to="/EditProfile">
           <FaUserCircle className="text-white text-4xl cursor-pointer mb-6" />
         </Link>
-
-        <FaSignOutAlt className="text-white text-4xl cursor-pointer" onClick={() => setShowConfirmation(true)} />
+        <FaSignOutAlt
+          className="text-white text-4xl cursor-pointer"
+          onClick={() => setShowConfirmation(true)}
+        />
         {showConfirmation && (
           <SignOutConfirm
             onClose={() => setShowConfirmation(false)}
@@ -46,3 +59,4 @@ const NavBar = () => {
 };
 
 export default NavBar;
+

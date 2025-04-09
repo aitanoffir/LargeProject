@@ -12,6 +12,7 @@ import Notes from './Pages/Notes';
 import CreateNote from './Components/CreateNote';
 import ViewNote from './Components/ViewNote';
 import EditProfile from './Pages/EditProfile';
+import WorkoutCard from './Components/Program/WorkoutCard';
 
 function App() {
   return (
@@ -26,10 +27,14 @@ function App() {
         <Route path="/Home" element={<HomePage />} />
         <Route path="/Clients" element={<ClientsPage />} />
         <Route path="/CreateNote" element={<CreateNote />} />
+        <Route path="/MyProgram" element={<ProgramPage />} /> 
         <Route path="/Notes" element={<Notes />} />
         <Route path="/ViewNote/:id" element={<ViewNote />} />
         <Route path="*" element={<Navigate to="/" />} />
         <Route path="/EditProfile" element={<EditProfile />} />
+
+        {/*dev work routes*/}
+        <Route path="/test-workout-card" element={<WorkoutCard />} />
       </Routes>
     </Router>
   );

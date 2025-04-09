@@ -22,6 +22,14 @@ const accountSignUp = mongoose.Schema({
         type: String,
         required: false
     },
+    phonenumber:{
+        type: String,
+        required: false
+    },
+    bio:{
+        type: String,
+        required: false
+    }
 }, 
 {
     timestamps: true //createdAT and updatedAt
