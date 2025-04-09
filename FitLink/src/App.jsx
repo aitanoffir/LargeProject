@@ -26,6 +26,7 @@ function App() {
         <Route path="/Home" element={<HomePage />} />
         <Route path="/Clients" element={<ClientsPage />} />
         <Route path="/CreateNote" element={<CreateNote />} />
+        <Route path="/MyProgram" element={<ProgramPage />} /> 
         <Route path="/Notes" element={<Notes />} />
         <Route path="/ViewNote/:id" element={<ViewNote />} />
         <Route path="*" element={<Navigate to="/" />} />

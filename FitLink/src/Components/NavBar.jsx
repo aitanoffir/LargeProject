@@ -1,8 +1,15 @@
-import { FaHome, FaCalendarAlt, FaUserFriends, FaSignOutAlt, FaUserCircle, FaRegEdit } from 'react-icons/fa';
+import {
+  FaHome,
+  FaCalendarAlt,
+  FaUserFriends,
+  FaSignOutAlt,
+  FaUserCircle,
+  FaRegEdit,
+  FaChartLine // Chart line icon for "My Program"
+} from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
 import SignOutConfirm from '../Components/SignOutConfirm';
 import React, { useState } from "react";
-
 
 const NavBar = () => {
   const [showConfirmation, setShowConfirmation] = useState(false);
@@ -23,17 +30,21 @@ const NavBar = () => {
         <Link to="/Clients">
           <FaUserFriends className="text-white text-4xl cursor-pointer" />
         </Link>
-
         <Link to="/Notes">
           <FaRegEdit className="text-white text-4xl cursor-pointer" />
+        </Link>
+        <Link to="/MyProgram">
+          <FaChartLine className="text-white text-4xl cursor-pointer" />
         </Link>
       </div>
       <div className="mb-4">
         <Link to="/EditProfile">
           <FaUserCircle className="text-white text-4xl cursor-pointer mb-6" />
         </Link>
-
-        <FaSignOutAlt className="text-white text-4xl cursor-pointer" onClick={() => setShowConfirmation(true)} />
+        <FaSignOutAlt
+          className="text-white text-4xl cursor-pointer"
+          onClick={() => setShowConfirmation(true)}
+        />
         {showConfirmation && (
           <SignOutConfirm
             onClose={() => setShowConfirmation(false)}
