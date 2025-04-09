@@ -26,7 +26,9 @@ const NavBar = () => {
         <Link to="/Home">
           <FaHome className="text-white text-4xl cursor-pointer" />
         </Link>
-        <FaCalendarAlt className="text-white text-4xl cursor-pointer" />
+        <Link to="/Calendar">
+          <FaCalendarAlt className="text-white text-4xl cursor-pointer" />
+        </Link>
         <Link to="/Clients">
           <FaUserFriends className="text-white text-4xl cursor-pointer" />
         </Link>
