@@ -1,8 +1,7 @@
-// CreateNote.jsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { FaArrowLeft, FaSave } from "react-icons/fa"; 
-import "../notes.css";
+import { FaArrowLeft, FaSave } from "react-icons/fa";
+import NavBar from "../Components/NavBar";
 
 export default function CreateNote() {
   const [title, setTitle] = useState("");
@@ -10,19 +9,10 @@ export default function CreateNote() {
   const navigate = useNavigate();
 
   const handleSave = () => {
-    // Create a new note object
     const newNote = { title, content: note };
-    
-    // Get existing notes from localStorage, or initialize an empty array
     const savedNotes = JSON.parse(localStorage.getItem("notes")) || [];
-
-    // Add the new note to the saved notes array
     savedNotes.push(newNote);
-
-    // Save the updated notes array back to localStorage
     localStorage.setItem("notes", JSON.stringify(savedNotes));
-
-    // Redirect to the Notes page
     navigate("/Notes");
   };
 
@@ -31,33 +21,54 @@ export default function CreateNote() {
   };
 
   return (
-    <div className="main-container">
-      <h1 className="create-note">Create Note</h1>
-      <div className="flex-row-bf">
-        <label className="title" htmlFor="note-title">Title: </label>
-        <input
-          id="note-title"
-          type="text"
-          className="textbox"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-        />
-      </div>
-      <textarea
-        className="text-box"
-        placeholder="Write your note here..."
-        value={note}
-        onChange={(e) => setNote(e.target.value)}
-      ></textarea>
-      <div className="flex-row-ed">
-        <button className="backButton" onClick={handleBack}>
-          <FaArrowLeft className="button-icon" />
-          <span>Back</span>
-        </button>
-        <button className="saveButton" onClick={handleSave}>
-          <FaSave className="button-icon" />
-          <span>Save Note</span>
-        </button>
+    <div className="flex h-screen bg-gray-100">
+      <NavBar />
+      <div className="flex-1 p-8 overflow-auto">
+        <div className="bg-white rounded-lg shadow-md p-6 max-w-3xl mx-auto">
+          <h1 className="text-2xl font-semibold mb-6 text-gray-800">Create New Note</h1>
+
+          <div className="mb-4">
+            <label htmlFor="note-title" className="block text-sm font-medium text-gray-700 mb-1">
+              Title
+            </label>
+            <input
+              id="note-title"
+              type="text"
+              className="w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="Enter a title for your note"
+            />
+          </div>
+
+          <div className="mb-6">
+            <label htmlFor="note-content" className="block text-sm font-medium text-gray-700 mb-1">
+              Note
+            </label>
+            <textarea
+              id="note-content"
+              className="w-full h-48 px-4 py-2 border rounded-lg shadow-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary"
+              placeholder="Write your note here..."
+              value={note}
+              onChange={(e) => setNote(e.target.value)}
+            ></textarea>
+          </div>
+
+          <div className="flex justify-between">
+            <button
+              onClick={handleBack}
+              className="flex items-center bg-gray-200 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-300"
+            >
+              <FaArrowLeft className="mr-2" /> Back
+            </button>
+            <button
+              onClick={handleSave}
+              className="flex items-center bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-dark"
+            >
+              <FaSave className="mr-2" /> Save Note
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );

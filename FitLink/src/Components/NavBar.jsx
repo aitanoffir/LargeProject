@@ -4,9 +4,9 @@ import {
   FaUserFriends,
   FaSignOutAlt,
   FaUserCircle,
-  FaRegEdit,
-  FaChartLine // Chart line icon for "My Program"
+  FaRegEdit
 } from 'react-icons/fa';
+import { FaDumbbell } from 'react-icons/fa6'; // ✅ Dumbbell icon from fa6
 import { Link, useNavigate } from 'react-router-dom';
 import SignOutConfirm from '../Components/SignOutConfirm';
 import React, { useState } from "react";
@@ -34,7 +34,7 @@ const NavBar = () => {
           <FaRegEdit className="text-white text-4xl cursor-pointer" />
         </Link>
         <Link to="/MyProgram">
-          <FaChartLine className="text-white text-4xl cursor-pointer" />
+          <FaDumbbell className="text-white text-4xl cursor-pointer" />
         </Link>
       </div>
       <div className="mb-4">
@@ -57,3 +57,4 @@ const NavBar = () => {
 };
 
 export default NavBar;
+
