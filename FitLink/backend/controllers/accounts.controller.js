@@ -27,7 +27,8 @@ export const login = async (req, res) => {
         }
         //create JWT token
         const payload = {
-            name:email
+            name:email,
+            loginType: 'fitlink',
         }
         const secret = process.env.JWT_SECRET;
         const token = jwt.sign(payload, secret, {
@@ -67,7 +68,8 @@ export const signUp = async (req, res) => {
 
         //generate and return JWT 
         const payload = {
-            name:email
+            name:email,
+            loginType: 'fitlink',
         }
         const secret = process.env.JWT_SECRET;
         const token = jwt.sign(payload, secret, {

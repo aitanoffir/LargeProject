@@ -8,6 +8,7 @@ import { addSessionNotesInfo, getSessionNotesInfo, deleteSessionNotesInfo, updat
 import { generateWorkoutPlan } from "../controllers/gpt.controller.js";
 import { createWorkout, updateWorkout, getWorkoutByClientId, deleteWorkout } from "../controllers/workout.controller.js";
 import { addClientNote, updateClientNote, deleteClientNote } from '../controllers/clientInfo.controller.js';
+import {createEvent, getEvents, updateEvent, deleteEvent} from "../controllers/googleCalendar.controller.js";
 
 const router = express.Router();
 
@@ -49,6 +50,11 @@ router.post("/workouts", createWorkout); // Create a new workout
 router.put("/workouts/:workoutId", updateWorkout); // Update an existing workout
 router.get("/workouts/client/:clientId", getWorkoutByClientId); // Get a workout by clientId
 router.delete("/workouts/:workoutId", deleteWorkout); // Delete a workout
+// Google Calendar routes
+router.post("/calendar/event", createEvent); // Create event
+router.get("/calendar/events", getEvents); // Get events
+router.put("/calendar/event/:eventId", updateEvent); // Update event
+router.delete("/calendar/event/:eventId", deleteEvent); // Delete event
 
 export default router;
 

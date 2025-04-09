@@ -101,6 +101,15 @@ http://localhost:7000/
 | GET    | `/api/accounts/auth/google`              | Start Google Login flow                 |
 | GET    | `/api/accounts/auth/google/callback`     | Google OAuth callback URI               |
 | GET    | `/api/accounts/auth/google/logout`       | Google OAuth Logout URI                 |
+
+### **🔹 Google Calendar**
+| Method | Endpoint                                    | Description            |
+|-------:|---------------------------------------------|------------------------|
+| POST   | `/api/accounts/calendar/event`              | Create event           |
+| GET    | `/api/accounts/calendar/events`             | Get events             |
+| PUT    | `/api/accounts/calendar/event/:eventId`     | Update event           |
+| DELETE | `/api/accounts/calendar/event/:eventId`     | Delete event           |
+
 ---
 
 ### **📧 Contact & Contributors**
