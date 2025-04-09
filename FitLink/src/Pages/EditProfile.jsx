@@ -1,9 +1,96 @@
-import React, { useState } from "react";
-import { FaRegSave, FaPen, FaExclamation } from "react-icons/fa";
+import { useEffect, useState } from 'react';
+import { FaRegSave, FaPen } from "react-icons/fa";
 import NavBar from '../Components/NavBar';
+import { useNavigate } from 'react-router-dom';
 
 
 const EditProfile = () => {
+    const navigate = useNavigate();
+
+    const [formData, setFormData] = useState({
+        email: "",
+        firstname: "",
+        lastname: "",
+        phonenumber: "",
+        bio: "",
+    });
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setFormData((prevData) => ({
+            ...prevData,
+            [name]: value,
+        }));
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        console.log("from handleSubmit");
+        try {
+            console.log("before POST");
+            const response = await fetch("http://fit-link.xyz:7000/api/accounts/trainer", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    email: formData.email,
+                    firstName: formData.firstname,
+                    lastName: formData.lastname,
+                    phoneNumber: formData.phonenumber,
+                    bio: formData.bio,
+                }),
+            });
+
+            console.log("API Failed");
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                console.error("Saving failed:", errorData);
+                alert("Saving failed. Please try again.");
+            } else {
+                const data = await response.json();
+                console.log("Signup successful:", data);
+
+            }
+        } catch (error) {
+            console.error("Error during edit profile:", error);
+            alert("An error occurred. Please try again later.");
+        }
+    };
+
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        if (token) {
+
+            try {
+                const [header, payload, signature] = token.split('.');
+                const decodedPayload = JSON.parse(atob(payload));
+
+                const email = decodedPayload.name;
+                const firstname = decodedPayload.firstname;
+                const lastname = decodedPayload.lastname;
+                const phonenumber = decodedPayload.phonenumber;
+                const bio = decodedPayload.bio;
+
+                setFormData({
+                    email: email || "",
+                    firstname: firstname || "",
+                    lastname: lastname || "",
+                    phonenumber: phonenumber || "",
+                    bio: bio || "",
+                });
+
+            } catch (error) {
+                console.error('Error decoding token:', error);
+                navigate('/signin');
+            }
+        } else {
+            console.log("Error no token at Home page");
+        }
+    }, [navigate]);
+
     return (
         <div className="flex h-screen bg-gray-100">
             <NavBar />
@@ -23,25 +110,43 @@ const EditProfile = () => {
                 <main className="flex-1 p-6">
                     <div className="flex flex-col md:flex-row justify-between p-6 gap-6">
                         {/* Left Side*/}
-                        <div className="flex-1 space-y-4">
+                        <form onSubmit={handleSubmit} className="flex-1 space-y-4">
 
-                            <div>
-                                <label className="block text-sm font-medium">Name</label>
-                                <input
-                                    type="text"
-                                    placeholder="We don't even ask the user for this information."
-                                    className="mt-1 w-100 border-b border-gray-400 bg-gray-200 p-2"
 
-                                />
+
+                            <div className="flex gap-4">
+                                <div className="flex-1">
+                                    <label className="block text-sm font-medium">First Name</label>
+                                    <input
+                                        type="text"
+                                        name="firstname"
+                                        value={formData.firstname}
+                                        onChange={handleInputChange}
+                                        className="mt-1 w-60 bg-gray-200 p-2"
+
+                                    />
+                                </div>
+                                <div className="flex-10">
+                                    <label className="block text-sm font-medium">Last Name</label>
+                                    <input
+                                        type="text"
+                                        name="lastname"
+                                        value={formData.lastname}
+                                        onChange={handleInputChange}
+                                        className="mt-1 w-60 bg-gray-200 p-2"
+
+                                    />
+                                </div>
                             </div>
-
 
                             <div className="flex gap-4">
                                 <div className="flex-1">
                                     <label className="block text-sm font-medium">Email Address</label>
                                     <input
                                         type="email"
-                                        placeholder="I don't really know"
+                                        name="email"
+                                        value={formData.email}
+                                        onChange={handleInputChange}
                                         className="mt-1 w-60 bg-gray-200 p-2"
 
                                     />
@@ -50,7 +155,9 @@ const EditProfile = () => {
                                     <label className="block text-sm font-medium">Phone Number</label>
                                     <input
                                         type="text"
-                                        placeholder="why I did this"
+                                        name="phonenumber"
+                                        value={formData.phonenumber}
+                                        onChange={handleInputChange}
                                         className="mt-1 w-60 bg-gray-200 p-2"
 
                                     />
@@ -61,21 +168,23 @@ const EditProfile = () => {
                             <div>
                                 <label className="block text-sm font-medium">Bio</label>
                                 <textarea
+                                    name="bio"
                                     rows={5}
                                     className="mt-1 w-140 bg-gray-200 p-2"
-                                    placeholder="but whatever‼️‼️"
+                                    value={formData.bio}
+                                    onChange={handleInputChange}
                                 />
 
                             </div>
 
 
                             <div className="flex justify-between mt-10">
-                                <button className="cursor-pointer mt-4 bg-black text-white px-4 py-2 flex items-center gap-2 rounded">
+                                <button type="submit" className="cursor-pointer mt-4 bg-black text-white px-4 py-2 flex items-center gap-2 rounded">
                                     <FaRegSave />
                                     Save
                                 </button>
                             </div>
-                        </div>
+                        </form>
 
                         {/* Right Side*/}
                         <div className="flex-1/5 items-center">
