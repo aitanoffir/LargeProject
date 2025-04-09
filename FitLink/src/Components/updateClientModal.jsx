@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaTimes } from "react-icons/fa";
 import pencil_icon from "../assets/Pencil Icon.png";
 import plus_circle from "../assets/plusCircleWhite.png";
 import left_arrow from "../assets/leftArrowWhite.png";
 
-const AddClientModal = ({ onClose }) => {
+const UpdateClientModal = ({ client, onClose }) => {
   const [form, setForm] = useState({
     firstName: "",
     lastName: "",
@@ -21,6 +21,25 @@ const AddClientModal = ({ onClose }) => {
   });
 
   const [errors, setErrors] = useState({});
+
+  useEffect(() => {
+    if (client) {
+      setForm({
+        firstName: client.firstName,
+        lastName: client.lastName,
+        age: client.age,
+        weight: client.weight,
+        height: client.height,
+        sex: client.sex,
+        email: client.email,
+        phoneNumber: client.phoneNumber,
+        goalWeight: client.goalWeight,
+        activityLevel: client.activityLevel,
+        workoutSchedule: client.workoutSchedule || [],
+        color: client.color || "#7CC9F7"
+      });
+    }
+  }, [client]);
 
   const generateTimeOptions = () => {
     const options = [];
@@ -106,7 +125,7 @@ const AddClientModal = ({ onClose }) => {
     setForm(prev => ({...prev, workoutSchedule: updated }));
   };
 
-  const handleAddClient = async () => {
+  const handleUpdateClient = async () => {
     const newErrors = {};
     if (!form.email) newErrors.email = "Email is required";
     if (!validateEmail(form.email)) newErrors.email = "Invalid email format";
@@ -140,41 +159,37 @@ const AddClientModal = ({ onClose }) => {
     }
 
     const token = localStorage.getItem("token");
-    const trainerId = localStorage.getItem("userId");
-    if (!token || !trainerId) {
-      alert("You must be signed in to add a client.");
+    if (!token) {
+      alert("You must be signed in to update a client.");
       return;
     }
   
     try {
-      const response = await fetch("http://localhost:7000/api/accounts/client", {
-        method: "POST",
+      const response = await fetch(`http://localhost:7000/api/accounts/client/${client._id}`, {
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
           Authorization: token,
         },
-        body: JSON.stringify({
-          ...form,
-          trainer: trainerId,
-        }),
+        body: JSON.stringify(form),
       });
-  
+
       if (!response.ok) {
         const text = await response.text();
-        console.error("Add client failed:", text);
-        alert("Failed to add client.");
+        console.error("Update failed:", text);
+        alert("Failed to update client.");
         return;
       }
-  
+
       const result = await response.json();
       if (result.success) {
         onClose();
       } else {
-        alert(result.message || "Failed to add client.");
+        alert(result.message || "Failed to update client.");
       }
     } catch (error) {
-      console.error("Error adding client:", error);
-      alert("An error occurred while adding the client.");
+      console.error("Error updating client:", error);
+      alert("An error occurred while updating the client.");
     }
   };
 
@@ -191,6 +206,8 @@ const AddClientModal = ({ onClose }) => {
     borderWidth: "2px",
     fontFamily: "Inter, sans-serif",
   };
+
+  if (!client) return null;
 
   return (
     <div className="fixed inset-0 bg-white/10 backdrop-blur-sm flex items-center justify-center z-50">
@@ -217,10 +234,10 @@ const AddClientModal = ({ onClose }) => {
           
           <div className="text-center mb-12" style={{ position: "relative", zIndex: 1 }}>
             <h1 className="text-5xl font-bold mb-4" style={{ fontFamily: "Inter, sans-serif" }}>
-              Add a Client
+              Update Client
             </h1>
             <h2 className="text-3xl font-bold" style={{ fontFamily: "Inter, sans-serif" }}>
-              Enter Client Information
+              Modify Client Information
             </h2>
           </div>
 
@@ -450,9 +467,9 @@ const AddClientModal = ({ onClose }) => {
                   Back
                 </button>
 
-                <button onClick={handleAddClient} className="bg-black text-white px-4 py-2 rounded-xl flex items-left">
-                  <img className="h-7 w-7 mr-2" src={plus_circle} alt="Add Client" />
-                  Add Client
+                <button onClick={handleUpdateClient} className="bg-black text-white px-4 py-2 rounded-xl flex items-left">
+                  <img className="h-7 w-7 mr-2" src={plus_circle} alt="Update Client" />
+                  Update Client
                 </button>
               </div>
             </div>
@@ -463,4 +480,4 @@ const AddClientModal = ({ onClose }) => {
   );
 };
 
-export default AddClientModal;
+export default UpdateClientModal;

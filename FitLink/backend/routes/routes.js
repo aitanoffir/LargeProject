@@ -7,7 +7,7 @@ import { googleLoginResponse, googleLoginCallback, googleLogout } from "../contr
 import { addSessionNotesInfo, getSessionNotesInfo, deleteSessionNotesInfo, updateSessionNotesInfo } from "../controllers/sessionNotes.controller.js";
 import { generateWorkoutPlan } from "../controllers/gpt.controller.js";
 import { createWorkout, updateWorkout, getWorkoutByClientId, deleteWorkout } from "../controllers/workout.controller.js";
-  
+import { addClientNote, updateClientNote, deleteClientNote } from '../controllers/clientInfo.controller.js';
 
 const router = express.Router();
 
@@ -24,6 +24,10 @@ router.post("/client", addClientAccountInfo); //where we add client account info
 router.get("/client", getClientAccountInfo); //gets trainer client info
 router.delete("/client/:id", deleteClientAccountInfo); // deleted a client by _id
 router.put("/client/:id", updateClientAccountInfo); //updates a client by _id
+    //Client Notes functionality
+    router.post('/client/:clientId/notes', addClientNote);
+    router.put('/client/:clientId/notes/:noteId',  updateClientNote);
+    router.delete('/client/:clientId/notes/:noteId', deleteClientNote);
 
 //session CRUD functionality
 router.post("/session", addSessionNotesInfo); //where we add session notes info

@@ -1,6 +1,7 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import sign_up_picture from "../assets/jonathan-borba-R0y_bEUjiOM-unsplash.jpg";
+// import jwtDecode from 'jwt-decode';
 
 const SignIn = () => {
   const [formData, setFormData] = useState({
@@ -23,7 +24,7 @@ const SignIn = () => {
     e.preventDefault();
   
     try {
-      const response = await fetch("http://fit-link.xyz:7000/api/accounts/login", {
+      const response = await fetch("http://localhost:7000/api/accounts/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -43,8 +44,10 @@ const SignIn = () => {
         console.log("Sign-in successful:", data);
 
         localStorage.setItem("token", data.jwt);
+        // const decoded = jwtDecode(data.jwt);
+        localStorage.setItem("userId", data.data._id);
+        // console.log("Id Logged:", data.data._id);
 
-        // Navigate to Home Page
         navigate("/Home");
       }
     } catch (error) {
@@ -70,7 +73,7 @@ const SignIn = () => {
               onSubmit={handleSubmit}
               className="w-4/5 mx-auto flex flex-col"
             >
-              <label for="email" className="input-label">
+              <label htmlFor="email" className="input-label">
                 Email
               </label>
               <input
@@ -80,7 +83,7 @@ const SignIn = () => {
                 value={formData.email}
                 onChange={handleInputChange}
               />
-              <label for="password" className="input-label">
+              <label htmlFor="password" className="input-label">
                 Password
               </label>
               <input

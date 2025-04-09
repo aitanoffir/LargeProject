@@ -23,8 +23,8 @@ const clientInfoSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    dob: {
-        type: Date,
+    age: {
+        type: Number,
         required: false
     },
     weight: {
@@ -57,7 +57,37 @@ const clientInfoSchema = new mongoose.Schema({
     ],
     bio: {
         type: String
-    }
+    },
+    notes: [{
+        title: {
+            type: String,
+            required: true
+        },
+        content: {
+            type: String,
+            required: true
+        },
+        createdAt: {
+            type: Date,
+            default: Date.now
+        },
+        updatedAt: {
+            type: Date,
+            default: Date.now
+        }
+    }],
+    workoutSchedule: [{
+        day: { 
+            type: String, 
+            enum: ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'] 
+        },
+        startTime: String,
+        endTime: String
+    }],
+    color: {
+        type: String,
+        default: '#7CC9F7'
+    },
 }, 
 {
     timestamps: true

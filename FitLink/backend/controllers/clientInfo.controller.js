@@ -174,3 +174,83 @@ export const updateClientAccountInfo = async (req, res) => {
     }
 
 };
+
+export const addClientNote = async (req, res) => {
+    const validToken = verifyJwt(req.headers.authorization);
+    if (!validToken) return res.status(401).json({ success: false, message: "Invalid Token" });
+
+    try {
+        const client = await ClientInfo.findById(req.params.clientId);
+        if (!client) return res.status(404).json({ success: false, message: "Client not found" });
+
+        const newNote = {
+            title: req.body.title,
+            content: req.body.content
+        };
+
+        client.notes.push(newNote);
+        const savedClient = await client.save();
+        
+        // Return the newly created note with ID
+        const createdNote = savedClient.notes[savedClient.notes.length - 1];
+        res.status(201).json({ 
+            success: true, 
+            note: createdNote 
+        });
+
+    } catch (error) {
+        console.error("Error adding note:", error);
+        res.status(500).json({ success: false, message: "Server Error" });
+    }
+};
+
+export const updateClientNote = async (req, res) => {
+    const validToken = verifyJwt(req.headers.authorization);
+    if (!validToken) return res.status(401).json({ success: false, message: "Invalid Token" });
+
+    try {
+        const client = await ClientInfo.findById(req.params.clientId);
+        if (!client) return res.status(404).json({ success: false, message: "Client not found" });
+
+        const note = client.notes.id(req.params.noteId);
+        if (!note) return res.status(404).json({ success: false, message: "Note not found" });
+
+        note.title = req.body.title;
+        note.content = req.body.content;
+        note.updatedAt = Date.now();
+
+        await client.save();
+        res.status(200).json({ 
+            success: true, 
+            note: note 
+        });
+
+    } catch (error) {
+        console.error("Error updating note:", error);
+        res.status(500).json({ success: false, message: "Server Error" });
+    }
+};
+
+export const deleteClientNote = async (req, res) => {
+    const validToken = verifyJwt(req.headers.authorization);
+    if (!validToken) return res.status(401).json({ success: false, message: "Invalid Token" });
+
+    try {
+        const client = await ClientInfo.findById(req.params.clientId);
+        if (!client) return res.status(404).json({ success: false, message: "Client not found" });
+
+        const noteExists = client.notes.some(n => n._id.equals(req.params.noteId));
+        if (!noteExists) return res.status(404).json({ success: false, message: "Note not found" });
+
+        client.notes.pull({ _id: req.params.noteId });
+        await client.save();
+        res.status(200).json({ 
+            success: true, 
+            message: "Note deleted" 
+        });
+
+    } catch (error) {
+        console.error("Error deleting note:", error);
+        res.status(500).json({ success: false, message: "Server Error" });
+    }
+};
