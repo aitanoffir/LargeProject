@@ -81,3 +81,48 @@ export const signUp = async (req, res) => {
     }
 
 };
+
+// Function to update the account information for the logged-in user
+export const updateAccount = async (req, res) => {
+    // Get token from request
+    const token = req.headers.authorization;
+    if (!token) {
+        return res.status(401).json({ success: false, message: "Authentication required" });
+    }
+
+    try {
+        // Decode the token to get email
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const email = decoded.name; // Email is stored as 'name' in your JWT
+
+        // Fields to update
+        const { firstName, lastName, phonenumber, bio } = req.body;
+        
+        // Find account by email
+        const account = await Account.findOne({ email });
+        if (!account) {
+            return res.status(404).json({ success: false, message: "Account not found" });
+        }
+
+        // Update fields if provided
+        if (firstName) account.firstName = firstName;
+        if (lastName) account.lastName = lastName;
+        if (phonenumber) account.phonenumber = phonenumber;
+        if (bio) account.bio = bio;
+        
+        // Save the updated account
+        await account.save();
+
+        return res.status(200).json({ 
+            success: true, 
+            message: "Account updated successfully",
+            data: account
+        });
+    } catch (error) {
+        console.error("Error in Update account:", error);
+        if (error.name === 'JsonWebTokenError') {
+            return res.status(401).json({ success: false, message: "Invalid token" });
+        }
+        res.status(500).json({ success: false, message: "Server Error" });
+    }
+};

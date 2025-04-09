@@ -6,6 +6,8 @@ import { useNavigate } from 'react-router-dom';
 
 const EditProfile = () => {
     const navigate = useNavigate();
+    const [loading, setLoading] = useState(false);
+    const [message, setMessage] = useState({ text: '', type: '' });
 
     const [formData, setFormData] = useState({
         email: "",
@@ -23,40 +25,86 @@ const EditProfile = () => {
         }));
     };
 
+    // const handleSubmit = async (e) => {
+    //     e.preventDefault();
+
+    //     console.log("from handleSubmit");
+    //     try {
+    //         console.log("before POST");
+    //         const response = await fetch("http://fit-link.xyz:7000/api/accounts/trainer", {
+    //             method: "POST",
+    //             headers: {
+    //                 "Content-Type": "application/json",
+    //             },
+    //             body: JSON.stringify({
+    //                 email: formData.email,
+    //                 firstName: formData.firstname,
+    //                 lastName: formData.lastname,
+    //                 phoneNumber: formData.phonenumber,
+    //                 bio: formData.bio,
+    //             }),
+    //         });
+
+    //         console.log("API Failed");
+
+    //         if (!response.ok) {
+    //             const errorData = await response.json();
+    //             console.error("Saving failed:", errorData);
+    //             alert("Saving failed. Please try again.");
+    //         } else {
+    //             const data = await response.json();
+    //             console.log("Signup successful:", data);
+
+    //         }
+    //     } catch (error) {
+    //         console.error("Error during edit profile:", error);
+    //         alert("An error occurred. Please try again later.");
+    //     }
+    // };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setLoading(true);
+        setMessage({ text: '', type: '' });
 
-        console.log("from handleSubmit");
+        // Get the token for authorization
+        const token = localStorage.getItem('token');
+        if (!token) {
+            setMessage({ text: 'You must be logged in to update your profile', type: 'error' });
+            setLoading(false);
+            return;
+        }
+
         try {
-            console.log("before POST");
-            const response = await fetch("http://fit-link.xyz:7000/api/accounts/trainer", {
-                method: "POST",
+            // Call the update API
+            const response = await fetch("http://localhost:7000/api/accounts/update", {
+                method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
+                    "Authorization": token
                 },
                 body: JSON.stringify({
-                    email: formData.email,
                     firstName: formData.firstname,
                     lastName: formData.lastname,
-                    phoneNumber: formData.phonenumber,
+                    phonenumber: formData.phonenumber,
                     bio: formData.bio,
                 }),
             });
 
-            console.log("API Failed");
+            const data = await response.json();
 
             if (!response.ok) {
-                const errorData = await response.json();
-                console.error("Saving failed:", errorData);
-                alert("Saving failed. Please try again.");
+                console.error("Update failed:", data.message);
+                setMessage({ text: data.message || 'Update failed. Please try again.', type: 'error' });
             } else {
-                const data = await response.json();
-                console.log("Signup successful:", data);
-
+                console.log("Profile updated successfully:", data);
+                setMessage({ text: 'Profile updated successfully!', type: 'success' });
             }
         } catch (error) {
-            console.error("Error during edit profile:", error);
-            alert("An error occurred. Please try again later.");
+            console.error("Error during profile update:", error);
+            setMessage({ text: 'An error occurred. Please try again later.', type: 'error' });
+        } finally {
+            setLoading(false);
         }
     };
 
