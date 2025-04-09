@@ -126,3 +126,35 @@ export const updateAccount = async (req, res) => {
         res.status(500).json({ success: false, message: "Server Error" });
     }
 };
+
+// Add this function to get user profile data
+export const getAccount = async (req, res) => {
+    const token = req.headers.authorization;
+    if (!token) {
+      return res.status(401).json({ success: false, message: "Authentication required" });
+    }
+  
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      const email = decoded.name;
+      
+      const account = await Account.findOne({ email });
+      if (!account) {
+        return res.status(404).json({ success: false, message: "Account not found" });
+      }
+  
+      res.status(200).json({
+        success: true,
+        profile: {
+          email: account.email,
+          firstName: account.firstName || "",
+          lastName: account.lastName || "",
+          phonenumber: account.phonenumber || "",
+          bio: account.bio || ""
+        }
+      });
+    } catch (error) {
+      console.error("Error in Get account:", error);
+      res.status(500).json({ success: false, message: "Server Error" });
+    }
+  };

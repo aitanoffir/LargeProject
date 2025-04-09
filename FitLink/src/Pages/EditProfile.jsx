@@ -108,35 +108,54 @@ const EditProfile = () => {
         }
     };
 
+    const fetchUserProfile = async (token) => {
+        try {
+          setLoading(true);
+          const response = await fetch("http://localhost:7000/api/accounts/get", {
+            headers: { "Authorization": token }
+          });
+          
+          if (response.ok) {
+            const data = await response.json();
+            // Update form with the fetched data
+            setFormData({
+              email: data.profile.email,
+              firstname: data.profile.firstName || "",
+              lastname: data.profile.lastName || "",
+              phonenumber: data.profile.phonenumber || "",
+              bio: data.profile.bio || ""
+            });
+          }
+        } catch (error) {
+          console.error("Error fetching profile:", error);
+        } finally {
+          setLoading(false);
+        }
+      };
+
     useEffect(() => {
         const token = localStorage.getItem('token');
         if (token) {
-
             try {
+                // First set email from token (immediate display)
                 const [header, payload, signature] = token.split('.');
                 const decodedPayload = JSON.parse(atob(payload));
-
-                const email = decodedPayload.name;
-                const firstname = decodedPayload.firstname;
-                const lastname = decodedPayload.lastname;
-                const phonenumber = decodedPayload.phonenumber;
-                const bio = decodedPayload.bio;
-
-                setFormData({
-                    email: email || "",
-                    firstname: firstname || "",
-                    lastname: lastname || "",
-                    phonenumber: phonenumber || "",
-                    bio: bio || "",
-                });
-
+      
+                setFormData(prev => ({
+                ...prev,
+                email: decodedPayload.name || ""
+                }));
+      
+                // Then fetch complete profile data
+                fetchUserProfile(token);
             } catch (error) {
-                console.error('Error decoding token:', error);
-                navigate('/signin');
-            }
-        } else {
-            console.log("Error no token at Home page");
+            console.error('Error decoding token:', error);
+            navigate('/signin');
         }
+    } else {
+    console.log("Error no token at Home page");
+    navigate('/signin');
+    }
     }, [navigate]);
 
     return (
@@ -196,7 +215,8 @@ const EditProfile = () => {
                                         value={formData.email}
                                         onChange={handleInputChange}
                                         className="mt-1 w-60 bg-gray-200 p-2"
-
+                                        readOnly
+                                        disabled
                                     />
                                 </div>
                                 <div className="flex-10">
