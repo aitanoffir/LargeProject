@@ -9,6 +9,7 @@ import { generateWorkoutPlan } from "../controllers/gpt.controller.js";
 import { createWorkout, updateWorkout, getWorkoutByClientId, deleteWorkout } from "../controllers/workout.controller.js";
 import { addClientNote, updateClientNote, deleteClientNote } from '../controllers/clientInfo.controller.js';
 import {createEvent, getEvents, updateEvent, deleteEvent} from "../controllers/googleCalendar.controller.js";
+import { getNotes, createNote, updateNote, deleteNote } from "../controllers/notes.controller.js";
 
 const router = express.Router();
 
@@ -32,6 +33,12 @@ router.put("/client/:id", updateClientAccountInfo); //updates a client by _id
 router.post('/client/:clientId/notes', addClientNote);
 router.put('/client/:clientId/notes/:noteId',  updateClientNote);
 router.delete('/client/:clientId/notes/:noteId', deleteClientNote);
+
+//notes CRUD functionality
+router.post("/notes", createNote); // Create a new note
+router.get("/notes", getNotes);    // Get notes
+router.put("/notes/:id", updateNote);  // Update a note
+router.delete("/notes/:id", deleteNote); // Delete a note
 
 //session CRUD functionality
 router.post("/session", addSessionNotesInfo); //where we add session notes info
