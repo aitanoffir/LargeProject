@@ -230,7 +230,7 @@ const AddClientModal = ({ onClose }) => {
                     value={form.firstName}
                     onChange={handleChange}
                     style={columnItemStyle}
-                    className={`w-full rounded-lg p-2 ${errors.firstName ? 'border-red-500' : ''}`}
+                    className={`w-full rounded-lg p-1 ${errors.firstName ? 'border-red-500' : ''}`}
                   />
 
                   {errors.lastName && <p className="text-red-500 text-sm -mb-2">{errors.lastName}</p>}
@@ -240,7 +240,7 @@ const AddClientModal = ({ onClose }) => {
                     value={form.lastName}
                     onChange={handleChange}
                     style={columnItemStyle}
-                    className={`w-full rounded-lg p-2 ${errors.lastName ? 'border-red-500' : ''}`}
+                    className={`w-full rounded-lg p-1 ${errors.lastName ? 'border-red-500' : ''}`}
                   />
 
                   <label htmlFor="age" className="input-label">Age:</label>
@@ -250,7 +250,7 @@ const AddClientModal = ({ onClose }) => {
                     value={form.age}
                     onChange={handleChange}
                     style={columnItemStyle}
-                    className="w-full rounded-lg p-2"
+                    className="w-full rounded-lg p-1"
                   />
 
                   <label htmlFor="weight" className="input-label">Weight (lbs):</label>
@@ -260,7 +260,7 @@ const AddClientModal = ({ onClose }) => {
                     value={form.weight}
                     onChange={handleChange}
                     style={columnItemStyle}
-                    className="w-full rounded-lg p-2"
+                    className="w-full rounded-lg p-1"
                   />
 
                   <label htmlFor="height" className="input-label">Height (in):</label>
@@ -270,7 +270,7 @@ const AddClientModal = ({ onClose }) => {
                     value={form.height}
                     onChange={handleChange}
                     style={columnItemStyle}
-                    className="w-full rounded-lg p-2"
+                    className="w-full rounded-lg p-1"
                   />
 
                   <label htmlFor="sex" className="input-label">Sex:</label>
@@ -279,7 +279,7 @@ const AddClientModal = ({ onClose }) => {
                     value={form.sex}
                     onChange={handleChange}
                     style={columnItemStyle}
-                    className="w-full rounded-lg p-2"
+                    className="w-full rounded-lg p-1"
                   >
                     <option value="">Select -Sex-</option>
                     <option>Male</option>
@@ -297,7 +297,7 @@ const AddClientModal = ({ onClose }) => {
                     placeholder="this@example.com"
                     value={form.email}
                     onChange={handleChange}
-                    className={`w-full rounded-lg p-2 ${errors.email ? 'border-red-500' : ''}`}
+                    className={`w-full rounded-lg p-1 ${errors.email ? 'border-red-500' : ''}`}
                     style={columnItemStyle}
                   />
 
@@ -309,7 +309,7 @@ const AddClientModal = ({ onClose }) => {
                     onChange={handlePhoneChange}
                     placeholder="123-456-7890"
                     maxLength="12"
-                    className={`w-full rounded-lg p-2 ${errors.phoneNumber ? 'border-red-500' : ''}`}
+                    className={`w-full rounded-lg p-1 ${errors.phoneNumber ? 'border-red-500' : ''}`}
                     style={columnItemStyle}
                   />
 
@@ -320,7 +320,7 @@ const AddClientModal = ({ onClose }) => {
                     value={form.goalWeight}
                     onChange={handleChange}
                     style={columnItemStyle}
-                    className="w-full rounded-lg p-2"
+                    className="w-full rounded-lg p-1"
                   />
 
                   <label htmlFor="activityLevel" className="input-label">Activity Level:</label>
@@ -329,7 +329,7 @@ const AddClientModal = ({ onClose }) => {
                     value={form.activityLevel}
                     onChange={handleChange}
                     style={columnItemStyle}
-                    className="w-full rounded-lg p-2"
+                    className="w-full rounded-lg p-1"
                   >
                     <option value="">Select -Activity Level-</option>
                     <option>Sedentary</option>
