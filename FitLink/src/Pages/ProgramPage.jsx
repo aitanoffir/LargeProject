@@ -5,6 +5,7 @@ import ProgramCard from '../Components/Program/ProgramCard';
 import ConfirmModal from '../Components/Program/ConfirmModal';
 import ProgramModal from '../Components/Program/ProgramModal';
 import NavBar from '../Components/NavBar';
+import { BsPlusLg } from "react-icons/bs";
 
 const ProgramPage = () => {
   const [customPrograms, setCustomPrograms] = useState([]);
@@ -17,28 +18,34 @@ const ProgramPage = () => {
   };
 
   return (
-    <div className="flex">
+    <div className="flex h-screen bg-gray-100">
       <NavBar />
-      <div className="flex-grow p-4"> {/* Main content area */}
-        <Header title="My Program" />
+      <div className="flex-1 flex flex-col overflow-hidden"> {/* Main content area */}
+        <header className="bg-white shadow-sm">
+          <div className="px-6 py-5 flex justify-between items-center">
+            <h1 className="text-2xl font-semibold text=gray-800">My Programs</h1>
+          </div>
+        </header>
         <div className="mt-5">
-          <Section title="Clients">
+          
+          <Section title="Clients Programs">
             <ProgramCard title="Popeyes" />
             <ProgramCard title="Wendy" />
             <ProgramCard title="KFC" />
             <ProgramCard title="McDonald" />
           </Section>
+          <div className="mt-20"></div>
 
-          <Section title="My Programs">
+          {/*<Section title="My Programs">
             {customPrograms.map((program, index) => (
               <ProgramCard key={index} title={program.title} />
             ))}
-          </Section>
+          </Section>*/}
 
           <Section title="New Program">
             <ProgramCard
-              title="Add"
-              color="blue"
+              title={<BsPlusLg size={100} color="white" />}
+              color="#319FED"
               onClick={() => setShowModal(true)}
             />
             {showModal && (
