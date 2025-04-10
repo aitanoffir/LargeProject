@@ -21,6 +21,14 @@ const accountSignUp = mongoose.Schema({
     type: String,
     required: false
   },
+  phonenumber: {
+    type: String,
+    required: false
+  },
+  bio: {
+    type: String,
+    required: false
+  },
   authType: {
     type: String,
     enum: ['google', 'fitlink'],
