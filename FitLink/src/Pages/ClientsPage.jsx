@@ -91,7 +91,7 @@ const ClientsList = () => {
       const dayWorkouts = converted.filter(ws => ws.dayIndex === targetDayIndex);
   
       dayWorkouts.forEach(workout => {
-        const workoutTime = dayOffset * 1440 + workout.startMinutes;
+        const workoutTime = targetDayIndex * 1440 + workout.startMinutes; // Fixed line
         const currentTotalMinutes = currentDayIndex * 1440 + currentTime;
         
         // Calculate time difference considering weekly cycle

@@ -72,18 +72,19 @@ const AddClientModal = ({ onClose }) => {
     }
   };
 
-  const handleDayToggle = (day, isChecked) => {
+  const handleDayToggle = (fullDay, isChecked) => {
     const newSchedule = isChecked
-      ? [...form.workoutSchedule, { day, startTime: '', endTime: '' }]
-      : form.workoutSchedule.filter(d => d.day !== day);
+      ? [...form.workoutSchedule, { day: fullDay, startTime: '', endTime: '' }]
+      : form.workoutSchedule.filter(d => d.day !== fullDay);
+    
     setForm(prev => ({...prev, workoutSchedule: newSchedule }));
     setErrors(prev => ({...prev, workoutTime: null }));
   };
 
-  const handleTimeChange = (day, field, e) => {
+  const handleTimeChange = (fullDay, field, e) => {
     const newValue = e.target.value;
     const updated = form.workoutSchedule.map(d => {
-      if (d.day === day) {
+      if (d.day === fullDay) {
         const newSchedule = { ...d, [field]: newValue };
         
         if (newSchedule.startTime && newSchedule.endTime) {
@@ -91,9 +92,10 @@ const AddClientModal = ({ onClose }) => {
           const endMins = convertTimeToMinutes(newSchedule.endTime);
           
           if (startMins >= endMins) {
+            const abbrevDay = Object.entries(dayAbbreviationToFull).find(([abbrev, full]) => full === fullDay)?.[0] || fullDay;
             setErrors(prev => ({
               ...prev,
-              workoutTime: `End time must be after start time for ${day}`
+              workoutTime: `End time must be after start time for ${abbrevDay}`
             }));
           } else {
             setErrors(prev => ({ ...prev, workoutTime: null }));
@@ -104,6 +106,16 @@ const AddClientModal = ({ onClose }) => {
       return d;
     });
     setForm(prev => ({...prev, workoutSchedule: updated }));
+  };
+
+  const dayAbbreviationToFull = {
+    Mon: 'Monday',
+    Tue: 'Tuesday',
+    Wed: 'Wednesday',
+    Thu: 'Thursday',
+    Fri: 'Friday',
+    Sat: 'Saturday',
+    Sun: 'Sunday'
   };
 
   const handleAddClient = async () => {
@@ -380,59 +392,63 @@ const AddClientModal = ({ onClose }) => {
             </div>
   
             {/* Workout Schedule */}
-            <div className="mt-6">
-              <h3 className="text-sm font-bold mb-3 text-purple-900">Workout Schedule</h3>
-              <div className="grid grid-cols-7 gap-2 bg-gray-50 p-3 rounded-lg border-2 border-purple-300">
-                {['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(day => (
-                  <div 
-                    key={day} 
-                    className={`border-2 p-2 rounded-lg text-center ${form.workoutSchedule.some(d => d.day === day) ? 'border-purple-500 bg-purple-50' : 'border-gray-200'}`}
-                  >
-                    <label className="flex flex-col items-center cursor-pointer text-sm font-medium">
-                      <input
-                        type="checkbox"
-                        className="mr-1 w-4 h-4 accent-purple-600"
-                        checked={form.workoutSchedule.some(d => d.day === day)}
-                        onChange={(e) => handleDayToggle(day, e.target.checked)}
-                      />
-                      {day}
-                    </label>
+              <div className="mt-6">
+                <h3 className="text-sm font-bold mb-3 text-purple-900">Workout Schedule</h3>
+                <div className="grid grid-cols-7 gap-2 bg-gray-50 p-3 rounded-lg border-2 border-purple-300">
+                  {['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(abbrevDay => {
+                    const fullDay = dayAbbreviationToFull[abbrevDay];
                     
-                    {form.workoutSchedule.some(d => d.day === day) && (
-                      <div className="mt-2 space-y-2">
-                        <select
-                          className="w-full text-xs p-1.5 rounded border-2 border-purple-300 font-medium"
-                          value={form.workoutSchedule.find(d => d.day === day)?.startTime || ''}
-                          onChange={(e) => handleTimeChange(day, 'startTime', e)}
-                        >
-                          <option value="">Start</option>
-                          {timeOptions.map(time => (
-                            <option key={time} value={time}>{time.replace(/:\d{3}\s/, ' ')}</option>
-                          ))}
-                        </select>
+                    return (
+                      <div 
+                        key={abbrevDay} 
+                        className={`border-2 p-2 rounded-lg text-center ${form.workoutSchedule.some(d => d.day === fullDay) ? 'border-purple-500 bg-purple-50' : 'border-gray-200'}`}
+                      >
+                        <label className="flex flex-col items-center cursor-pointer text-sm font-medium">
+                          <input
+                            type="checkbox"
+                            className="mr-1 w-4 h-4 accent-purple-600"
+                            checked={form.workoutSchedule.some(d => d.day === fullDay)}
+                            onChange={(e) => handleDayToggle(fullDay, e.target.checked)}
+                          />
+                          {abbrevDay}
+                        </label>
                         
-                        <select
-                          className="w-full text-xs p-1.5 rounded border-2 border-purple-300 font-medium"
-                          value={form.workoutSchedule.find(d => d.day === day)?.endTime || ''}
-                          onChange={(e) => handleTimeChange(day, 'endTime', e)}
-                        >
-                          <option value="">End</option>
-                          {timeOptions.map(time => (
-                            <option key={time} value={time}>{time.replace(/:\d{3}\s/, ' ')}</option>
-                          ))}
-                        </select>
+                        {form.workoutSchedule.some(d => d.day === fullDay) && (
+                          <div className="mt-2 space-y-2">
+                            <select
+                              className="w-full text-xs p-1.5 rounded border-2 border-purple-300 font-medium"
+                              value={form.workoutSchedule.find(d => d.day === fullDay)?.startTime || ''}
+                              onChange={(e) => handleTimeChange(fullDay, 'startTime', e)}
+                            >
+                              <option value="">Start</option>
+                              {timeOptions.map(time => (
+                                <option key={time} value={time}>{time.replace(/:\d{3}\s/, ' ')}</option>
+                              ))}
+                            </select>
+                            
+                            <select
+                              className="w-full text-xs p-1.5 rounded border-2 border-purple-300 font-medium"
+                              value={form.workoutSchedule.find(d => d.day === fullDay)?.endTime || ''}
+                              onChange={(e) => handleTimeChange(fullDay, 'endTime', e)}
+                            >
+                              <option value="">End</option>
+                              {timeOptions.map(time => (
+                                <option key={time} value={time}>{time.replace(/:\d{3}\s/, ' ')}</option>
+                              ))}
+                            </select>
+                          </div>
+                        )}
                       </div>
-                    )}
-                  </div>
-                ))}
+                    );
+                  })}
+                </div>
+                {errors.workoutSchedule && (
+                  <p className="text-red-600 text-xs mt-2 font-medium">{errors.workoutSchedule}</p>
+                )}
+                {errors.workoutTime && (
+                  <p className="text-red-600 text-xs mt-2 font-medium">{errors.workoutTime}</p>
+                )}
               </div>
-              {errors.workoutSchedule && (
-                <p className="text-red-600 text-xs mt-2 font-medium">{errors.workoutSchedule}</p>
-              )}
-              {errors.workoutTime && (
-                <p className="text-red-600 text-xs mt-2 font-medium">{errors.workoutTime}</p>
-              )}
-            </div>
   
             {/* Buttons */}
             <div className="flex justify-between mt-6">
