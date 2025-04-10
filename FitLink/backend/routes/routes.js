@@ -18,7 +18,7 @@ router.post("/login", login); //login logs a trainer in
 router.put("/update", updateAccount); // Updates account information
 router.get("/get", getAccount); // Gets account information
 
-//trainer accounts info (optional)
+//trainer accounts info (optional) NOT BEING USED IGNORE
 router.post("/trainer", addTrainerAccountInfo); //where we add trainer account info
 router.get("/trainer", getTrainerAccountInfo); //gets trainer account info  STILL NEEDS TO BE DONE
 
@@ -27,10 +27,11 @@ router.post("/client", addClientAccountInfo); //where we add client account info
 router.get("/client", getClientAccountInfo); //gets trainer client info
 router.delete("/client/:id", deleteClientAccountInfo); // deleted a client by _id
 router.put("/client/:id", updateClientAccountInfo); //updates a client by _id
-    //Client Notes functionality
-    router.post('/client/:clientId/notes', addClientNote);
-    router.put('/client/:clientId/notes/:noteId',  updateClientNote);
-    router.delete('/client/:clientId/notes/:noteId', deleteClientNote);
+
+//Client Notes functionality
+router.post('/client/:clientId/notes', addClientNote);
+router.put('/client/:clientId/notes/:noteId',  updateClientNote);
+router.delete('/client/:clientId/notes/:noteId', deleteClientNote);
 
 //session CRUD functionality
 router.post("/session", addSessionNotesInfo); //where we add session notes info

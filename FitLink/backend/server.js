@@ -3,8 +3,9 @@ import express from 'express'; //<-- modern version
 import dotenv from 'dotenv';
 import { connectDB } from './config/db.js';
 import cors from 'cors';
+import swaggerUi from 'swagger-ui-express';
+import YAML from 'yamljs';
 
-//const cors = require("cors");
 
 
 import accountRoutes from './routes/routes.js';
@@ -20,6 +21,11 @@ app.use(express.json()); //allows us to accept JSON data in the req.body
 //^ middleware
 //api endpoint
 app.use("/api/accounts", accountRoutes);
+// Load your swagger.yaml file
+const swaggerDocument = YAML.load('./backend/swagger.yaml');
+
+// Serve it at /docs
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 //catch all undefined routes
 app.all("*", (req, res) => {

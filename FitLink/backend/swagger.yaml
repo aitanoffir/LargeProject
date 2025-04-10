@@ -1,0 +1,566 @@
+openapi: 3.0.0
+info:
+  title: MERN App API
+  version: 1.0.0
+  description: API documentation for the MERN fitness coaching app
+servers:
+  - url: http://localhost:3000/api/accounts
+paths:
+  /:
+    post:
+      summary: Create a new trainer account
+      description: This endpoint registers a new user (trainer) in the system.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccountInput'
+            example:
+              username: landerson3
+              password: test1234
+              email: test@gmail.com
+              firstName: Luke
+              lastName: Anderson
+      responses:
+        '201':
+          description: Account successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountResponse'
+        '400':
+          description: Missing required fields
+        '409':
+          description: Account already exists
+        '500':
+          description: Server error
+
+  /login:
+    post:
+      summary: Login an existing trainer account
+      description: Authenticates a trainer using email and password.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginInput'
+            example:
+              email: test@gmail.com
+              password: test1234
+      responses:
+        '200':
+          description: Successfully authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountResponse'
+        '401':
+          description: Invalid credentials
+        '500':
+          description: Server error
+  /update:
+    put:
+      summary: Update trainer account info
+      description: Updates the logged-in trainer’s profile info using a JWT token in the Authorization header.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                firstName:
+                  type: string
+                lastName:
+                  type: string
+                phonenumber:
+                  type: string
+                bio:
+                  type: string
+              example:
+                firstName: Luke
+                lastName: Anderson
+                phonenumber: "555-123-4567"
+                bio: "Certified trainer for high-performance athletes"
+      responses:
+        '200':
+          description: Account updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    $ref: '#/components/schemas/AccountResponse/data'
+        '401':
+          description: Missing or invalid JWT
+        '404':
+          description: Account not found
+        '500':
+          description: Server error
+
+  /get:
+    get:
+      summary: Get trainer profile
+      description: Returns limited profile info for the logged-in trainer using JWT auth.
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Profile fetched successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  profile:
+                    type: object
+                    properties:
+                      email:
+                        type: string
+                      firstName:
+                        type: string
+                      lastName:
+                        type: string
+                      phonenumber:
+                        type: string
+                      bio:
+                        type: string
+        '401':
+          description: Authentication required
+        '404':
+          description: Account not found
+        '500':
+          description: Server error
+  /client:
+    post:
+      summary: Create a new client
+      description: Creates a new client account linked to the trainer. Requires JWT in Authorization header.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClientInput'
+      responses:
+        '201':
+          description: Client created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientResponse'
+        '401':
+          description: Invalid token
+        '409':
+          description: Client already exists
+        '500':
+          description: Server error
+
+    get:
+      summary: Search or get clients
+      description: Returns all clients or filters by query fields. Requires JWT in Authorization header.
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: email
+          schema: { type: string }
+          description: Search clients by email (partial match)
+        - in: query
+          name: firstName
+          schema: { type: string }
+          description: Search by first name
+        - in: query
+          name: id
+          schema: { type: string }
+          description: Search by ObjectId
+      responses:
+        '200':
+          description: Clients returned
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  clients:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Client'
+        '400':
+          description: Invalid or missing query
+        '401':
+          description: Invalid token
+        '404':
+          description: No clients found
+        '500':
+          description: Server error
+
+  /client/{id}:
+    delete:
+      summary: Delete client
+      description: Deletes a client by ID. Requires JWT.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Client deleted
+        '400':
+          description: Invalid client ID
+        '401':
+          description: Invalid token
+        '404':
+          description: Client not found
+        '500':
+          description: Server error
+
+    put:
+      summary: Update client
+      description: Updates a client’s information. Requires JWT.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClientInput'
+      responses:
+        '200':
+          description: Client updated successfully
+        '400':
+          description: Invalid client ID
+        '401':
+          description: Invalid token
+        '409':
+          description: No matching client
+        '500':
+          description: Server error
+  /{clientID}/notes:
+    post:
+      summary: Create a new session note
+      description: Creates a new workout session note for a client. Requires JWT.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: clientID
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SessionNoteInput'
+      responses:
+        '201':
+          description: Session note created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionNoteResponse'
+        '401':
+          description: Invalid token
+        '500':
+          description: Server error
+
+  /{clientID}/{noteId}:
+    delete:
+      summary: Delete session note
+      description: Deletes a session note for a given client and note ID. Requires JWT.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: clientID
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: noteId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Note deleted
+        '400':
+          description: Invalid note ID
+        '401':
+          description: Invalid token
+        '404':
+          description: Note not found
+        '500':
+          description: Server error
+
+    put:
+      summary: Update session note
+      description: Updates a session note for a given client and note ID. Requires JWT.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: clientID
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: noteId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SessionNoteInput'
+      responses:
+        '200':
+          description: Note updated
+        '400':
+          description: Invalid note ID
+        '401':
+          description: Invalid token
+        '409':
+          description: No session with matching ID found
+        '500':
+          description: Server error
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    AccountInput:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+        email:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        phonenumber:
+          type: string
+        bio:
+          type: string
+        authType:
+          type: string
+          enum: [google, fitlink]
+        googleAccessToken:
+          type: string
+        googleRefreshToken:
+          type: string
+
+    LoginInput:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+
+    AccountResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: object
+          properties:
+            _id:
+              type: string
+            username:
+              type: string
+            password:
+              type: string
+              description: Hashed password
+            email:
+              type: string
+            firstName:
+              type: string
+            lastName:
+              type: string
+            authType:
+              type: string
+            createdAt:
+              type: string
+              format: date-time
+            updatedAt:
+              type: string
+              format: date-time
+            __v:
+              type: integer
+        jwt:
+          type: string
+
+    ClientInput:
+      type: object
+      required:
+        - trainer
+        - email
+        - phoneNumber
+        - firstName
+        - lastName
+      properties:
+        trainer:
+          type: string
+        email:
+          type: string
+        phoneNumber:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        country:
+          type: string
+        state:
+          type: string
+        county:
+          type: string
+        city:
+          type: string
+        fitnessGoals:
+          type: array
+          items:
+            type: string
+        medicalConditions:
+          type: array
+          items:
+            type: string
+        schedulingPreferences:
+          type: object
+        preferredTrainers:
+          type: array
+          items:
+            type: object
+            properties:
+              trainer_id:
+                type: string
+              trainerName:
+                type: string
+        progress:
+          type: object
+        bio:
+          type: string
+
+    ClientResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          $ref: '#/components/schemas/Client'
+
+    Client:
+      type: object
+      properties:
+        _id:
+          type: string
+        trainer:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+        phoneNumber:
+          type: string
+        sessions:
+          type: array
+          items:
+            type: string
+        notes:
+          type: array
+          items:
+            type: object
+        bio:
+          type: string
+        color:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        __v:
+          type: integer
+    SessionNoteInput:
+      type: object
+      required: [client, trainer, date, title, notes]
+      properties:
+        client:
+          type: string
+        trainer:
+          type: string
+        date:
+          type: string
+          format: date
+        title:
+          type: string
+        notes:
+          type: string
+
+    SessionNoteResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: object
+          properties:
+            _id:
+              type: string
+            client:
+              type: string
+            trainer:
+              type: string
+            date:
+              type: string
+              format: date
+            title:
+              type: string
+            notes:
+              type: string
