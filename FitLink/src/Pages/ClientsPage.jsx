@@ -333,7 +333,7 @@ const ClientsList = () => {
               <h1 className="text-2xl font-bold text-gray-800">My Clients</h1>
               <button 
                 onClick={() => setShowAddModal(true)} 
-                className="bg-black text-white px-4 py-2 rounded-lg hover:bg-primary-dark flex items-center"
+                className="bg-purple-600 hover:bg-purple-700 text-white px-5 py-2 rounded-lg text-sm font-bold flex items-center border-2 border-purple-700"
               >
                 <FaPlus className="mr-2" /> Add Client
               </button>
@@ -447,7 +447,7 @@ const ClientsList = () => {
               <button
                 key={i + 1}
                 onClick={() => setCurrentPage(i + 1)}
-                className={`px-3 py-1 mx-1 rounded ${currentPage === i + 1 ? 'bg-black text-white' : 'bg-white border'}`}
+                className={`px-3 py-1 mx-1 rounded text-white px-5 ${currentPage === i + 1 ? 'bg-purple-900 hover:bg-purple-1000' : 'bg-purple-600 hover:bg-purple-700' }`}
               >
                 {i + 1}
               </button>

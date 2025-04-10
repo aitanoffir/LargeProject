@@ -7,6 +7,7 @@ const ViewClientNotes = ({ client, onClose, onSaveNote, onDeleteNote }) => {
   const [noteTitle, setNoteTitle] = useState('');
   const [noteContent, setNoteContent] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     console.log('Current client notes:', client.notes);
@@ -17,6 +18,7 @@ const ViewClientNotes = ({ client, onClose, onSaveNote, onDeleteNote }) => {
     setNoteTitle('');
     setNoteContent('');
     setEditingNoteId(null);
+    setErrors(prev => ({ ...prev, note: null }));
   };
 
   const handleEditNote = (note) => {
@@ -24,16 +26,18 @@ const ViewClientNotes = ({ client, onClose, onSaveNote, onDeleteNote }) => {
     setNoteTitle(note.title);
     setNoteContent(note.content);
     setNewNoteMode(false);
+    setErrors(prev => ({ ...prev, note: null }));
   };
 
   const handleCancelEdit = () => {
     setNewNoteMode(false);
     setEditingNoteId(null);
+    setErrors(prev => ({ ...prev, note: null }));
   };
 
   const handleSave = async () => {
     if (!noteTitle.trim() || !noteContent.trim()) {
-      alert('Please enter both title and content');
+      setErrors(prev => ({ ...prev, note: 'Please enter both title and content' }));
       return;
     }
 
@@ -56,18 +60,16 @@ const ViewClientNotes = ({ client, onClose, onSaveNote, onDeleteNote }) => {
   };
 
   const handleDelete = async (noteId) => {
-    // if (window.confirm('Are you sure you want to delete this note?')) {
-      setIsProcessing(true);
-      console.log('Deleting note:', noteId);
-      
-      try {
-        await onDeleteNote(client._id, noteId);
-      } catch (error) {
-        console.error('Error deleting note:', error);
-      } finally {
-        setIsProcessing(false);
-      }
-    // }
+    setIsProcessing(true);
+    console.log('Deleting note:', noteId);
+    
+    try {
+      await onDeleteNote(client._id, noteId);
+    } catch (error) {
+      console.error('Error deleting note:', error);
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   return (
@@ -94,30 +96,40 @@ const ViewClientNotes = ({ client, onClose, onSaveNote, onDeleteNote }) => {
                 placeholder="Note Title"
                 className="w-full p-2 mb-2 border rounded"
                 value={noteTitle}
-                onChange={(e) => setNoteTitle(e.target.value)}
+                onChange={(e) => {
+                  setNoteTitle(e.target.value);
+                  setErrors(prev => ({ ...prev, note: null }));
+                }}
                 disabled={isProcessing}
               />
               <textarea
                 placeholder="Write your note here..."
                 className="w-full p-2 border rounded min-h-[150px]"
                 value={noteContent}
-                onChange={(e) => setNoteContent(e.target.value)}
+                onChange={(e) => {
+                  setNoteContent(e.target.value);
+                  setErrors(prev => ({ ...prev, note: null }));
+                }}
                 disabled={isProcessing}
                 data-gramm="false"
                 data-gramm_editor="false"
                 data-enable-grammarly="false"
               />
+              {/* Error text shown below the textarea */}
+              {errors.note && (
+                <p className="text-red-600 text-xs mt-2 font-medium">{errors.note}</p>
+              )}
               <div className="flex justify-end mt-2 gap-2">
                 <button
                   onClick={handleCancelEdit}
-                  className="px-4 py-2 border rounded flex items-center gap-2"
+                  className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 border rounded flex items-center gap-2"
                   disabled={isProcessing}
                 >
                   <FaTimes /> Cancel
                 </button>
                 <button
                   onClick={handleSave}
-                  className="px-4 py-2 bg-black text-white rounded flex items-center gap-2 disabled:opacity-50"
+                  className="bg-purple-600 hover:bg-purple-700 px-4 py-2 bg-black text-white rounded flex items-center gap-2 disabled:opacity-50"
                   disabled={isProcessing}
                 >
                   {isProcessing ? (
@@ -133,7 +145,7 @@ const ViewClientNotes = ({ client, onClose, onSaveNote, onDeleteNote }) => {
           ) : (
             <button
               onClick={handleAddNewNote}
-              className="mb-4 px-4 py-2 bg-black text-white rounded flex items-center gap-2"
+              className="bg-purple-600 hover:bg-purple-700 mb-4 px-4 py-2 text-white rounded flex items-center gap-2"
               disabled={isProcessing}
             >
               <FaPlus /> Add New Note
@@ -143,7 +155,7 @@ const ViewClientNotes = ({ client, onClose, onSaveNote, onDeleteNote }) => {
           {client.notes?.length > 0 ? (
             <div className="space-y-4">
               {client.notes
-                .slice() // Create a copy to avoid mutating original array
+                .slice()
                 .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
                 .map((note) => (
                 <div key={note._id} className="border border-gray-200 rounded-lg p-4">
@@ -158,19 +170,23 @@ const ViewClientNotes = ({ client, onClose, onSaveNote, onDeleteNote }) => {
                           </p>
                         </div>
                         <div className="flex gap-2">
-                          <button
-                            onClick={() => handleEditNote(note)}
-                            className="text-blue-600 hover:text-blue-800"
-                            disabled={isProcessing}
-                          >
-                            <FaEdit />
-                          </button>
+                        <button 
+                          onClick={() => handleEditNote(note)}
+                          className="px-3 py-1 bg-purple-100 text-purple-700 rounded-lg hover:bg-purple-200 flex items-center gap-1 transition-colors"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                          </svg>
+                          <span>Edit</span>
+                        </button>
                           <button
                             onClick={() => handleDelete(note._id)}
                             className="text-red-600 hover:text-red-800"
                             disabled={isProcessing}
                           >
-                            <FaTrash />
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
                           </button>
                         </div>
                       </div>

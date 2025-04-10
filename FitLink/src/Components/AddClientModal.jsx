@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { FaTimes } from "react-icons/fa";
+import { FaPlus, FaTimes, FaArrowLeft } from 'react-icons/fa';
 import pencil_icon from "../assets/Pencil Icon.png";
 import plus_circle from "../assets/plusCircleWhite.png";
 import left_arrow from "../assets/leftArrowWhite.png";
@@ -194,263 +194,260 @@ const AddClientModal = ({ onClose }) => {
 
   return (
     <div className="fixed inset-0 bg-white/10 backdrop-blur-sm flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg w-5/8 relative max-h-[90vh] overflow-y-auto">
+      <div className="bg-white rounded-xl w-3/4 relative max-h-[90vh] overflow-y-auto shadow-2xl">
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-gray-600 hover:text-gray-800 z-10"
+          className="absolute top-4 right-4 text-gray-600 hover:text-gray-800 z-10 transition-colors"
         >
           <FaTimes size={24} />
         </button>
-
-        <div className="flex flex-col p-8 items-center">
-          <div
-            style={{
-              zIndex: 0,
-              backgroundColor: "#F8F8F8",
-              position: "absolute",
-              top: 0,
-              left: 0,
-              width: "100%",
-              height: "150px",
-            }}
-          ></div>
+  
+        <div className="flex flex-col p-6 items-center">
+          <h2 className="text-center text-xl font-bold mb-0 text-purple-900" style={{ fontFamily: "Inter, sans-serif" }}>
+            Add Client Information
+          </h2>
           
-        
-          <div className="w-3/4 bg-white p-1 rounded-lg shadow-lg relative mx-auto">
-          <h2 className="text-center text-xl font-bold" style={{ fontFamily: "Inter, sans-serif" }}>
-              Add Client Information
-            </h2>
-            <div className="ml-12 mr-12">
-              <div style={containerStyle}>
-                <div style={{ width: "45%", padding: "5px", textAlign: "left" }}>
-                  {errors.firstName && <p className="text-red-500 text-sm -mb-2">{errors.firstName}</p>}
-                  <label htmlFor="firstName" className="input-label">First Name:</label>
+          <div className="w-full bg-white p-4 rounded-xl relative mx-auto">
+            <div className="grid grid-cols-3 gap-4">
+              {/* Column 1 */}
+              <div className="space-y-3">
+                <div>
+                  <label className="text-sm font-bold text-purple-900 flex items-center">
+                    First Name
+                    {errors.firstName && <span className="text-red-600 text-xs font-normal ml-2">{errors.firstName}</span>}
+                  </label>
                   <input
                     name="firstName"
                     value={form.firstName}
                     onChange={handleChange}
-                    style={columnItemStyle}
-                    className={`w-full rounded-lg p-1 ${errors.firstName ? 'border-red-500' : ''}`}
+                    className="w-full rounded p-2 border-2 border-purple-300 text-sm h-9 font-medium"
                   />
-
-                  {errors.lastName && <p className="text-red-500 text-sm -mb-2">{errors.lastName}</p>}
-                  <label htmlFor="lastName" className="input-label">Last Name:</label>
+                </div>
+  
+                <div>
+                  <label className="text-sm font-bold text-purple-900 flex items-center">
+                    Last Name
+                    {errors.lastName && <span className="text-red-600 text-xs font-normal ml-2">{errors.lastName}</span>}
+                  </label>
                   <input
                     name="lastName"
                     value={form.lastName}
                     onChange={handleChange}
-                    style={columnItemStyle}
-                    className={`w-full rounded-lg p-1 ${errors.lastName ? 'border-red-500' : ''}`}
+                    className="w-full rounded p-2 border-2 border-purple-300 text-sm h-9 font-medium"
                   />
-
-                  <label htmlFor="age" className="input-label">Age:</label>
+                </div>
+  
+                <div>
+                  <label className="text-sm font-bold text-purple-900">Age</label>
                   <input
                     name="age"
                     type="number"
                     value={form.age}
                     onChange={handleChange}
-                    style={columnItemStyle}
-                    className="w-full rounded-lg p-1"
+                    className="w-full rounded p-2 border-2 border-purple-300 text-sm h-9 font-medium"
                   />
-
-                  <label htmlFor="weight" className="input-label">Weight (lbs):</label>
+                </div>
+              </div>
+  
+              {/* Column 2 */}
+              <div className="space-y-3">
+                <div>
+                  <label className="flex items-center text-sm font-bold text-purple-900">Weight (lbs)</label>
                   <input
                     name="weight"
                     type="number"
                     value={form.weight}
                     onChange={handleChange}
-                    style={columnItemStyle}
-                    className="w-full rounded-lg p-1"
+                    className="w-full rounded p-2 border-2 border-purple-300 text-sm h-9 font-medium"
                   />
-
-                  <label htmlFor="height" className="input-label">Height (in):</label>
+                </div>
+  
+                <div>
+                  <label className="flex items-center text-sm font-bold text-purple-900">Height (in)</label>
                   <input
                     name="height"
                     type="number"
                     value={form.height}
                     onChange={handleChange}
-                    style={columnItemStyle}
-                    className="w-full rounded-lg p-1"
+                    className="w-full rounded p-2 border-2 border-purple-300 text-sm h-9 font-medium"
                   />
-
-                  <label htmlFor="sex" className="input-label">Sex:</label>
+                </div>
+  
+                <div>
+                  <label className="text-sm font-bold text-purple-900">Sex</label>
                   <select
                     name="sex"
                     value={form.sex}
                     onChange={handleChange}
-                    style={columnItemStyle}
-                    className="w-full rounded-lg p-1"
+                    className="w-full rounded p-2 border-2 border-purple-300 text-sm h-9 font-medium"
                   >
-                    <option value="">Select -Sex-</option>
+                    <option value="">Select</option>
                     <option>Male</option>
                     <option>Female</option>
                     <option>N/A</option>
                   </select>
                 </div>
-
-                <div style={{ width: "45%", padding: "5px", textAlign: "left" }}>
-                  {errors.email && <p className="text-red-500 text-sm -mb-2">{errors.email}</p>}
-                  <label htmlFor="email" className="input-label">Email:</label>
+              </div>
+  
+              {/* Column 3 */}
+              <div className="space-y-3">
+                <div>
+                  <label className="text-sm font-bold text-purple-900 flex items-center">
+                    Email
+                    {errors.email && <span className="text-red-600 text-xs font-normal ml-2">{errors.email}</span>}
+                  </label>
                   <input
                     name="email"
                     type="email"
-                    placeholder="this@example.com"
                     value={form.email}
                     onChange={handleChange}
-                    className={`w-full rounded-lg p-1 ${errors.email ? 'border-red-500' : ''}`}
-                    style={columnItemStyle}
+                    className="w-full rounded p-2 border-2 border-purple-300 text-sm h-9 font-medium"
                   />
-
-                  {errors.phoneNumber && <p className="text-red-500 text-sm -mb-2">{errors.phoneNumber}</p>}
-                  <label htmlFor="phoneNumber" className="input-label">Phone Number:</label>
+                </div>
+  
+                <div>
+                  <label className="text-sm font-bold text-purple-900 flex items-center">
+                    Phone
+                    {errors.phoneNumber && <span className="text-red-600 text-xs font-normal ml-2">{errors.phoneNumber}</span>}
+                  </label>
                   <input
                     name="phoneNumber"
                     value={form.phoneNumber}
                     onChange={handlePhoneChange}
-                    placeholder="123-456-7890"
-                    maxLength="12"
-                    className={`w-full rounded-lg p-1 ${errors.phoneNumber ? 'border-red-500' : ''}`}
-                    style={columnItemStyle}
+                    className="w-full rounded p-2 border-2 border-purple-300 text-sm h-9 font-medium"
                   />
-
-                  <label htmlFor="goalWeight" className="input-label">Goal Weight (lbs):</label>
+                </div>
+  
+                <div>
+                  <label className="text-sm font-bold text-purple-900">Goal Weight (lbs)</label>
                   <input
                     name="goalWeight"
                     type="number"
                     value={form.goalWeight}
                     onChange={handleChange}
-                    style={columnItemStyle}
-                    className="w-full rounded-lg p-1"
+                    className="w-full rounded p-2 border-2 border-purple-300 text-sm h-9 font-medium"
                   />
-
-                  <label htmlFor="activityLevel" className="input-label">Activity Level:</label>
-                  <select
-                    name="activityLevel"
-                    value={form.activityLevel}
-                    onChange={handleChange}
-                    style={columnItemStyle}
-                    className="w-full rounded-lg p-1"
-                  >
-                    <option value="">Select -Activity Level-</option>
-                    <option>Sedentary</option>
-                    <option>Slightly active</option>
-                    <option>Moderately active</option>
-                    <option>Very active</option>
-                  </select>
-
-                  <div className="mt-3">
-                    <label className="input-label block mb-2">Profile Color</label>
-                    <div className="relative inline-block">
+                </div>
+              </div>
+            </div>
+  
+            {/* Second Row - Full Width */}
+            <div className="grid grid-cols-3 gap-4 mt-4">
+              <div>
+                <label className="text-sm font-bold text-purple-900">Activity Level</label>
+                <select
+                  name="activityLevel"
+                  value={form.activityLevel}
+                  onChange={handleChange}
+                  className="w-full rounded p-1 border-2 border-purple-300 text-sm h-9 font-medium"
+                >
+                  <option value="">Select</option>
+                  <option>Sedentary</option>
+                  <option>Slightly active</option>
+                  <option>Moderately active</option>
+                  <option>Very active</option>
+                </select>
+              </div>
+  
+              <div className="col-span-2 flex items-end">
+                <div>
+                  <label className="text-sm font-bold text-purple-900">Profile Color</label>
+                  <div className="flex items-center mt-1">
+                    <div className="relative">
                       <div
-                        className="w-16 h-16 rounded-full border-2 border-purple-500 cursor-pointer relative overflow-hidden"
+                        className="w-10 h-10 rounded-full border-2 border-purple-500 cursor-pointer mr-2 shadow-sm"
                         style={{ backgroundColor: form.color }}
                         onClick={() => document.getElementById('colorInput').click()}
                       >
                         <input
                           type="color"
                           id="colorInput"
-                          className="absolute opacity-0 w-full h-full cursor-pointer"
+                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                           value={form.color}
                           onChange={(e) => setForm(prev => ({...prev, color: e.target.value}))}
                         />
                         <img
                           src={pencil_icon}
                           alt="Edit color"
-                          className="absolute bottom-1 right-1 w-6 h-6 p-1 bg-white rounded-full shadow-sm"
+                          className="absolute bottom-0 right-0 w-4 h-4 p-0.5 bg-white rounded-full shadow-sm"
                         />
                       </div>
                     </div>
+                    <span className="text-xs text-gray-600">Click to change</span>
                   </div>
                 </div>
               </div>
-
-              <div className="mt-1 col-span-2">
-                <h3 className="text-2xl font-bold mb-4" style={{ fontFamily: "Inter, sans-serif" }}>
-                  Workout Schedule
-                </h3>
-                <div className="grid grid-cols-7 gap-2 bg-gray-100 p-4 rounded-lg" style={{
-                  boxShadow: "0px 1px 3px #2e2e2e",
-                  borderColor: "#734BF4",
-                  borderWidth: "2px"
-                }}>
-                  {['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'].map(day => (
-                    <div 
-                      key={day} 
-                      className="border p-2 rounded-lg bg-white transition-all"
-                      style={{
-                        borderColor: form.workoutSchedule.some(d => d.day === day) ? "#734BF4" : "#CCCCCC",
-                        borderWidth: "2px"
-                      }}
-                    >
-                      <label className="flex items-center mb-2 cursor-pointer">
-                        <input
-                          type="checkbox"
-                          className="mr-2 w-4 h-4 accent-purple-600"
-                          checked={form.workoutSchedule.some(d => d.day === day)}
-                          onChange={(e) => handleDayToggle(day, e.target.checked)}
-                        />
-                        <span className="font-semibold text-sm">{day.slice(0, 3)}</span>
-                      </label>
-                      
-                      {form.workoutSchedule.some(d => d.day === day) && (
-                        <div className="space-y-2">
-                          <select
-                            className={`w-full text-sm p-1 rounded bg-gray-100 border ${
-                              errors.workoutTime && errors.workoutTime.includes(day) 
-                                ? 'border-red-500' 
-                                : 'border-gray-300 focus:border-purple-500'
-                            }`}
-                            value={form.workoutSchedule.find(d => d.day === day)?.startTime || ''}
-                            onChange={(e) => handleTimeChange(day, 'startTime', e)}
-                          >
-                            <option value="">Start Time</option>
-                            {timeOptions.map(time => (
-                              <option key={time} value={time}>{time}</option>
-                            ))}
-                          </select>
-                          
-                          <select
-                            className={`w-full text-sm p-1 rounded bg-gray-100 border ${
-                              errors.workoutTime && errors.workoutTime.includes(day) 
-                                ? 'border-red-500' 
-                                : 'border-gray-300 focus:border-purple-500'
-                            }`}
-                            value={form.workoutSchedule.find(d => d.day === day)?.endTime || ''}
-                            onChange={(e) => handleTimeChange(day, 'endTime', e)}
-                          >
-                            <option value="">End Time</option>
-                            {timeOptions.map(time => (
-                              <option key={time} value={time}>{time}</option>
-                            ))}
-                          </select>
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-                {errors.workoutSchedule && (
-                  <div className="mt-4 text-red-500 text-sm">
-                    ⚠️ {errors.workoutSchedule}
+            </div>
+  
+            {/* Workout Schedule */}
+            <div className="mt-6">
+              <h3 className="text-sm font-bold mb-3 text-purple-900">Workout Schedule</h3>
+              <div className="grid grid-cols-7 gap-2 bg-gray-50 p-3 rounded-lg border-2 border-purple-300">
+                {['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(day => (
+                  <div 
+                    key={day} 
+                    className={`border-2 p-2 rounded-lg text-center ${form.workoutSchedule.some(d => d.day === day) ? 'border-purple-500 bg-purple-50' : 'border-gray-200'}`}
+                  >
+                    <label className="flex flex-col items-center cursor-pointer text-sm font-medium">
+                      <input
+                        type="checkbox"
+                        className="mr-1 w-4 h-4 accent-purple-600"
+                        checked={form.workoutSchedule.some(d => d.day === day)}
+                        onChange={(e) => handleDayToggle(day, e.target.checked)}
+                      />
+                      {day}
+                    </label>
+                    
+                    {form.workoutSchedule.some(d => d.day === day) && (
+                      <div className="mt-2 space-y-2">
+                        <select
+                          className="w-full text-xs p-1.5 rounded border-2 border-purple-300 font-medium"
+                          value={form.workoutSchedule.find(d => d.day === day)?.startTime || ''}
+                          onChange={(e) => handleTimeChange(day, 'startTime', e)}
+                        >
+                          <option value="">Start</option>
+                          {timeOptions.map(time => (
+                            <option key={time} value={time}>{time.replace(/:\d{3}\s/, ' ')}</option>
+                          ))}
+                        </select>
+                        
+                        <select
+                          className="w-full text-xs p-1.5 rounded border-2 border-purple-300 font-medium"
+                          value={form.workoutSchedule.find(d => d.day === day)?.endTime || ''}
+                          onChange={(e) => handleTimeChange(day, 'endTime', e)}
+                        >
+                          <option value="">End</option>
+                          {timeOptions.map(time => (
+                            <option key={time} value={time}>{time.replace(/:\d{3}\s/, ' ')}</option>
+                          ))}
+                        </select>
+                      </div>
+                    )}
                   </div>
-                )}
-                {errors.workoutTime && (
-                  <div className="mt-2 text-red-500 text-sm">
-                    ⚠️ {errors.workoutTime}
-                  </div>
-                )}
+                ))}
               </div>
-
-              <div className="flex justify-between mt-3 mb-3">
-                <button onClick={onClose} className="bg-black text-white px-4 py-2 rounded-xl flex items-left">
-                  <img className="h-5 w-5 mr-2 mt-1" src={left_arrow} alt="Back" />
-                  Back
-                </button>
-
-                <button onClick={handleAddClient} className="bg-black text-white px-4 py-2 rounded-xl flex items-left">
-                  <img className="h-7 w-7 mr-2 mt-0" src={plus_circle} alt="Add Client" />
-                  Add Client
-                </button>
-              </div>
+              {errors.workoutSchedule && (
+                <p className="text-red-600 text-xs mt-2 font-medium">{errors.workoutSchedule}</p>
+              )}
+              {errors.workoutTime && (
+                <p className="text-red-600 text-xs mt-2 font-medium">{errors.workoutTime}</p>
+              )}
+            </div>
+  
+            {/* Buttons */}
+            <div className="flex justify-between mt-6">
+              <button 
+                onClick={onClose}
+                className="bg-purple-600 hover:bg-purple-700 text-white px-5 py-2 rounded-lg text-sm font-bold flex items-center border-2 border-purple-700"
+              >
+                <FaArrowLeft className="mr-2" />Back
+              </button>
+              <button 
+                onClick={handleAddClient}
+                className="bg-purple-600 hover:bg-purple-700 text-white px-5 py-2 rounded-lg text-sm font-bold flex items-center border-2 border-purple-700"
+              >
+                <FaPlus className="mr-2" /> Add Client
+              </button>
             </div>
           </div>
         </div>
