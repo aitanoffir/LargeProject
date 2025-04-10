@@ -194,7 +194,7 @@ const AddClientModal = ({ onClose }) => {
 
   return (
     <div className="fixed inset-0 bg-white/10 backdrop-blur-sm flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg w-3/4 relative max-h-[90vh] overflow-y-auto">
+      <div className="bg-white rounded-lg w-5/8 relative max-h-[90vh] overflow-y-auto">
         <button
           onClick={onClose}
           className="absolute top-4 right-4 text-gray-600 hover:text-gray-800 z-10"
@@ -215,19 +215,14 @@ const AddClientModal = ({ onClose }) => {
             }}
           ></div>
           
-          <div className="text-center mb-12" style={{ position: "relative", zIndex: 1 }}>
-            <h1 className="text-5xl font-bold mb-4" style={{ fontFamily: "Inter, sans-serif" }}>
-              Add a Client
-            </h1>
-            <h2 className="text-3xl font-bold" style={{ fontFamily: "Inter, sans-serif" }}>
-              Enter Client Information
+        
+          <div className="w-3/4 bg-white p-1 rounded-lg shadow-lg relative mx-auto">
+          <h2 className="text-center text-xl font-bold" style={{ fontFamily: "Inter, sans-serif" }}>
+              Add Client Information
             </h2>
-          </div>
-
-          <div className="w-3/4 bg-white p-8 rounded-lg shadow-lg relative mx-auto">
-            <div className="ml-12">
+            <div className="ml-12 mr-12">
               <div style={containerStyle}>
-                <div style={{ padding: "10px", textAlign: "left" }}>
+                <div style={{ width: "45%", padding: "5px", textAlign: "left" }}>
                   {errors.firstName && <p className="text-red-500 text-sm -mb-2">{errors.firstName}</p>}
                   <label htmlFor="firstName" className="input-label">First Name:</label>
                   <input
@@ -293,12 +288,13 @@ const AddClientModal = ({ onClose }) => {
                   </select>
                 </div>
 
-                <div style={{ width: "60%", padding: "10px", textAlign: "left" }}>
+                <div style={{ width: "45%", padding: "5px", textAlign: "left" }}>
                   {errors.email && <p className="text-red-500 text-sm -mb-2">{errors.email}</p>}
                   <label htmlFor="email" className="input-label">Email:</label>
                   <input
                     name="email"
                     type="email"
+                    placeholder="this@example.com"
                     value={form.email}
                     onChange={handleChange}
                     className={`w-full rounded-lg p-2 ${errors.email ? 'border-red-500' : ''}`}
@@ -317,7 +313,7 @@ const AddClientModal = ({ onClose }) => {
                     style={columnItemStyle}
                   />
 
-                  <label htmlFor="goalWeight" className="input-label">Goal Weight:</label>
+                  <label htmlFor="goalWeight" className="input-label">Goal Weight (lbs):</label>
                   <input
                     name="goalWeight"
                     type="number"
@@ -342,7 +338,7 @@ const AddClientModal = ({ onClose }) => {
                     <option>Very active</option>
                   </select>
 
-                  <div className="mt-6">
+                  <div className="mt-3">
                     <label className="input-label block mb-2">Profile Color</label>
                     <div className="relative inline-block">
                       <div
@@ -368,7 +364,7 @@ const AddClientModal = ({ onClose }) => {
                 </div>
               </div>
 
-              <div className="mt-8 col-span-2">
+              <div className="mt-1 col-span-2">
                 <h3 className="text-2xl font-bold mb-4" style={{ fontFamily: "Inter, sans-serif" }}>
                   Workout Schedule
                 </h3>
@@ -444,14 +440,14 @@ const AddClientModal = ({ onClose }) => {
                 )}
               </div>
 
-              <div className="flex justify-between mt-6">
+              <div className="flex justify-between mt-3 mb-3">
                 <button onClick={onClose} className="bg-black text-white px-4 py-2 rounded-xl flex items-left">
                   <img className="h-5 w-5 mr-2 mt-1" src={left_arrow} alt="Back" />
                   Back
                 </button>
 
                 <button onClick={handleAddClient} className="bg-black text-white px-4 py-2 rounded-xl flex items-left">
-                  <img className="h-7 w-7 mr-2" src={plus_circle} alt="Add Client" />
+                  <img className="h-7 w-7 mr-2 mt-0" src={plus_circle} alt="Add Client" />
                   Add Client
                 </button>
               </div>
