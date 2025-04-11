@@ -76,9 +76,9 @@ const ProgramPage = () => {
         </header>
         <div className="mt-5">
 
-          <Section title="Clients Programs" >
+          <Section title="Clients Programs">
             <div className="ml-1 flex overflow-x-auto space-x-4 px-4">
-              {clients.map((client) => (
+              {clients.slice().reverse().map((client) => (
                 <ProgramCard
                   key={client._id}
                   title={`${client.firstName} ${client.lastName}`}
