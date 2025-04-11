@@ -34,13 +34,13 @@ router.post('/client/:clientId/notes', addClientNote);
 router.put('/client/:clientId/notes/:noteId',  updateClientNote);
 router.delete('/client/:clientId/notes/:noteId', deleteClientNote);
 
-//notes CRUD functionality
+//notes CRUD functionality <--UNUSED
 router.post("/notes", createNote); // Create a new note
 router.get("/notes", getNotes);    // Get notes
 router.put("/notes/:id", updateNote);  // Update a note
 router.delete("/notes/:id", deleteNote); // Delete a note
 
-//session CRUD functionality
+//session CRUD functionality <--UNUSED
 router.post("/session", addSessionNotesInfo); //where we add session notes info
 router.get("/session", getSessionNotesInfo); //gets session notes info
 router.delete("/session/:id", deleteSessionNotesInfo); // deletes a session by _id
@@ -54,10 +54,12 @@ router.get("/auth/google/logout", googleLogout);
 // Add this route to handle GPT-based workout plan generation
 router.post("/generate-workout", generateWorkoutPlan);
 
+//workout CRUD functionality
 router.post("/workouts", createWorkout); // Create a new workout
 router.put("/workouts/:workoutId", updateWorkout); // Update an existing workout
 router.get("/workouts/client/:clientId", getWorkoutByClientId); // Get a workout by clientId
 router.delete("/workouts/:workoutId", deleteWorkout); // Delete a workout
+
 // Google Calendar routes
 router.post("/calendar/event", createEvent); // Create event
 router.get("/calendar/events", getEvents); // Get events

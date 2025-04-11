@@ -1,10 +1,10 @@
 openapi: 3.0.0
 info:
-  title: MERN App API
+  title: FitLink API Docs
   version: 1.0.0
-  description: API documentation for the MERN fitness coaching app
+  description: API documentation for FitLink
 servers:
-  - url: http://localhost:3000/api/accounts
+  - url: http://localhost:7000/api/accounts
 paths:
   /:
     post:
@@ -351,7 +351,327 @@ paths:
           description: No session with matching ID found
         '500':
           description: Server error
+  /auth/google:
+    get:
+      summary: Initiate Google OAuth Login
+      description: Redirects the user to Google's OAuth 2.0 server to initiate the login flow.
+      responses:
+        '302':
+          description: Redirect to Google login
 
+  /auth/google/callback:
+    get:
+      summary: Google OAuth Callback
+      description: Handles Google's OAuth callback, creates/updates user account, and returns a JWT token.
+      parameters:
+        - name: code
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Authorization code returned by Google
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountResponse'
+        '500':
+          description: OAuth login failed
+
+  /auth/google/logout:
+    get:
+      summary: Logout from Google
+      description: Handles logging the user out (client should clear stored token).
+      responses:
+        '200':
+          description: Logout successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+  /generate-workout:
+    post:
+      summary: Generate GPT-based Workout Plan
+      description: Generates a personalized multi-day workout plan using OpenAI's GPT model. Returns a structured JSON response.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - goal
+                - experience
+                - days
+                - style
+              properties:
+                goal:
+                  type: string
+                experience:
+                  type: string
+                days:
+                  type: integer
+                style:
+                  type: string
+              example:
+                goal: build muscle
+                experience: intermediate
+                days: 5
+                style: push/pull/legs split
+      responses:
+        '200':
+          description: Workout plan successfully generated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  workoutPlan:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        day:
+                          type: string
+                        focus:
+                          type: string
+                        exercises:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              name:
+                                type: string
+                              sets:
+                                type: integer
+                              reps:
+                                type: integer
+                        notes:
+                          type: string
+        '500':
+          description: Failed to generate workout plan
+  /workouts:
+    post:
+      summary: Create a new workout
+      description: Creates a workout plan for a client. Requires JWT and only one workout per client.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkoutInput'
+      responses:
+        '201':
+          description: Workout created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkoutResponse'
+        '401':
+          description: Invalid token
+        '409':
+          description: Client already has a workout
+        '500':
+          description: Server error
+
+  /workouts/{workoutId}:
+    put:
+      summary: Update an existing workout
+      description: Updates a workout by workout ID. Requires JWT.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: workoutId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkoutInput'
+      responses:
+        '200':
+          description: Workout updated
+        '401':
+          description: Invalid token
+        '404':
+          description: Workout not found
+        '500':
+          description: Server error
+
+    delete:
+      summary: Delete a workout
+      description: Deletes a workout by ID. Requires JWT.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: workoutId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Workout deleted
+        '401':
+          description: Invalid token
+        '404':
+          description: Workout not found
+        '500':
+          description: Server error
+
+  /workouts/client/{clientId}:
+    get:
+      summary: Get workout by client ID
+      description: Retrieves a workout for the given client. Requires JWT.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: clientId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Workout retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkoutResponse'
+        '401':
+          description: Invalid token
+        '404':
+          description: Workout not found
+        '500':
+          description: Server error
+  /calendar/event:
+    post:
+      summary: Create Google calendar event
+      description: >
+        Requires a valid Google login. You must be authenticated with Google OAuth (authType: google)
+        and provide a valid JWT token in the Authorization header. The token must contain `loginType: google`
+        and be associated with a Google-connected user.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                summary: Workout with Luke
+                location: Zoom
+                description: Chest and triceps day
+                start:
+                  dateTime: '2025-04-12T10:00:00-05:00'
+                end:
+                  dateTime: '2025-04-12T11:00:00-05:00'
+      responses:
+        '201':
+          description: Event created successfully
+        '403':
+          description: Unauthorized or not logged in with Google
+        '500':
+          description: Failed to create event
+
+  /calendar/events:
+    get:
+      summary: Get upcoming Google calendar events
+      description: >
+        Requires a valid Google login. You must be authenticated with Google OAuth (authType: google)
+        and provide a valid JWT token in the Authorization header. The token must contain `loginType: google`
+        and be associated with a Google-connected user.
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Events fetched successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  events:
+                    type: array
+                    items:
+                      type: object
+        '403':
+          description: Unauthorized or not logged in with Google
+        '500':
+          description: Failed to fetch events
+
+  /calendar/event/{eventId}:
+    put:
+      summary: Update Google calendar event
+      description: >
+        Requires a valid Google login. You must be authenticated with Google OAuth (authType: google)
+        and provide a valid JWT token in the Authorization header. The token must contain `loginType: google`
+        and be associated with a Google-connected user.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: eventId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                summary: Updated Workout
+                description: Focus on core
+                start:
+                  dateTime: '2025-04-12T10:30:00-05:00'
+                end:
+                  dateTime: '2025-04-12T11:30:00-05:00'
+      responses:
+        '200':
+          description: Event updated successfully
+        '403':
+          description: Unauthorized or not logged in with Google
+        '500':
+          description: Failed to update event
+
+    delete:
+      summary: Delete calendar event
+      description: Deletes a Google Calendar event by ID. Requires Google OAuth.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: eventId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Event deleted successfully
+        '403':
+          description: Unauthorized or not logged in with Google
+        '500':
+          description: Failed to delete event
 components:
   securitySchemes:
     bearerAuth:
@@ -564,3 +884,53 @@ components:
               type: string
             notes:
               type: string
+    WorkoutInput:
+      type: object
+      required:
+        - clientId
+        - goal
+        - experience
+        - days
+        - style
+        - workoutPlan
+      properties:
+        clientId:
+          type: string
+        goal:
+          type: string
+        experience:
+          type: string
+        days:
+          type: integer
+        style:
+          type: string
+        workoutPlan:
+          type: array
+          items:
+            type: object
+            properties:
+              day:
+                type: string
+              focus:
+                type: string
+              exercises:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    sets:
+                      type: integer
+                    reps:
+                      type: string
+              notes:
+                type: string
+
+    WorkoutResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          $ref: '#/components/schemas/WorkoutInput'
