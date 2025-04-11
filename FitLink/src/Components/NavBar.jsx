@@ -32,9 +32,9 @@ const NavBar = () => {
         <Link to="/Clients">
           <FaUserFriends className="text-white text-4xl cursor-pointer" />
         </Link>
-        <Link to="/Notes">
+        {/* <Link to="/Notes">
           <FaRegEdit className="text-white text-4xl cursor-pointer" />
-        </Link>
+        </Link> */}
         <Link to="/MyProgram">
           <FaDumbbell className="text-white text-4xl cursor-pointer" />
         </Link>
