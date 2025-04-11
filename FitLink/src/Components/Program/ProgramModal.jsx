@@ -45,14 +45,16 @@ const ProgramModal = ({ title, message, onConfirm, onClose }) => {
 
   return (
     <>
-      <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center overflow-auto">
-        <div className="bg-white p-6 rounded-lg shadow-lg w-250 max-h-[90vh] overflow-y-auto">
+      <div
+        className="fixed inset-0 flex items-center justify-center overflow-auto z-50 backdrop-blur-sm"
+        style={{ backgroundColor: "rgba(0, 0, 0, 0.4)" }}
+      >
+        <div className="bg-white p-6 rounded-lg shadow-lg w-[600px] max-h-[90vh] overflow-y-auto">
           <h2 className="text-xl font-bold mb-1">{title}</h2>
-          {/* <p>{message}</p> */}
 
           <form>
             {/* Program Name */}
-            <label for="name" className="input-label font-bold">
+            <label htmlFor="name" className="input-label font-bold">
               Program Name:
             </label>
             <input
@@ -65,44 +67,25 @@ const ProgramModal = ({ title, message, onConfirm, onClose }) => {
               className="w-full border rounded-md p-2"
             />
 
-            {/* Days */}
-            {/* <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "1fr 1fr",
-                gap: "8px",
-              }}
-            >
-              {daysOfWeek.map((day) => (
-                <label key={day}>
-                  <input
-                    className="mx-2"
-                    type="checkbox"
-                    value={day}
-                    checked={selectedDays.includes(day)}
-                    onChange={handleCheckboxChange}
-                  />
-                  {day}
-                </label>
-              ))}
-            </div> */}
-
             {/* Client */}
-            <label for="name" className="input-label font-bold">
+            <label htmlFor="client" className="input-label font-bold mt-4 block">
               Client
             </label>
-              <select value={client} onChange={handleClientChange} className="border-1 rounded-sm">
-                <option value="">-- Select client --</option>
-                {clientNames.map((name) => (
-                  <option key={name} value={name}>
-                    {name}
-                  </option>
-                ))}
-              </select>
-
+            <select
+              value={client}
+              onChange={handleClientChange}
+              className="w-full border rounded-md p-2"
+            >
+              <option value="">-- Select client --</option>
+              {clientNames.map((name) => (
+                <option key={name} value={name}>
+                  {name}
+                </option>
+              ))}
+            </select>
 
             {/* Duration */}
-            <label for="days" className="input-label font-bold">
+            <label htmlFor="days" className="input-label font-bold block mt-4">
               Days:
             </label>
             <input
@@ -115,13 +98,14 @@ const ProgramModal = ({ title, message, onConfirm, onClose }) => {
               className="w-full border rounded-md p-2"
             />
 
-            {/*Calender*/}
-            {/* <label for="duration" className="input-label font-bold">
-              Calender:
+            {/* Calendar (optional placeholder for future) */}
+            {/* <label htmlFor="calendar" className="input-label font-bold block mt-4">
+              Calendar:
             </label>
             <CalenderForm /> */}
 
-            <label for="comments" className="input-label font-bold block mt-4">
+            {/* Comments */}
+            <label htmlFor="comments" className="input-label font-bold block mt-4">
               Additional Comments:
             </label>
             <textarea
@@ -136,6 +120,7 @@ const ProgramModal = ({ title, message, onConfirm, onClose }) => {
               className="w-full border rounded-md p-2"
             />
           </form>
+
           <div className="mt-4 flex justify-end gap-2">
             <button
               onClick={() => setShowConfirmCancel(true)}
