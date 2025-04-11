@@ -24,12 +24,16 @@
 
   /* Reusable button */
   .btn {
-    @apply px-4 py-2 rounded-lg font-semibold text-white transition duration-300;
+    @apply px-4 py-2 rounded-lg font-semibold transition duration-300 ease-in-out;
   }
 
-  /* Primary Button */
+  /* Hover effect */
+  .btn-hover {
+   @apply shadow-md hover:brightness-110 hover:shadow-lg cursor-pointer
+  }  
+  /* Primary button */
   .btn-primary {
-    @apply bg-primary hover:bg-orange-300 rounded-lg hover:text-white;
+    @apply bg-primary;
   }
 
   /* Secondary Button */
@@ -42,5 +46,9 @@
   }
   .menu-text {
     @apply absolute right-0 transform translate-x-full text-white whitespace-nowrap;
+  }
+  
+  .static-input-style {
+    @apply bg-white;
   }
 }

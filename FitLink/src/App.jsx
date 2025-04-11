@@ -12,8 +12,8 @@ import Notes from './Pages/Notes';
 import CreateNote from './Components/CreateNote';
 import ViewNote from './Components/ViewNote';
 import EditProfile from './Pages/EditProfile';
-import WorkoutCard from './Components/Program/WorkoutCard';
 import EditProgram from './Components/Program/EditProgram';
+
 
 function App() {
   return (
@@ -36,6 +36,7 @@ function App() {
 
         {/*dev work routes*/}
         <Route path="/test-edit-program" element={<EditProgram />} />
+        
       </Routes>
     </Router>
   );
