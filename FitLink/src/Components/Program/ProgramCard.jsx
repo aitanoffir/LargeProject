@@ -1,26 +1,17 @@
-import React from 'react'
+import React from 'react';
 
-const ProgramCard = ({title, color, onClick}) => {
-
-    //stack overflow function for generating colors http://blog.adamcole.ca/2011/11/simple-javascript-rainbow-color.html
-    // function rainbowStop(h) 
-    // {
-    //     let f= (n,k=(n+h*12)%12) => .5-.5*Math.max(Math.min(k-3,9-k,1),-1);  
-    //     let rgb2hex = (r,g,b) => "#"+[r,g,b].map(x=>Math.round(x*255).toString(16).padStart(2,0)).join('');
-    //     return ( rgb2hex(f(0), f(8), f(4)) );
-    // } 
-
+const ProgramCard = ({ title, color, onClick }) => {
     const bgColor = color || '#A9A9A9';
 
     return (
-        <div 
+        <div
             onClick={onClick}
-            className='ml-5 w-65 h-45 shadow-md flex justify-center items-center text-white text-lg font-semibold cursor-pointer bg-agreeable-grey'
+            className="mt-1 mb-2 ml-5 w-74 h-54 flex-shrink-0 shadow-md flex justify-center items-center text-white text-lg font-semibold cursor-pointer "
             style={{ backgroundColor: bgColor }}
         >
             {title}
         </div>
-    )
-}
+    );
+};
 
-export default ProgramCard
+export default ProgramCard;

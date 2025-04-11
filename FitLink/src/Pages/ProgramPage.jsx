@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from '../Components/Header';
 import Section from '../Components/Program/CardSection';
 import ProgramCard from '../Components/Program/ProgramCard';
@@ -10,12 +10,60 @@ import { BsPlusLg } from "react-icons/bs";
 const ProgramPage = () => {
   const [customPrograms, setCustomPrograms] = useState([]);
   const [showModal, setShowModal] = useState(false);
+  const [clients, setClients] = useState([]);
+
+  useEffect(() => {
+    fetchClients();
+  }, []);
+
+  const fetchClients = async () => {
+    const token = localStorage.getItem("token");
+    const trainerId = localStorage.getItem("userId");
+    if (!token || !trainerId) {
+      console.error("Token or Trainer ID not found.");
+      return;
+    }
+
+    try {
+      const response = await fetch(`http://localhost:7000/api/accounts/client?trainer=${trainerId}`, {
+        headers: { Authorization: `${token}` },
+      });
+
+      if (!response.ok) {
+        const text = await response.text();
+        try {
+          const errData = JSON.parse(text);
+          if (response.status === 404 && errData.message === "No clients found") {
+            setClients([]);
+            return;
+          }
+          console.error("Fetch error:", errData.message);
+        } catch {
+          console.error("Unexpected error:", text);
+        }
+        return;
+      }
+
+      const data = await response.json();
+      if (data.success) {
+        // Clients now include their notes directly
+        setClients(data.clients);
+      } else {
+        console.error("Fetch failed:", data.message);
+      }
+    } catch (error) {
+      console.error("Error fetching clients:", error);
+    }
+  };
+
 
   const handleAddProgram = () => {
     const newTitle = `Custom Program ${customPrograms.length + 1}`;
     setCustomPrograms([...customPrograms, { title: newTitle }]);
     setShowModal(false);
   };
+
+
 
   return (
     <div className="flex h-screen bg-gray-100">
@@ -27,20 +75,20 @@ const ProgramPage = () => {
           </div>
         </header>
         <div className="mt-5">
-          
-          <Section title="Clients Programs">
-            <ProgramCard title="Popeyes" />
-            <ProgramCard title="Wendy" />
-            <ProgramCard title="KFC" />
-            <ProgramCard title="McDonald" />
-          </Section>
-          <div className="mt-20"></div>
 
-          {/*<Section title="My Programs">
-            {customPrograms.map((program, index) => (
-              <ProgramCard key={index} title={program.title} />
-            ))}
-          </Section>*/}
+          <Section title="Clients Programs" >
+            <div className="ml-1 flex overflow-x-auto space-x-4 px-4">
+              {clients.map((client) => (
+                <ProgramCard
+                  key={client._id}
+                  title={`${client.firstName} ${client.lastName}`}
+                  color={client.color}
+                />
+              ))}
+            </div>
+          </Section>
+
+          <div className="mt-10"></div>
 
           <Section title="New Program">
             <ProgramCard
@@ -56,7 +104,7 @@ const ProgramPage = () => {
                 onClose={() => setShowModal(false)}
               />
             )}
-            <ProgramCard title="Use Template" color="grey" />
+
           </Section>
         </div>
       </div>

@@ -252,21 +252,7 @@ const EditProfile = () => {
                                     Save
                                 </button>
                             </div>
-                        </form>
-
-                        {/* Right Side*/}
-                        <div className="flex-1/5 items-center">
-                            <div className="w-40 h-40 rounded-full overflow-hidden border">
-                                <img
-
-                                    className="object-cover w-full h-full"
-                                />
-                            </div>
-                            <button className="cursor-pointer -mt-11 -ml-5 bg-orange-600 text-white px-4 py-1 rounded flex items-center gap-2">
-                                <FaPen />
-                                Edit
-                            </button>
-                        </div>
+                        </form>                      
                     </div>
                 </main>
             </div>
