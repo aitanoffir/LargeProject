@@ -18,9 +18,15 @@ const extractJson = (text) => {
 export const generateWorkoutPlan = async (req, res) => {
   const { goal, experience, days, style } = req.body;
 
-  const prompt = `You are a certified personal trainer. Create a ${days}-day workout plan for a ${experience} client whose goal is to ${goal}. They prefer ${style}. 
+   // Join the days array into a comma-separated string for the prompt
+   const daysString = Array.isArray(days) ? days.join(", ") : days;
+
+  const prompt = `You are a certified personal trainer. Create a workout plan for a ${experience} client whose goal is to ${goal}. 
+  They prefer ${style} and can train on these specific days: ${daysString}.
+  Create exactly one workout for each of these days.
   ONLY output valid JSON, without any markdown, code fences, or explanations. 
-  The JSON should include: day, focus, exercises (with sets & reps), and notes.`;
+  The JSON should include: day, focus, exercises (with sets & reps), and notes.
+  Each workout object MUST have the exact day name as specified in the input.`;
 
   try {
     const completion = await openai.chat.completions.create({

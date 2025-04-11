@@ -17,7 +17,7 @@ const workoutSchema = new mongoose.Schema(
       required: true,
     },
     days: {
-      type: Number,
+      type: [String], // Changed from Number to array of Strings
       required: true,
     },
     style: {
