@@ -25,7 +25,6 @@ const PasswordResetPage = () => {
       await sendPasswordResetEmail(auth, email);
       setMessage('Password reset email sent! Check your inbox for further instructions.');
       //set token for 
-      localStorage.setItem('passwordReset', true);
     } catch (error) {
       setError(error.message);
     } finally {
