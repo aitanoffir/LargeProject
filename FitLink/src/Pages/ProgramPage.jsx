@@ -1,19 +1,21 @@
-import React, { useState, useEffect } from "react";
-import Header from "../Components/Header";
-import Section from "../Components/Program/CardSection";
-import ProgramCard from "../Components/Program/ProgramCard";
-import ConfirmModal from "../Components/Program/ConfirmModal";
-import ProgramModal from "../Components/Program/ProgramModal";
-import NavBar from "../Components/NavBar";
+import React, { useState, useEffect } from 'react';
+import Header from '../Components/Header';
+import Section from '../Components/Program/CardSection';
+import ProgramCard from '../Components/Program/ProgramCard';
+import ConfirmModal from '../Components/Program/ConfirmModal';
+import ProgramModal from '../Components/Program/ProgramModal';
+import EditProgram from '../Components/Program/EditProgram';
+import NavBar from '../Components/NavBar';
 import { BsPlusLg } from "react-icons/bs";
-import EditProgram from "../Components/Program/EditProgram";
+
 
 const ProgramPage = () => {
   const [customPrograms, setCustomPrograms] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [clients, setClients] = useState([]);
-  const [selectedClientId, setSelectedClientId] = useState(null);
-  const [showProgram, setShowProgram] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [selectedClient, setSelectedClient] = useState(null);
+
 
   useEffect(() => {
     fetchClients();
@@ -86,30 +88,29 @@ const ProgramPage = () => {
         </header>
         <div className="">
           <Section title="Clients Programs">
-            <div className="flex overflow-x-auto space-x-4 px-4">
-              {clients
-                .slice()
-                .reverse()
-                .map((client) => (
+            <div className="ml-1 flex overflow-x-auto space-x-4 px-4">
+              {clients.slice().reverse().map((client) => (
+                <>
                   <ProgramCard
                     key={client._id}
                     title={`${client.firstName} ${client.lastName}`}
                     color={client.color}
                     onClick={() => {
-                      setSelectedClientId(client._id);
-                      setShowProgram(true);
+                      setSelectedClient(client);
+                      setShowEditModal(true);
                     }}
                   />
-                ))}
-              {showProgram && selectedClientId && (
-                <EditProgram
-                  clientId={selectedClientId}
-                  onClose={() => {
-                    setSelectedClientId(null);
-                    setShowProgram(false);
-                  }}
-                />
-              )}
+                  {showEditModal && selectedClient?._id === client._id && (
+                    <EditProgram
+                      client={selectedClient}
+                      onClose={() => {
+                        setShowEditModal(false);
+                        setSelectedClient(null);
+                      }}
+                    />
+                  )}
+                </>
+              ))}
             </div>
           </Section>
 

@@ -5,7 +5,7 @@ import { FaCheck } from "react-icons/fa";
 import { FaRegTrashAlt } from "react-icons/fa";
 import { IoMdAddCircleOutline } from "react-icons/io";
 
-const WorkoutCard = ({ id, day, focusName, onDelete  }) => {
+const WorkoutCard = ({ id, day, focusName, onDelete }) => {
 
   const [exercises, setExercises] = useState([
     { name: "Bench Press", sets: 4, reps: "8-10" },
@@ -23,7 +23,7 @@ const WorkoutCard = ({ id, day, focusName, onDelete  }) => {
   const handleAdd = () => {
     setExercises([...exercises, { name: "", sets: "", reps: "" }]);
   };
-  
+
 
   const handleDelete = (index) => {
     const updated = exercises.filter((_, i) => i !== index);
@@ -35,7 +35,7 @@ const WorkoutCard = ({ id, day, focusName, onDelete  }) => {
   };
 
   return (
-    <div className="relative border rounded-lg shadow-md p-4 bg-white w-full">
+    <div className="relative border-2 border-purple-300 rounded shadow-md p-4 bg-white w-full font-medium">
       <div className="absolute top-2 right-2 flex gap-2">
         {isEditing ? (
           <button
@@ -60,8 +60,8 @@ const WorkoutCard = ({ id, day, focusName, onDelete  }) => {
 
       {/* Header */}
       <div className="text-center mb-4">
-        <h2 className="font-bold text-2xl text-gray-800">{day}</h2>
-        <h4 className="text-gray-500">{focusName}</h4>
+        <h2 className="font-bold text-2xl text-gray-800 text-purple-900">{day}</h2>
+        <h4 className="text-purple-900">{focusName}</h4>
       </div>
 
       {/* Table */}
@@ -127,7 +127,7 @@ const WorkoutCard = ({ id, day, focusName, onDelete  }) => {
               </td>
 
               {/* Actions */}
-              {isEditing &&  <td className="border text-center">
+              {isEditing && <td className="border text-center">
 
                 <button
                   className="p-1 rounded-full hover:bg-red-50 transition-transform duration-200 hover:scale-110 hover:cursor-pointer"
@@ -135,9 +135,9 @@ const WorkoutCard = ({ id, day, focusName, onDelete  }) => {
                 >
                   <FaRegTrashAlt className="text-red-500" size={14} />
                 </button>
-              
+
               </td>}
-              
+
             </tr>
           ))}
         </tbody>
