@@ -1,6 +1,7 @@
 // gpt.controller.js
 import OpenAI from "openai";
-
+import dotenv from 'dotenv';
+dotenv.config();
 // OpenAI Client
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,

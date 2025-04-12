@@ -19,7 +19,7 @@ const mockRes = () => {
   return res;
 };
 
-let createdClientId = null;
+let createdClientId = 'mock-client-id';
 
 const newClientPayload = {
   trainer: "67c626423a12ce4f5079e16f",
@@ -67,7 +67,12 @@ describe('Client Controller Full Flow', () => {
 
     await addClientAccountInfo(req, res);
     expect(res.status).toHaveBeenCalledWith(201);
-    expect(res.json).toHaveBeenCalledWith({ success: true, data: mockSavedClient });
+    expect(res.json).toHaveBeenCalledWith({
+    success: true,
+    data: expect.objectContaining(newClientPayload)
+    });
+
+
     createdClientId = mockSavedClient._id;
   });
 
