@@ -5,6 +5,7 @@ import AddClientModal from '../Components/AddClientModal';
 import UpdateClientModal from '../Components/updateClientModal';
 import DeleteConfirm from '../Components/deleteConfirm';
 import ViewClientNotes from '../Components/ViewClientNotes';
+import { useNavigate } from 'react-router-dom';
 
 const ClientsList = () => {
   const [clients, setClients] = useState([]);
@@ -19,6 +20,8 @@ const ClientsList = () => {
   const [clientToDelete, setClientToDelete] = useState(null);
   const [showNotesModal, setShowNotesModal] = useState(false);
   const [selectedClientForNotes, setSelectedClientForNotes] = useState(null);
+
+  const navigate = useNavigate();
 
   const fetchClients = async () => {
     const token = localStorage.getItem("token");
@@ -68,7 +71,6 @@ const ClientsList = () => {
     const currentDayIndex = now.getDay();
     const currentTime = now.getHours() * 60 + now.getMinutes();
   
-    // Convert and validate schedule
     const converted = schedule.map(ws => {
       const dayMatch = days.find(d => 
         d.toLowerCase().startsWith(ws.day.toLowerCase().substring(0, 3))
@@ -83,7 +85,6 @@ const ClientsList = () => {
       } : null;
     }).filter(ws => ws !== null);
   
-    // Find all upcoming workouts in the next 7 days
     const upcomingWorkouts = [];
     
     for (let dayOffset = 0; dayOffset < 7; dayOffset++) {
@@ -91,12 +92,11 @@ const ClientsList = () => {
       const dayWorkouts = converted.filter(ws => ws.dayIndex === targetDayIndex);
   
       dayWorkouts.forEach(workout => {
-        const workoutTime = targetDayIndex * 1440 + workout.startMinutes; // Fixed line
+        const workoutTime = targetDayIndex * 1440 + workout.startMinutes;
         const currentTotalMinutes = currentDayIndex * 1440 + currentTime;
         
-        // Calculate time difference considering weekly cycle
         let timeDifference = workoutTime - currentTotalMinutes;
-        if (timeDifference < 0) timeDifference += 7 * 1440; // Add a week if in past
+        if (timeDifference < 0) timeDifference += 7 * 1440;
         
         upcomingWorkouts.push({
           timeDifference,
@@ -109,7 +109,6 @@ const ClientsList = () => {
   
     if (upcomingWorkouts.length === 0) return 'No upcoming workouts';
   
-    // Find closest workout
     const closest = upcomingWorkouts.reduce((prev, current) => 
       prev.timeDifference < current.timeDifference ? prev : current
     );
@@ -118,7 +117,6 @@ const ClientsList = () => {
     return `${targetDay} ${formatTime(closest.start)} - ${formatTime(closest.end)}`;
   };
   
-  // Helper function to convert time to minutes since midnight
   const convertTimeToMinutes = (timeString) => {
     if (!timeString) return null;
     const [time, period] = timeString.split(' ');
@@ -128,7 +126,6 @@ const ClientsList = () => {
     return (hours % 12) * 60 + minutes + (period === 'PM' ? 720 : 0);
   };
   
-  // Helper function to format minutes back to HH:MM AM/PM
   const formatTime = (minutes) => {
     let hours = Math.floor(minutes / 60);
     const mins = minutes % 60;
@@ -154,16 +151,13 @@ const ClientsList = () => {
       const startMinutes = convertTimeToMinutes(workout.startTime);
       if (!startMinutes) return;
   
-      // Calculate days to add
       let daysToAdd = dayIndex - currentDayIndex;
       if (daysToAdd < 0) daysToAdd += 7;
       
-      // Handle same-day workouts
       if (daysToAdd === 0 && startMinutes <= currentTime) {
         daysToAdd = 7;
       }
   
-      // Create Date object for next occurrence
       const nextDate = new Date(now);
       nextDate.setDate(now.getDate() + daysToAdd);
       nextDate.setHours(Math.floor(startMinutes / 60), startMinutes % 60, 0, 0);
@@ -175,6 +169,11 @@ const ClientsList = () => {
   };
 
   useEffect(() => {
+    const verified = localStorage.getItem('verified');
+    if (verified === "false") {
+      navigate("/email-verify");
+    }
+
     fetchClients();
   }, []);
 
@@ -187,7 +186,7 @@ const ClientsList = () => {
       sorted.sort((a, b) => {
         const aTime = getNextWorkoutTimestamp(a.workoutSchedule);
         const bTime = getNextWorkoutTimestamp(b.workoutSchedule);
-        return aTime - bTime; // Closest first
+        return aTime - bTime;
       });
     } else {
       sorted.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
@@ -264,7 +263,7 @@ const ClientsList = () => {
         })
       });
   
-      const responseData = await response.json(); // Always parse JSON
+      const responseData = await response.json();
       
       if (!response.ok) {
         console.error("Note operation failed:", responseData);
@@ -275,7 +274,6 @@ const ClientsList = () => {
       console.log("Note operation successful:", responseData);
       fetchClients();
       
-      // Update selected client notes immediately
       setSelectedClientForNotes(prev => prev ? {
         ...prev,
         notes: noteData.noteId 
@@ -311,7 +309,6 @@ const ClientsList = () => {
       console.log("Delete successful:", responseData);
       fetchClients();
       
-      // Update selected client notes immediately
       setSelectedClientForNotes(prev => prev ? {
         ...prev,
         notes: prev.notes.filter(n => n._id !== noteId)
@@ -371,58 +368,78 @@ const ClientsList = () => {
         <main className="flex-1 overflow-y-auto p-6">
           <div className="bg-white rounded-lg shadow overflow-hidden">
             <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                {['Name', 'Next Workout', 'Phone Number', 'Email', 'Notes', 'Edit Info', 'Actions'].map(header => (
-                  <th key={header} className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    {header}
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-2 py-1 md:px-6 md:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Name
                   </th>
-                ))}
-              </tr>
-            </thead>
+                  <th className="px-2 py-1 md:px-6 md:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">
+                    Next Workout
+                  </th>
+                  <th className="px-2 py-1 md:px-6 md:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">
+                    Phone Number
+                  </th>
+                  <th className="px-2 py-1 md:px-6 md:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">
+                    Email
+                  </th>
+                  <th className="px-2 py-1 md:px-6 md:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Notes
+                  </th>
+                  <th className="px-2 py-1 md:px-6 md:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Edit Info
+                  </th>
+                  <th className="px-2 py-1 md:px-6 md:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Actions
+                  </th>
+                </tr>
+              </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {currentClients.length > 0 ? currentClients.map(client => (
                   <tr key={client._id}>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-2 py-1 md:px-6 md:py-4 whitespace-nowrap">
                       <div className="flex items-center">
                         <div 
                           className="w-4 h-4 rounded-full mr-2"
                           style={{ backgroundColor: client.color || '#7CC9F7' }}
                         />
-                        {client.firstName} {client.lastName}
+                        <span className="text-sm">{client.firstName} {client.lastName}</span>
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      {getNextWorkout(client.workoutSchedule)}
+                    <td className="px-2 py-1 md:px-6 md:py-4 whitespace-nowrap hidden md:table-cell">
+                      <span className="text-sm">{getNextWorkout(client.workoutSchedule)}</span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">{client.phoneNumber}</td>
-                    <td className="px-6 py-4 whitespace-nowrap">{client.email}</td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                    <button 
-                    onClick={() => handleViewNotes(client)} 
-                    className="px-3 py-1 bg-purple-100 text-purple-700 rounded-lg hover:bg-purple-200 flex items-center gap-1 transition-colors"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                    </svg>
-                    <span>Notes</span>
-                  </button>
+                    <td className="px-2 py-1 md:px-6 md:py-4 whitespace-nowrap hidden md:table-cell">
+                      <span className="text-sm">{client.phoneNumber}</span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap flex items-center">
-                    <button 
-                    onClick={() => handleEdit(client)} 
-                    className="px-3 py-1 bg-purple-100 text-purple-700 rounded-lg hover:bg-purple-200 flex items-center gap-1 transition-colors"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                    </svg>
-                    <span>Edit Info</span>
-                  </button>
+                    <td className="px-2 py-1 md:px-6 md:py-4 whitespace-nowrap hidden md:table-cell">
+                      <span className="text-sm">{client.email}</span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-2 py-1 md:px-6 md:py-4 whitespace-nowrap">
+                      <button 
+                        onClick={() => handleViewNotes(client)} 
+                        className="px-2 py-1 bg-purple-100 text-purple-700 rounded-lg hover:bg-purple-200 flex items-center gap-1 transition-colors text-xs md:text-sm"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        <span>Notes</span>
+                      </button>
+                    </td>
+                    <td className="px-2 py-1 md:px-6 md:py-4 whitespace-nowrap flex items-center">
+                      <button 
+                        onClick={() => handleEdit(client)} 
+                        className="px-2 py-1 bg-purple-100 text-purple-700 rounded-lg hover:bg-purple-200 flex items-center gap-1 transition-colors text-xs md:text-sm"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                        </svg>
+                        <span>Edit Info</span>
+                      </button>
+                    </td>
+                    <td className="px-2 py-1 md:px-6 md:py-4 whitespace-nowrap">
                       <button 
                         onClick={() => handleDeleteClick(client._id)} 
-                        className="text-red-600 hover:text-red-800 p-1 rounded-full hover:bg-red-100 transition-colors"
+                        className="text-red-600 hover:text-red-800 p-1 rounded-full hover:bg-red-100 transition-colors text-xs md:text-sm"
                         title="Delete"
                       >
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -433,7 +450,7 @@ const ClientsList = () => {
                   </tr>
                 )) : (
                   <tr>
-                    <td colSpan="6" className="px-6 py-4 text-center text-gray-500">
+                    <td colSpan="7" className="px-2 py-1 md:px-6 md:py-4 text-center text-gray-500">
                       No clients found
                     </td>
                   </tr>
@@ -447,7 +464,7 @@ const ClientsList = () => {
               <button
                 key={i + 1}
                 onClick={() => setCurrentPage(i + 1)}
-                className={`px-3 py-1 mx-1 rounded text-white px-5 ${currentPage === i + 1 ? 'bg-purple-900 hover:bg-purple-1000' : 'bg-purple-600 hover:bg-purple-700' }`}
+                className={`px-4 py-1 mx-1 rounded text-white ${currentPage === i + 1 ? 'bg-purple-900 hover:bg-purple-800' : 'bg-purple-600 hover:bg-purple-700'} text-xs md:text-sm`}
               >
                 {i + 1}
               </button>

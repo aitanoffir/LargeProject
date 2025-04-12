@@ -7,6 +7,7 @@ import ProgramModal from '../Components/Program/ProgramModal';
 import EditProgram from '../Components/Program/EditProgram';
 import NavBar from '../Components/NavBar';
 import { BsPlusLg } from "react-icons/bs";
+import { useNavigate } from 'react-router-dom';
 
 
 const ProgramPage = () => {
@@ -16,9 +17,17 @@ const ProgramPage = () => {
   const [selectedClient, setSelectedClient] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedClient, setSelectedClient] = useState(null);
+  const navigate = useNavigate();
 
 
   useEffect(() => {
+
+    //Check email verification
+    const verified = localStorage.getItem('verified');
+    if (verified === "false") {
+      navigate("/email-verify");
+    }
+
     fetchClients();
   }, []);
 
