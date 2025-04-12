@@ -6,7 +6,7 @@ const ProgramCard = ({ title, color, onClick }) => {
     return (
         <div
             onClick={onClick}
-            className="mt-1 mb-2 ml-5 w-74 h-54 flex-shrink-0 shadow-md flex justify-center items-center text-white text-lg font-semibold cursor-pointer "
+            className="w-50 h-35 rounded-2xl flex-shrink-0 shadow-md flex justify-center items-center text-white text-lg font-semibold cursor-pointer "
             style={{ backgroundColor: bgColor }}
         >
             {title}
