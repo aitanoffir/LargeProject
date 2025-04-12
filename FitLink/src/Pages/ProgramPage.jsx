@@ -12,12 +12,13 @@ const ProgramPage = () => {
   const [customPrograms, setCustomPrograms] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [clients, setClients] = useState([]);
-  const [selectedClientId, setSelectedClientId] = useState(null);
-  const [showProgram, setShowProgram] = useState(false);
+  const [selectedClient, setSelectedClient] = useState(null);
 
   useEffect(() => {
     fetchClients();
   }, []);
+
+
 
   const fetchClients = async () => {
     const token = localStorage.getItem("token");
@@ -96,18 +97,17 @@ const ProgramPage = () => {
                     title={`${client.firstName} ${client.lastName}`}
                     color={client.color}
                     onClick={() => {
-                      setSelectedClientId(client._id);
-                      setShowProgram(true);
+                      setSelectedClient(client);
                     }}
                   />
                 ))}
-              {showProgram && selectedClientId && (
+
+              {/*On click shows the program based on the client id*/}
+              {selectedClient && (
                 <EditProgram
-                  clientId={selectedClientId}
-                  onClose={() => {
-                    setSelectedClientId(null);
-                    setShowProgram(false);
-                  }}
+                  key={selectedClient._id}
+                  client={selectedClient}
+                  onClose={() => setSelectedClient(null)}
                 />
               )}
             </div>
