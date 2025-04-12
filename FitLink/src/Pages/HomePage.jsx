@@ -12,18 +12,15 @@ const HomePage = () => {
     // Retrieve token from localStorage (assuming it was stored during sign-in)
     const token = localStorage.getItem('token');
 
-    //Check email verification
+    // Check email verification
     const verified = localStorage.getItem('verified');
     if (verified === "false") {
       navigate("/email-verify");
     }
 
-
     if (token) {
-
       try {
         // Decode the token to get user information
-
         const [header, payload, signature] = token.split('.');
         const decodedPayload = JSON.parse(atob(payload));
         const email = decodedPayload.name;
@@ -44,17 +41,17 @@ const HomePage = () => {
   }, [navigate]);
 
   return (
-    <div className="flex h-screen bg-gray-100">
+    <div className="flex h-screen bg-gray-50">
       {/* NavBar on the left */}
       <NavBar />
-      
+
       {/* Main content area */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Header section */}
         <header className="bg-white shadow-sm">
           <div className="px-6 py-4">
             <h1 className="text-2xl font-semibold text-gray-800">
-              Welcome back, <span className="text-primary">{userEmail || 'User'}</span>
+              Welcome back, <span className="text-purple-600">{userEmail || 'User'}</span>
             </h1>
             <p className="text-gray-600">Your dashboard overview</p>
           </div>
@@ -69,7 +66,7 @@ const HomePage = () => {
               onClick={() => navigate("/ProgramPage")} //replace later with page route
             >
               <div className="flex items-center">
-                <div className="p-3 rounded-full bg-blue-100 text-blue-600 mr-4">
+                <div className="p-3 rounded-full bg-purple-100 text-purple-600 mr-4">
                   <FaDumbbell size={24} />
                 </div>
                 <div>
@@ -85,7 +82,7 @@ const HomePage = () => {
               onClick={() => navigate("/Clients")} //replace later with page route
             >
               <div className="flex items-center">
-                <div className="p-3 rounded-full bg-green-100 text-green-600 mr-4">
+                <div className="p-3 rounded-full bg-purple-100 text-purple-600 mr-4">
                   <FaUsers size={24} />
                 </div>
                 <div>

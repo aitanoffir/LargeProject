@@ -1,22 +1,35 @@
 import React from "react";
+import { FaSignOutAlt } from "react-icons/fa";
 
 const SignOutConfirm = ({ onClose, onConfirm }) => {
     return (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg w-100 h-40 flex flex-col items-center justify-center relative p-6">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full">
+                <div className="text-center mb-6">
+                    <div className="flex justify-center mb-4">
+                        <FaSignOutAlt className="text-purple-600 text-5xl" />
+                    </div>
+                    <h1 className="text-2xl font-bold mb-2 text-purple-900">Sign Out Confirmation</h1>
+                    <p className="text-gray-600">
+                        Are you sure you want to sign out of your account?
+                    </p>
+                </div>
 
-                <h2 className="text-center text-xl font-bold mb-4 text-purple-900">Are you sure you want to sign out?</h2>
-                <div className="flex justify-center gap-x-20 mt-1">
-                    <button
-                        onClick={onClose}
-                        className="cursor-pointer px-6 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400 transition">
-                        No
-                    </button>
-                    <button
-                        onClick={onConfirm}
-                        className="cursor-pointer px-6 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition">
-                        Yes
-                    </button>
+                <div className="space-y-4">
+                    <div className="flex justify-center gap-4">
+                        <button
+                            onClick={onClose}
+                            className="flex-1 bg-gray-200 text-gray-800 py-2 px-4 rounded-lg hover:bg-gray-300 transition-colors"
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            onClick={onConfirm}
+                            className="flex-1 bg-purple-600 text-white py-2 px-4 rounded-lg hover:bg-purple-700 transition-colors"
+                        >
+                            Sign Out
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
