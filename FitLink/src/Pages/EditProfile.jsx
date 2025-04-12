@@ -183,7 +183,7 @@ const EditProfile = () => {
 
                             <div className="flex gap-4">
                                 <div className="flex-1">
-                                    <label className="block text-sm font-medium">First Name</label>
+                                    <label className="font-bold block text-purple-900 flex items-center font-medium">First Name</label>
                                     <input
                                         type="text"
                                         name="firstname"
@@ -194,7 +194,7 @@ const EditProfile = () => {
                                     />
                                 </div>
                                 <div className="flex-10">
-                                    <label className="block text-sm font-medium">Last Name</label>
+                                    <label className="font-bold block text-purple-900 flex items-center font-medium">Last Name</label>
                                     <input
                                         type="text"
                                         name="lastname"
@@ -208,7 +208,7 @@ const EditProfile = () => {
 
                             <div className="flex gap-4">
                                 <div className="flex-1">
-                                    <label className="block text-sm font-medium">Email Address</label>
+                                    <label className="font-bold block text-purple-900 flex items-center font-medium">Email Address</label>
                                     <input
                                         type="email"
                                         name="email"
@@ -220,7 +220,7 @@ const EditProfile = () => {
                                     />
                                 </div>
                                 <div className="flex-10">
-                                    <label className="block text-sm font-medium">Phone Number</label>
+                                    <label className="font-bold block text-purple-900 flex items-center font-medium">Phone Number</label>
                                     <input
                                         type="text"
                                         name="phonenumber"
@@ -234,11 +234,11 @@ const EditProfile = () => {
 
 
                             <div>
-                                <label className="block text-sm font-medium">Bio</label>
+                                <label className="font-bold block text-purple-900 flex items-center font-medium">Bio</label>
                                 <textarea
                                     name="bio"
-                                    rows={5}
-                                    className="mt-1 w-140 bg-gray-200 p-2"
+                                    rows={7}
+                                    className="border-2 rounded border-purple-300 text-med font-medium mt-1 w-140 bg-gray-200 p-2"
                                     value={formData.bio}
                                     onChange={handleInputChange}
                                 />
@@ -247,8 +247,8 @@ const EditProfile = () => {
 
 
                             <div className="flex justify-between mt-10">
-                                <button type="submit" className="cursor-pointer mt-4 bg-black text-white px-4 py-2 flex items-center gap-2 rounded">
-                                    <FaRegSave />
+                                <button type="submit" className="border-purple-700 order-2 items-center flex font-bold cursor-pointer mt-4 hover:bg-purple-700 bg-purple-600 text-sm text-white px-5 py-2 flex items-center gap-2 rounded-lg">
+                                    <FaRegSave className="text-lg mr-2"/>
                                     Save
                                 </button>
                             </div>
