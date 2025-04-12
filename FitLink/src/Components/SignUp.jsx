@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import "../index.css";
 import { Link, useNavigate } from "react-router-dom";
 import sign_up_picture from "../assets/jonathan-borba-R0y_bEUjiOM-unsplash.jpg";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../firebase";
 
 const SignUp = () => {
   const [formData, setFormData] = useState({
@@ -23,15 +25,15 @@ const SignUp = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
   
-    // Simple password match check (optional)
+    // Check for matching passwords.
     if (formData.password !== formData.confirm_password) {
       alert("Passwords do not match!");
       return;
     }
-    console.log("from handleSubmit");
+  
     try {
-      console.log("before POST");
-      const response = await fetch("http://fit-link.xyz:7000/api/accounts/", {
+      // Call your backend signup endpoint.
+      const response = await fetch("http://localhost:7000/api/accounts/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -41,8 +43,6 @@ const SignUp = () => {
           password: formData.password,
         }),
       });
-
-      console.log("API Failed");
   
       if (!response.ok) {
         const errorData = await response.json();
@@ -51,15 +51,18 @@ const SignUp = () => {
       } else {
         const data = await response.json();
         console.log("Signup successful:", data);
-        // Navigate to signin page after successful signup
-        navigate("/signin")
+  
+        // Create a Firebase account as well.
+        await createUserWithEmailAndPassword(auth, formData.email, formData.password);
+  
+        // After signup, navigate to the Email Verification page so the user can verify their email.
+        navigate("/email-verification");
       }
     } catch (error) {
       console.error("Error during signup:", error);
       alert("An error occurred. Please try again later.");
     }
   };
-  
 
   return (
     <div className="flex h-screen items-center justify-center">
@@ -77,7 +80,7 @@ const SignUp = () => {
               onSubmit={handleSubmit}
               className="w-4/5 m-auto flex flex-col "
             >
-              <label for="email" className="input-label">
+              <label htmlFor="email" className="input-label">
                 Email
               </label>
               <input
@@ -87,7 +90,7 @@ const SignUp = () => {
                 value={formData.email}
                 onChange={handleInputChange}
               />
-              <label for="password" className="input-label">
+              <label htmlFor="password" className="input-label">
                 Password
               </label>
               <input
@@ -97,7 +100,7 @@ const SignUp = () => {
                 value={formData.password}
                 onChange={handleInputChange}
               />
-              <label for="confirm_password" className="input-label">
+              <label htmlFor="confirm_password" className="input-label">
                 Confirm Password
               </label>
               <input

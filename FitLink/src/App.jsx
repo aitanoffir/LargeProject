@@ -13,6 +13,8 @@ import CreateNote from './Components/CreateNote';
 import ViewNote from './Components/ViewNote';
 import EditProfile from './Pages/EditProfile';
 import EditProgram from './Components/Program/EditProgram';
+import EmailVerifyPage from './Pages/EmailVerificationPage';
+import PasswordResetPage from './Pages/PasswordResetPage';
 
 
 function App() {
@@ -33,7 +35,9 @@ function App() {
         <Route path="/ViewNote/:id" element={<ViewNote />} />
         <Route path="*" element={<Navigate to="/" />} />
         <Route path="/EditProfile" element={<EditProfile />} />
-
+        <Route path="/Email-Verify" element={<EmailVerifyPage />} />
+        <Route path="/Password-Reset" element={<PasswordResetPage />} />
+        
         {/*dev work routes*/}
         <Route path="/test-edit-program" element={<EditProgram />} />
         

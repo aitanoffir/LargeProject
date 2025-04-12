@@ -5,6 +5,7 @@ import AddClientModal from '../Components/AddClientModal';
 import UpdateClientModal from '../Components/updateClientModal';
 import DeleteConfirm from '../Components/deleteConfirm';
 import ViewClientNotes from '../Components/ViewClientNotes';
+import { useNavigate } from 'react-router-dom';
 
 const ClientsList = () => {
   const [clients, setClients] = useState([]);
@@ -19,6 +20,8 @@ const ClientsList = () => {
   const [clientToDelete, setClientToDelete] = useState(null);
   const [showNotesModal, setShowNotesModal] = useState(false);
   const [selectedClientForNotes, setSelectedClientForNotes] = useState(null);
+
+  const navigate = useNavigate();
 
   const fetchClients = async () => {
     const token = localStorage.getItem("token");
@@ -175,6 +178,12 @@ const ClientsList = () => {
   };
 
   useEffect(() => {
+    //Check email verification
+    const verified = localStorage.getItem('verified');
+    if (verified === "false") {
+      navigate("/email-verify");
+    }
+
     fetchClients();
   }, []);
 

@@ -134,6 +134,13 @@ const EditProfile = () => {
       };
 
     useEffect(() => {
+
+        //Check email verification
+        const verified = localStorage.getItem('verified');
+        if (verified === "false") {
+        navigate("/email-verify");
+        }
+
         const token = localStorage.getItem('token');
         if (token) {
             try {

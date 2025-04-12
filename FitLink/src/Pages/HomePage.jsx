@@ -10,7 +10,15 @@ const HomePage = () => {
 
   useEffect(() => {
     // Retrieve token from localStorage (assuming it was stored during sign-in)
-    const token = localStorage.getItem('token');     
+    const token = localStorage.getItem('token');
+
+    //Check email verification
+    const verified = localStorage.getItem('verified');
+    if (verified === "false") {
+      navigate("/email-verify");
+    }
+
+
     if (token) {
 
       try {
