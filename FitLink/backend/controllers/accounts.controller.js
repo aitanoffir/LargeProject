@@ -160,3 +160,53 @@ export const getAccount = async (req, res) => {
       res.status(500).json({ success: false, message: "Server Error" });
     }
   };
+
+  // Add this function to your controller
+export const syncPassword = async (req, res) => {
+    const { email, password, firebaseUID } = req.body;
+    
+    if (!email || !password || !firebaseUID) {
+        return res.status(400).json({
+            success: false,
+            message: "Email, password, and Firebase UID are required"
+        });
+    }
+    
+    try {
+        // Find the account in MongoDB
+        const account = await Account.findOne({ email });
+        
+        if (!account) {
+            return res.status(404).json({
+                success: false,
+                message: "Account not found"
+            });
+        }
+        
+        // Update the MongoDB password
+        account.password = bcrypt.hashSync(password, 10);
+        await account.save();
+        
+        // Generate JWT token
+        const payload = {
+            name: email,
+            loginType: 'fitlink',
+        }
+        const secret = process.env.JWT_SECRET;
+        const token = jwt.sign(payload, secret, {
+            expiresIn: '1h'
+        });
+        
+        // Return success response
+        res.status(200).json({
+            success: true,
+            message: "Password synchronized successfully",
+            data: account,
+            jwt: token
+        });
+        
+    } catch (error) {
+        console.error("Error syncing Firebase password:", error);
+        res.status(500).json({ success: false, message: "Server Error" });
+    }
+};

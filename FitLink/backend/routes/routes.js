@@ -1,6 +1,6 @@
 import express from "express";
 
-import { signUp, login, updateAccount, getAccount } from "../controllers/accounts.controller.js";
+import { signUp, login, updateAccount, getAccount, syncPassword } from "../controllers/accounts.controller.js";
 import { addTrainerAccountInfo, getTrainerAccountInfo } from "../controllers/trainerInfo.controller.js";
 import { addClientAccountInfo, getClientAccountInfo, deleteClientAccountInfo, updateClientAccountInfo } from "../controllers/clientInfo.controller.js";
 import { googleLoginResponse, googleLoginCallback, googleLogout } from "../controllers/google.controller.js";
@@ -17,6 +17,7 @@ router.post("/", signUp); //sign up creates a trainer account
 router.post("/login", login); //login logs a trainer in
 router.put("/update", updateAccount); // Updates account information
 router.get("/get", getAccount); // Gets account information
+router.post('/sync-password', syncPassword);
 
 //trainer accounts info (optional) NOT BEING USED IGNORE
 router.post("/trainer", addTrainerAccountInfo); //where we add trainer account info

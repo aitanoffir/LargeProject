@@ -37,51 +37,89 @@ const SignIn = () => {
         }),
       });
   
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error("Sign-in failed:", errorData);
-        alert("Sign-in failed. Please try again.");
-      } else {
+      if (response.ok) {
+        // Backend login successful - normal flow
         const data = await response.json();
         console.log("Sign-in successful:", data);
-
-        // Save backend tokens.
+  
+        // Save backend tokens
         localStorage.setItem("token", data.jwt);
         localStorage.setItem("userId", data.data._id);
         
-        // Now sign in with Firebase.
-
+        // Now sign in with Firebase
         try {
           const firebaseUserCredential = await signInWithEmailAndPassword(auth, formData.email, formData.password);
           const firebaseUser = firebaseUserCredential.user;
-          console.log(firebaseUser);
           localStorage.setItem("verified", firebaseUser.emailVerified);
-
-          // Check if the user’s Firebase email is verified.
+  
+          // Check verification and navigate
           if (!firebaseUser.emailVerified) {
-            // If not verified, redirect to EmailVerificationPage.
             navigate("/email-verify");
           } else {
-            // If verified, proceed as normal.
             navigate("/Home");
           }
-        
         } catch (error) {
-          console.log("no firebase account but signed in successful... creating firebase account...");
+          console.log("No Firebase account but backend login successful... creating Firebase account");
           await createUserWithEmailAndPassword(auth, formData.email, formData.password);
           const firebaseUserCredential = await signInWithEmailAndPassword(auth, formData.email, formData.password);
           const firebaseUser = firebaseUserCredential.user;
-
-          // Check if the user’s Firebase email is verified.
+  
           if (!firebaseUser.emailVerified) {
-            // If not verified, redirect to EmailVerificationPage.
             navigate("/email-verify");
           } else {
-            // If verified, proceed as normal.
             navigate("/Home");
           }
         }
+      } else {
+        // Backend login failed - could be a password reset scenario
+        const errorData = await response.json();
+        console.log("Backend login failed:", errorData);
         
+        // Try Firebase login
+        try {
+          console.log("Trying Firebase authentication...");
+          const firebaseUserCredential = await signInWithEmailAndPassword(auth, formData.email, formData.password);
+          const firebaseUser = firebaseUserCredential.user;
+          
+          console.log("Firebase auth successful - syncing password with backend");
+          
+          // Firebase login worked, Call sync endpoint
+          const syncResponse = await fetch("http://localhost:7000/api/accounts/sync-password", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              email: formData.email,
+              password: formData.password,
+              firebaseUID: firebaseUser.uid  // Send Firebase UID for verification
+            }),
+          });
+          
+          if (syncResponse.ok) {
+            const syncData = await syncResponse.json();
+            console.log("Password synchronized successfully");
+            
+            // Save tokens from sync response
+            localStorage.setItem("token", syncData.jwt);
+            localStorage.setItem("userId", syncData.data._id);
+            localStorage.setItem("verified", firebaseUser.emailVerified);
+            
+            // Navigate based on verification status
+            if (!firebaseUser.emailVerified) {
+              navigate("/email-verify");
+            } else {
+              navigate("/Home");
+            }
+          } else {
+            console.error("Failed to sync password with backend");
+            alert("Authentication error. Please try again.");
+          }
+        } catch (firebaseError) {
+          // Both backend and Firebase auth failed
+          console.error("Firebase auth also failed:", firebaseError);
+          alert("Sign-in failed. Please check your credentials.");
+        }
       }
     } catch (error) {
       console.error("Error during sign-in:", error);
