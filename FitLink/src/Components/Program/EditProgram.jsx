@@ -2,40 +2,63 @@ import React, { useEffect, useState } from "react";
 import WorkoutCard from "./WorkoutCard";
 
 const EditProgram = (props) => {
-  let client = props.client;
-  const [activeDay, setActiveDay] = useState(client.workoutSchedule[0].day);
-  useEffect(() => {
-    console.log("Current Client", client);
-  });
 
-  const defaultWorkoutsByDay = {
-    Monday: [
-      { name: "Chest Press", sets: "3", reps: "10" },
-      { name: "Incline Dumbbell Press", sets: "3", reps: "12" },
-    ],
-    Tuesday: [
-      { name: "Squats", sets: "4", reps: "8" },
-      { name: "Lunges", sets: "3", reps: "10" },
-    ],
-    Wednesday: [
-      { name: "Deadlifts", sets: "3", reps: "5" },
-      { name: "Barbell Rows", sets: "3", reps: "8" },
-    ],
-    Thursday: [
-      { name: "Overhead Press", sets: "3", reps: "10" },
-      { name: "Lateral Raises", sets: "3", reps: "15" },
-    ],
-    Friday: [
-      { name: "Barbell Curls", sets: "3", reps: "12" },
-      { name: "Tricep Extensions", sets: "3", reps: "12" },
-    ],
+  const sampleProgram = {
+    clientId: "67faf81ba8e8c4f2815d5fe8",
+    goal: "Strength",
+    experience: "Beginner",
+    days: ["Monday", "Wednesday", "Friday"],
+    style: "Split",
+    workoutPlan: {
+      workouts: [
+        {
+          day: "Monday",
+          focus: "Full Body Strength",
+          notes: "Focus on form and full range of motion. Rest 1 minute between sets.",
+          exercises: [
+            { name: "Squat", sets: 3, reps: "10" },
+            { name: "Push-up", sets: 3, reps: "15" },
+            { name: "Bent-over Row", sets: 3, reps: "12" },
+            { name: "Plank", sets: 3, reps: "60s" },
+          ],
+        },
+        {
+          day: "Wednesday",
+          focus: "Cardio and Core",
+          notes: "Maintain a steady cardio pace and focus on engaging core muscles throughout exercises.",
+          exercises: [
+            { name: "Jump Rope", sets: 5, reps: "60s" },
+            { name: "Sit-up", sets: 3, reps: "20" },
+            { name: "Mountain Climber", sets: 4, reps: "30" },
+            { name: "Bicycle Crunch", sets: 3, reps: "20" },
+          ],
+        },
+        {
+          day: "Friday",
+          focus: "Upper Body Strength",
+          notes: "Use weights that are challenging but allow maintaining good form. Rest 60–90 seconds between sets.",
+          exercises: [
+            { name: "Bench Press", sets: 3, reps: "10" },
+            { name: "Shoulder Press", sets: 3, reps: "10" },
+            { name: "Lat Pulldown", sets: 3, reps: "12" },
+            { name: "Bicep Curl", sets: 3, reps: "15" },
+          ],
+        },
+      ],
+    },
   };
 
-  const fallbackWorkouts = [
-    { name: "Push-ups", sets: "3", reps: "15" },
-    { name: "Plank", sets: "3", reps: "60s" },
-  ];
+  const client = props.client;
+  const workouts = sampleProgram.workoutPlan.workouts;
+  const [activeDay, setActiveDay] = useState(client.workoutSchedule[0].day);
 
+  const workoutsByDay = workouts.reduce((acc, entry) => {
+    acc[entry.day] = entry.exercises;
+    return acc;
+  }, {});
+
+  
+  console.log("Workouts is", workoutsByDay)
   const [cards, setCards] = useState(
     client.workoutSchedule.map((entry, index) => ({
       id: index + 1,
@@ -43,9 +66,7 @@ const EditProgram = (props) => {
       startTime: entry.startTime,
       endTime: entry.endTime,
       focus: entry.focus || "TBD",
-      exercises: (defaultWorkoutsByDay[entry.day] || fallbackWorkouts).map(
-        (w) => ({ ...w })
-      ),
+      exercises: (workoutsByDay[entry.day] || []).map((w) => ({ ...w })),
     }))
     // Add more as needed
   );
@@ -115,7 +136,7 @@ const EditProgram = (props) => {
             Cancel
           </button>
           <button
-            onClick={props.onSave}
+            onClick={() => props.onSave(props.program)}
             className="btn bg-accent hover:bg-blue-700 text-white"
           >
             Save

@@ -8,13 +8,66 @@ import EditProgram from "../Components/Program/EditProgram";
 import NavBar from "../Components/NavBar";
 import { BsPlusLg } from "react-icons/bs";
 import { useNavigate } from "react-router-dom";
+import { generateWorkout, saveWorkout, editWorkout, deleteWorkout, getWorkout, getAllWorkouts } from "../api/workoutApi";
+import { getClientsByTrainer } from "../api/clientApi";
 
 const ProgramPage = () => {
   const [customPrograms, setCustomPrograms] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [clients, setClients] = useState([]);
   const [selectedClient, setSelectedClient] = useState(null);
-  const [showEditModal, setShowEditModal] = useState(false);
+  const [showEditProgram, setShowEditProgram] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(null);
+
+  const sampleProgram = {
+    clientId: "67faf81ba8e8c4f2815d5fe8",
+    goal: "Strength",
+    experience: "Beginner",
+    days: ["Monday", "Wednesday", "Friday"],
+    style: "Split",
+    workoutPlan: {
+      workouts: [
+        {
+          day: "Monday",
+          focus: "Full Body Strength",
+          notes:
+            "Focus on form and full range of motion. Rest 1 minute between sets.",
+          exercises: [
+            { name: "Squat", sets: 3, reps: "10" },
+            { name: "Push-up", sets: 3, reps: "15" },
+            { name: "Bent-over Row", sets: 3, reps: "12" },
+            { name: "Plank", sets: 3, reps: "60s" },
+          ],
+        },
+        {
+          day: "Wednesday",
+          focus: "Cardio and Core",
+          notes:
+            "Maintain a steady cardio pace and focus on engaging core muscles throughout exercises.",
+          exercises: [
+            { name: "Jump Rope", sets: 5, reps: "60s" },
+            { name: "Sit-up", sets: 3, reps: "20" },
+            { name: "Mountain Climber", sets: 4, reps: "30" },
+            { name: "Bicycle Crunch", sets: 3, reps: "20" },
+          ],
+        },
+        {
+          day: "Friday",
+          focus: "Upper Body Strength",
+          notes:
+            "Use weights that are challenging but allow maintaining good form. Rest 60–90 seconds between sets.",
+          exercises: [
+            { name: "Bench Press", sets: 3, reps: "10" },
+            { name: "Shoulder Press", sets: 3, reps: "10" },
+            { name: "Lat Pulldown", sets: 3, reps: "12" },
+            { name: "Bicep Curl", sets: 3, reps: "15" },
+          ],
+        },
+      ],
+    },
+  };
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -28,9 +81,37 @@ const ProgramPage = () => {
   }, []);
 
   useEffect(() => {
-    //Check email verification
-    console.log(clients);
-  }, []);
+    const token = localStorage.getItem("token");
+  
+    if (clients.length && token) {
+      getAllWorkouts(clients, token)
+        .then((programs) => {
+          if (programs.length > 0) {
+            setCustomPrograms(programs);
+          } else {
+            console.log("⚠️ No workouts found, using fallback program");
+            setCustomPrograms([sampleProgram]);
+          }
+        })
+        .catch((error) => {
+          console.error("❌ Error fetching workouts:", error);
+          setCustomPrograms([sampleProgram]);
+        });
+    }
+  }, [clients]);
+
+  console.log(customPrograms);
+
+  const handleSaveWorkout = async (program) => {
+    const token = localStorage.getItem("token");
+  
+    try {
+      await saveWorkout(program, token);
+      console.log("✅ Workout saved successfully");
+    } catch (error) {
+      console.error("❌ Error saving workout:", error.message);
+    }
+  };
 
   const fetchClients = async () => {
     const token = localStorage.getItem("token");
@@ -78,58 +159,49 @@ const ProgramPage = () => {
     }
   };
 
-  const [isLoading, setIsLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState(null);
-
   const handleAddProgram = async (newProgram) => {
-
     setIsLoading(true);
     setErrorMessage(null);
-
-    console.log(newProgram);
-
+  
     try {
-      const response = await fetch(
-        "http://localhost:7000/api/accounts/generate-workout",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            goal: newProgram.client.goal,
-            experience: newProgram.client.experience,
-            days: newProgram.selected_days,
-            style: newProgram.client.style,
-          }),
-        }
-      );
-
-      if (response.ok) {
-        const data = await response.json();
-
-        const fullProgram = {
-          // title: newProgram.program_name,
-          clientId: newProgram.clientId,
-          goal: newProgram.client.goal,
-          experience: newProgram.client.experience,
-          days: newProgram.selected_days,
-          style: newProgram.client.style,
-          workoutPlan: data.workoutPlan,
-        };
-
-        console.log(`Full Program: ${fullProgram}`);
-
-        setCustomPrograms((prev) => [...prev, fullProgram]);
-        setShowModal(false);
+      const fullProgram = await generateWorkout(newProgram);
+  
+      if (
+        fullProgram.clientId &&
+        fullProgram.goal &&
+        fullProgram.experience &&
+        fullProgram.days &&
+        fullProgram.style &&
+        fullProgram.workoutPlan?.workouts?.length > 0
+      ) {
+        console.log("✅ Full program ready:", fullProgram);
       } else {
-        setErrorMessage("Failed to generate workout plan.");
+        console.warn("⚠️ Full program is missing fields:", fullProgram);
       }
+  
+      // Optionally save to backend
+      // await saveWorkout(fullProgram, localStorage.getItem("token"));
+  
+      setCustomPrograms((prev) => [...prev, fullProgram]);
+  
+      const fullClient = clients.find((c) => c._id === newProgram.clientId);
+      if (!fullClient) {
+        console.warn("⚠️ Could not find fullClient for ID:", newProgram.clientId);
+      }
+      setSelectedClient(fullClient);
+      setShowModal(false);
+      setShowEditProgram(true);
     } catch (error) {
-      console.error("Error during fetching data from ChatGPT:", error);
+      console.error("❌ Error generating workout plan:", error);
       setErrorMessage("An error occurred. Please try again later.");
     } finally {
       setIsLoading(false);
     }
   };
+
+  const clientsWithPrograms = clients.filter((client) =>
+    customPrograms.some((program) => program.clientId === client._id)
+  );
 
   return (
     <div className="flex h-screen bg-gray-100">
@@ -147,10 +219,18 @@ const ProgramPage = () => {
         <div className="">
           <Section title="Clients Programs">
             <div className="ml-1 flex overflow-x-auto space-x-4 px-4">
-              {clients
-                .slice()
-                .reverse()
-                .map((client) => (
+              {/* {clientsWithPrograms.length === 0 && (
+                <div className="text-gray-500 italic px-4 py-2">
+                  You haven't generated any client programs yet.
+                </div>
+              )}
+
+              {clientsWithPrograms.map((client) => {
+                const clientProgram = customPrograms.find(
+                  (program) => program.clientId === client._id
+                ); */}
+              {clients.map((client) => {
+                return (
                   <>
                     <ProgramCard
                       key={client._id}
@@ -158,21 +238,29 @@ const ProgramPage = () => {
                       color={client.color}
                       onClick={() => {
                         setSelectedClient(client);
-                        setSelectedClient(client);
-                        setShowEditModal(true);
+                        setShowEditProgram(true);
                       }}
                     />
 
-                    {/*On click shows the program based on the client id*/}
-                    {selectedClient && (
-                      <EditProgram
-                        key={selectedClient._id}
-                        client={selectedClient}
-                        onClose={() => setSelectedClient(null)}
-                      />
-                    )}
+                    {selectedClient &&
+                      selectedClient._id === client._id &&
+                      showEditProgram && (
+                        <EditProgram
+                          key={selectedClient._id}
+                          client={selectedClient}
+                          program={customPrograms.find(
+                            (program) => program.clientId === selectedClient._id
+                          )}
+                          onClose={() => {
+                            setSelectedClient(null);
+                            setShowEditProgram(false);
+                          }}
+                        />
+                      )}
                   </>
-                ))}
+                );
+              })}
+              ;
             </div>
           </Section>
 
@@ -204,6 +292,31 @@ const ProgramPage = () => {
                 )
               )}
             </Suspense>
+
+            {showEditProgram && selectedClient && (
+              <EditProgram
+                key={selectedClient._id}
+                client={selectedClient}
+                program={customPrograms}
+                oprogram={customPrograms.find((p) => p.clientId === selectedClient._id)}
+                onClose={() => {
+                  setSelectedClient(null);
+                  setShowEditProgram(false);
+                }}
+                onSave={(program) => {
+                  const token = localStorage.getItem("token");
+                  saveWorkout(program, token);
+                }}
+                onEdit={(program) => {
+                  const token = localStorage.getItem("token");
+                  editWorkout(program, token);
+                }}
+                onDelete={(program) => {
+                  const token = localStorage.getItem("token");
+                  deleteWorkout(program.clientId, token);
+                }}
+              />
+            )}
           </Section>
         </div>
       </div>
