@@ -1,14 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import Header from '../Components/Header';
-import Section from '../Components/Program/CardSection';
-import ProgramCard from '../Components/Program/ProgramCard';
-import ConfirmModal from '../Components/Program/ConfirmModal';
-import ProgramModal from '../Components/Program/ProgramModal';
-import EditProgram from '../Components/Program/EditProgram';
-import NavBar from '../Components/NavBar';
+import React, { useState, useEffect, Suspense } from "react";
+import Header from "../Components/Header";
+import Section from "../Components/Program/CardSection";
+import ProgramCard from "../Components/Program/ProgramCard";
+import ConfirmModal from "../Components/Program/ConfirmModal";
+import ProgramModal from "../Components/Program/ProgramModal";
+import EditProgram from "../Components/Program/EditProgram";
+import NavBar from "../Components/NavBar";
 import { BsPlusLg } from "react-icons/bs";
-import { useNavigate } from 'react-router-dom';
-
+import { useNavigate } from "react-router-dom";
 
 const ProgramPage = () => {
   const [customPrograms, setCustomPrograms] = useState([]);
@@ -16,14 +15,11 @@ const ProgramPage = () => {
   const [clients, setClients] = useState([]);
   const [selectedClient, setSelectedClient] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
-  const [selectedClient, setSelectedClient] = useState(null);
   const navigate = useNavigate();
 
-
   useEffect(() => {
-
     //Check email verification
-    const verified = localStorage.getItem('verified');
+    const verified = localStorage.getItem("verified");
     if (verified === "false") {
       navigate("/email-verify");
     }
@@ -31,7 +27,10 @@ const ProgramPage = () => {
     fetchClients();
   }, []);
 
-
+  useEffect(() => {
+    //Check email verification
+    console.log(clients);
+  }, []);
 
   const fetchClients = async () => {
     const token = localStorage.getItem("token");
@@ -79,10 +78,57 @@ const ProgramPage = () => {
     }
   };
 
-  const handleAddProgram = () => {
-    const newTitle = `Custom Program ${customPrograms.length + 1}`;
-    setCustomPrograms([...customPrograms, { title: newTitle }]);
-    setShowModal(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(null);
+
+  const handleAddProgram = async (newProgram) => {
+
+    setIsLoading(true);
+    setErrorMessage(null);
+
+    console.log(newProgram);
+
+    try {
+      const response = await fetch(
+        "http://localhost:7000/api/accounts/generate-workout",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            goal: newProgram.client.goal,
+            experience: newProgram.client.experience,
+            days: newProgram.selected_days,
+            style: newProgram.client.style,
+          }),
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+
+        const fullProgram = {
+          // title: newProgram.program_name,
+          clientId: newProgram.clientId,
+          goal: newProgram.client.goal,
+          experience: newProgram.client.experience,
+          days: newProgram.selected_days,
+          style: newProgram.client.style,
+          workoutPlan: data.workoutPlan,
+        };
+
+        console.log(`Full Program: ${fullProgram}`);
+
+        setCustomPrograms((prev) => [...prev, fullProgram]);
+        setShowModal(false);
+      } else {
+        setErrorMessage("Failed to generate workout plan.");
+      }
+    } catch (error) {
+      console.error("Error during fetching data from ChatGPT:", error);
+      setErrorMessage("An error occurred. Please try again later.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -101,39 +147,32 @@ const ProgramPage = () => {
         <div className="">
           <Section title="Clients Programs">
             <div className="ml-1 flex overflow-x-auto space-x-4 px-4">
-              {clients.slice().reverse().map((client) => (
-                <>
-                  <ProgramCard
-                    key={client._id}
-                    title={`${client.firstName} ${client.lastName}`}
-                    color={client.color}
-                    onClick={() => {
-                      setSelectedClient(client);
-                      setSelectedClient(client);
-                      setShowEditModal(true);
-                    }}
-                  />
-                ))}
-
-              {/*On click shows the program based on the client id*/}
-              {selectedClient && (
-                <EditProgram
-                  key={selectedClient._id}
-                  client={selectedClient}
-                  onClose={() => setSelectedClient(null)}
-                />
-              )}
-                  {showEditModal && selectedClient?._id === client._id && (
-                    <EditProgram
-                      client={selectedClient}
-                      onClose={() => {
-                        setShowEditModal(false);
-                        setSelectedClient(null);
+              {clients
+                .slice()
+                .reverse()
+                .map((client) => (
+                  <>
+                    <ProgramCard
+                      key={client._id}
+                      title={`${client.firstName} ${client.lastName}`}
+                      color={client.color}
+                      onClick={() => {
+                        setSelectedClient(client);
+                        setSelectedClient(client);
+                        setShowEditModal(true);
                       }}
                     />
-                  )}
-                </>
-              ))}
+
+                    {/*On click shows the program based on the client id*/}
+                    {selectedClient && (
+                      <EditProgram
+                        key={selectedClient._id}
+                        client={selectedClient}
+                        onClose={() => setSelectedClient(null)}
+                      />
+                    )}
+                  </>
+                ))}
             </div>
           </Section>
 
@@ -145,14 +184,26 @@ const ProgramPage = () => {
                 onClick={() => setShowModal(true)}
               />
             </div>
-            {showModal && (
-              <ProgramModal
-                title="Create New Program"
-                message="Are you sure you want to add a new program?"
-                onConfirm={handleAddProgram}
-                onClose={() => setShowModal(false)}
-              />
-            )}
+
+            <Suspense>
+              {isLoading ? (
+                <div className="fixed inset-0 z-50 flex flex-col items-center justify-center backdrop-blur-sm bg-black/30">
+                  <span className="text-purple-700 font-semibold text-lg">
+                    Generating Program...
+                  </span>
+                  <div className="mt-4 animate-spin rounded-full h-8 w-8 border-t-2 border-purple-600 border-opacity-50"></div>
+                </div>
+              ) : (
+                showModal && (
+                  <ProgramModal
+                    clients={clients}
+                    title="Create New Program"
+                    onConfirm={handleAddProgram}
+                    onClose={() => setShowModal(false)}
+                  />
+                )
+              )}
+            </Suspense>
           </Section>
         </div>
       </div>
