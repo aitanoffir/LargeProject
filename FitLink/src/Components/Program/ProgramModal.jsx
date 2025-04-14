@@ -3,13 +3,13 @@ import { FaPlus, FaArrowLeft } from "react-icons/fa";
 import CalenderForm from "./CalenderForm";
 
 const ProgramModal = ({ clients, title, onConfirm, onClose }) => {
+
   const [formData, setFormData] = useState({
     clientId: "",
-    // program_name: "",
     experience: "",
     goal: "",
     style: "",
-    selected_days: [],
+    days: [],
   });
 
   const [client, setClient] = useState();
@@ -22,7 +22,7 @@ const ProgramModal = ({ clients, title, onConfirm, onClose }) => {
     };
   
     if (client.workoutSchedule) {
-      updatedFields.selected_days = client.workoutSchedule.map(entry => entry.day);
+      updatedFields.days = client.workoutSchedule.map(entry => entry.day);
     }
   
     setFormData((prev) => ({ ...prev, ...updatedFields }));
@@ -71,21 +71,7 @@ const ProgramModal = ({ clients, title, onConfirm, onClose }) => {
               ))}
             </select>
 
-            {/* Program Name
-            <label
-              htmlFor="client"
-              className="input-label font-bold mt-4 text-sm text-purple-900 items-center"
-            >
-              Program Name
-            </label>
-            <input
-              value={formData.program_name}
-              placeholder="e.g. Full Body Strength Program"
-              onChange={(e) => {
-                setFormData({ ...formData, program_name: e.target.value });
-              }}
-              className="w-full border-2 rounded p-2 border-purple-300 text-sm font-medium"
-            /> */}
+    
             {/*Experience */}
             <label
               htmlFor="client"
@@ -135,17 +121,17 @@ const ProgramModal = ({ clients, title, onConfirm, onClose }) => {
             />
 
             {/* Availability */}
-            <label
+            {/* <label
               htmlFor="days"
               className="input-label font-bold mt-4 text-sm text-purple-900 items-center"
             >
               Availability:
-            </label>
-
+            </label> */}
+{/* 
             <CalenderForm
               color={client?.color}
               schedule={client?.workoutSchedule}
-            />
+            /> */}
 
             {/* Comments */}
             {/* <label
@@ -177,7 +163,9 @@ const ProgramModal = ({ clients, title, onConfirm, onClose }) => {
             </button>
             <button
               type="button"
-              onClick={() => onConfirm(formData)}
+              onClick={() => {
+                onConfirm(formData)
+              }}
               className="bg-purple-600 hover:bg-purple-700 text-white px-5 py-2 rounded-lg text-sm font-bold flex items-center border-2 border-purple-700"
             >
               <FaPlus className="mr-2" />

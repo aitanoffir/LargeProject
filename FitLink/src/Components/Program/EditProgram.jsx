@@ -3,6 +3,16 @@ import WorkoutCard from "./WorkoutCard";
 
 const EditProgram = (props) => {
 
+  const [formData, setFormData] = useState({
+    clientId: props.clientId,
+    goal: props.goal,
+    experience: props.experience,
+    days: 0,
+    style: props.style,
+    workoutPlan: props.workoutPlan,
+  });
+  
+  
   const sampleProgram = {
     clientId: "67faf81ba8e8c4f2815d5fe8",
     goal: "Strength",
@@ -136,7 +146,7 @@ const EditProgram = (props) => {
             Cancel
           </button>
           <button
-            onClick={() => props.onSave(props.program)}
+            onClick={onSave(formData)}
             className="btn bg-accent hover:bg-blue-700 text-white"
           >
             Save

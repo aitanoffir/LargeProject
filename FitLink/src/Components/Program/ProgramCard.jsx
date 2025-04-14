@@ -1,15 +1,15 @@
 import React from 'react';
 
-const ProgramCard = ({ title, color, onClick }) => {
-    const bgColor = color || '#A9A9A9';
+const ProgramCard = (props) => {
+    const bgColor = props.color || '#A9A9A9';
 
     return (
         <div
-            onClick={onClick}
+            onClick={props.onClick}
             className="w-75 h-55 rounded-2xl flex-shrink-0 shadow-md flex justify-center items-center text-white text-xl font-semibold cursor-pointer "
             style={{ backgroundColor: bgColor }}
         >
-            {title}
+            {props.title}
         </div>
     );
 };

@@ -9,116 +9,16 @@ import NavBar from "../Components/NavBar";
 import { BsPlusLg } from "react-icons/bs";
 import { useNavigate } from "react-router-dom";
 
-
 const ProgramPage = () => {
   const [customPrograms, setCustomPrograms] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [clients, setClients] = useState([]);
   const [selectedClient, setSelectedClient] = useState(null);
+  const [selectedWorkoutPlan, setSelectedWorkoutPlan] = useState(null);
   const [showEditProgram, setShowEditProgram] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
-  
-  const getWorkout = async (clientId, token) => {
-    const res = await fetch(
-      `http://localhost:7000/api/accounts/workouts/client/${clientId}`,
-      {
-        headers: {
-          Authorization: token,
-        },
-      }
-    );
-  
-    if (!res.ok) {
-      const errText = await res.text();
-      throw new Error(errText || "Failed to fetch workout.");
-    }
-  
-    const data = await res.json();
-    return { ...data, clientId }; // You can spread data.data if that's your structure
-  };
-  
-  const getAllWorkouts = async (clients, token) => {
-    const programs = [];
-  
-    for (const client of clients) {
-      try {
-        const res = await fetch(
-          `http://localhost:7000/api/accounts/workouts/client/${client._id}`,
-          {
-            headers: {
-              Authorization: token,
-            },
-          }
-        );
-  
-        if (res.ok) {
-          const data = await res.json();
-          programs.push({ ...data, clientId: client._id });
-        } else if (res.status !== 404) {
-          const errText = await res.text();
-          console.error(`Error fetching workout for ${client._id}:`, errText);
-        }
-      } catch (error) {
-        console.error(`Network error for ${client._id}:`, error);
-      }
-    }
-  
-    return programs;
-  };
-  
-  const saveWorkout = async (program, token) => {
-    const response = await fetch("http://localhost:7000/api/accounts/workouts", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: token,
-      },
-      body: JSON.stringify({
-        clientId: program.client._id,
-        goal: program.client.goal,
-        experience: program.client.experience,
-        days: program.days,
-        style: program.client.style,
-        workoutPlan: program.workoutPlan,
-      }),
-    });
-  
-    if (!response.ok) throw new Error("Failed to save program");
-  };
-  
-  const generateWorkout = async (newProgram) => {
-    const response = await fetch(
-      "http://localhost:7000/api/accounts/generate-workout",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          goal: newProgram.client.goal,
-          experience: newProgram.client.experience,
-          days: newProgram.selected_days,
-          style: newProgram.client.style,
-        }),
-      }
-    );
-  
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(errorText || "Failed to generate workout");
-    }
-  
-    const data = await response.json();
-  
-    return {
-      clientId: newProgram.clientId,
-      goal: newProgram.goal,
-      experience: newProgram.experience,
-      days: newProgram.selected_days,
-      style: newProgram.style,
-      workoutPlan: data.workoutPlan,
-    };
-  };
-  
+
   const sampleProgram = {
     clientId: "67faf81ba8e8c4f2815d5fe8",
     goal: "Strength",
@@ -167,48 +67,159 @@ const ProgramPage = () => {
     },
   };
 
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    //Check email verification
-    const verified = localStorage.getItem("verified");
-    if (verified === "false") {
-      navigate("/email-verify");
+  const getWorkout = async (clientId) => {
+    const token = localStorage.getItem("token");
+    const trainerId = localStorage.getItem("userId");
+    if (!token || !trainerId) {
+      console.error("Token or Trainer ID not found.");
+      return;
     }
 
-    fetchClients();
-  }, []);
-
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-  
-    if (clients.length && token) {
-      getAllWorkouts(clients, token)
-        .then((programs) => {
-          if (programs.length > 0) {
-            setCustomPrograms(programs);
-          } else {
-            console.log("⚠️ No workouts found, using fallback program");
-            setCustomPrograms([sampleProgram]);
-          }
-        })
-        .catch((error) => {
-          console.error("❌ Error fetching workouts:", error);
-          setCustomPrograms([sampleProgram]);
-        });
-    }
-  }, [clients]);
-
-  console.log(customPrograms);
-
-  const handleSaveWorkout = async (program) => {
-    const token = localStorage.getItem("token");
-  
     try {
-      await saveWorkout(program, token);
-      console.log("✅ Workout saved successfully");
+      console.log("Getting workout for", {clientId})
+      const response = await fetch(
+        `http://localhost:7000/api/accounts/workouts/client/${clientId}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: token,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || "Failed to fetch workout.");
+      }
+
+      const data = await response.json(); // <-- must call as a function
+      console.log("Got data", { data: data.data })
+      return data.data;
     } catch (error) {
-      console.error("❌ Error saving workout:", error.message);
+      console.error(`Network error for ${clientId}:`, error);
+      return null;
+    }
+  };
+
+  const getWorkoutFromClient = async (clientId) => {
+    try {
+      const workoutPlan = await getWorkout(clientId);
+      console.log(workoutPlan);
+      setSelectedWorkoutPlan(workoutPlan);
+    } catch (error) {
+      console.error("Error fetching workout:", error);
+      setSelectedWorkoutPlan(null);
+    }
+  };
+
+  const saveWorkout = async (program) => {
+    const token = localStorage.getItem("token");
+
+    try {
+      const response = await fetch(
+        `http://localhost:7000/api/accounts/workouts`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: token,
+          },
+          body: JSON.stringify({
+            clientId: program.clientId,
+            goal: program.goal,
+            experience: program.experience,
+            days: Array.isArray(program.days)
+              ? program.days.length
+              : program.days,
+            style: program.style,
+            workoutPlan: program.workoutPlan?.workouts || program.workoutPlan,
+          }),
+        }
+      );
+
+      if (response.status == 409) {
+        return 409;
+      }
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || "Failed to saved program");
+      }
+
+      console.log("Program saved successfully");
+    } catch (err) {
+      console.error("Edit error:", err.message);
+    }
+  };
+
+  const editWorkout = async (program, workoutId) => {
+    const token = localStorage.getItem("token");
+
+    try {
+      console.log("Editing Program", { program });
+      const response = await fetch(
+        `http://localhost:7000/api/accounts/workouts/${workoutId}`, // assume RESTful
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: token,
+          },
+          body: JSON.stringify({
+            clientId: program.clientId,
+            goal: program.goal,
+            experience: program.experience,
+            days: Array.isArray(program.days)
+              ? program.days.length
+              : program.days,
+            style: program.style,
+            workoutPlan: program.workoutPlan?.workoutPlan?.workouts,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || "Failed to edit program");
+      }
+
+      console.log("Program edited successfully", { program });
+    } catch (err) {
+      console.error("Edit error:", err.message);
+    }
+  };
+
+  const deleteWorkout = async (program) => {
+    const token = localStorage.getItem("token");
+    const trainerId = localStorage.getItem("userId");
+    if (!token || !trainerId) {
+      console.error("Token or Trainer ID not found.");
+      return;
+    }
+
+    console.log("Saving new program", { program });
+
+    try {
+      const response = await fetch(
+        "http://localhost:7000/api/accounts/workouts",
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: token,
+          },
+          body: JSON.stringify({
+            workoutId: workoutId,
+          }),
+        }
+      );
+
+      if (!response.ok) throw new Error("Failed to delete program");
+
+      console.log("Program deleted successfully");
+    } catch (err) {
+      console.error("Delete error:", err.message);
     }
   };
 
@@ -258,38 +269,65 @@ const ProgramPage = () => {
     }
   };
 
-  const handleAddProgram = async (newProgram) => {
+  const generateProgram = async (formData) => {
     setIsLoading(true);
     setErrorMessage(null);
-  
+
+    const token = localStorage.getItem("token");
+    const trainerId = localStorage.getItem("userId");
+    if (!token || !trainerId) {
+      console.error("Token or Trainer ID not found.");
+      return;
+    }
+
     try {
-      const fullProgram = await generateWorkout(newProgram);
-  
-      if (
-        fullProgram.clientId &&
-        fullProgram.goal &&
-        fullProgram.experience &&
-        fullProgram.days &&
-        fullProgram.style &&
-        fullProgram.workoutPlan?.workouts?.length > 0
-      ) {
-        console.log("✅ Full program ready:", fullProgram);
-      } else {
-        console.warn("⚠️ Full program is missing fields:", fullProgram);
+      console.log("Generating Program", { formData });
+      const response = await fetch(
+        "http://localhost:7000/api/accounts/generate-workout",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: token,
+          },
+          body: JSON.stringify({
+            goal: formData.goal,
+            experience: formData.experience,
+            days: formData.days,
+            style: formData.style,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch the workout plan.");
       }
-  
-      // Optionally save to backend
-      // await saveWorkout(fullProgram, localStorage.getItem("token"));
-  
-      setCustomPrograms((prev) => [...prev, fullProgram]);
-  
-      const fullClient = clients.find((c) => c._id === newProgram.clientId);
-      if (!fullClient) {
-        console.warn("⚠️ Could not find fullClient for ID:", newProgram.clientId);
+
+      const data = await response.json();
+
+      console.log(data);
+      const program = {
+        clientId: formData.clientId,
+        goal: formData.goal,
+        experience: formData.experience,
+        days: formData.days,
+        style: formData.style,
+        workoutPlan: data.workoutPlan,
+      };
+
+      {/*Try to save workout but fail due to existing workout-> get the workoutId -> using workoutId to update instead*/}
+      const result = await saveWorkout(program);
+      if (result === 409) {
+        
+        let data = await getWorkout(program.clientId);
+        let workoutId = data._id;
+        console.log(workoutId)
+        await editWorkout(program, workoutId);
       }
-      setSelectedClient(fullClient);
+
+      console.log("Generated Program", program);
+
       setShowModal(false);
-      setShowEditProgram(true);
     } catch (error) {
       console.error("❌ Error generating workout plan:", error);
       setErrorMessage("An error occurred. Please try again later.");
@@ -297,6 +335,18 @@ const ProgramPage = () => {
       setIsLoading(false);
     }
   };
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    //Check email verification
+    const verified = localStorage.getItem("verified");
+    if (verified === "false") {
+      navigate("/email-verify");
+    }
+
+    fetchClients();
+  }, []);
 
   const clientsWithPrograms = clients.filter((client) =>
     customPrograms.some((program) => program.clientId === client._id)
@@ -337,29 +387,31 @@ const ProgramPage = () => {
                       color={client.color}
                       onClick={() => {
                         setSelectedClient(client);
+                        getWorkoutFromClient(client._id);
                         setShowEditProgram(true);
                       }}
                     />
 
-                    {selectedClient &&
-                      selectedClient._id === client._id &&
-                      showEditProgram && (
-                        <EditProgram
-                          key={selectedClient._id}
-                          client={selectedClient}
-                          program={customPrograms.find(
-                            (program) => program.clientId === selectedClient._id
-                          )}
-                          onClose={() => {
-                            setSelectedClient(null);
-                            setShowEditProgram(false);
-                          }}
-                        />
-                      )}
+                    {showEditProgram && selectedClient && selectedProgram && (
+                      <EditProgram
+                        key={selectedClient._id}
+                        clientId={selectedClient._id}
+                        goal={selectedWorkoutPlan.goal}
+                        days={customPrograms}
+                        style={selectedWorkoutPlan.style}
+                        workoutPlan={selectedWorkoutPlan.workoutPlan}
+                        onClose={() => {
+                          setSelectedClient(null);
+                          setShowEditProgram(false);
+                        }}
+                        onSave={saveWorkout}
+                        onEdit={editWorkout}
+                        onDelete={deleteWorkout}
+                      />
+                    )}
                   </>
                 );
               })}
-              ;
             </div>
           </Section>
 
@@ -385,42 +437,16 @@ const ProgramPage = () => {
                   <ProgramModal
                     clients={clients}
                     title="Create New Program"
-                    onConfirm={handleAddProgram}
+                    onConfirm={generateProgram}
                     onClose={() => setShowModal(false)}
                   />
                 )
               )}
             </Suspense>
-
-            {showEditProgram && selectedClient && (
-              <EditProgram
-                key={selectedClient._id}
-                client={selectedClient}
-                program={customPrograms}
-                oprogram={customPrograms.find((p) => p.clientId === selectedClient._id)}
-                onClose={() => {
-                  setSelectedClient(null);
-                  setShowEditProgram(false);
-                }}
-                onSave={(program) => {
-                  const token = localStorage.getItem("token");
-                  saveWorkout(program, token);
-                }}
-                onEdit={(program) => {
-                  const token = localStorage.getItem("token");
-                  editWorkout(program, token);
-                }}
-                onDelete={(program) => {
-                  const token = localStorage.getItem("token");
-                  deleteWorkout(program.clientId, token);
-                }}
-              />
-            )}
           </Section>
         </div>
       </div>
     </div>
   );
 };
-
 export default ProgramPage;
