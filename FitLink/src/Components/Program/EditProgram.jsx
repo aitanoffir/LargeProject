@@ -3,10 +3,11 @@ import WorkoutCard from "./WorkoutCard";
 
 const EditProgram = (props) => {
   const [formData, setFormData] = useState({
+    _id: props.workoutPlan._id,
     clientId: props.clientId,
     goal: props.goal,
     experience: props.experience,
-    days: 0,
+    days: props.days,
     style: props.style,
     workoutPlan: props.workoutPlan,
   });

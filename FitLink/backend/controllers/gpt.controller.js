@@ -41,6 +41,26 @@ export const generateWorkoutPlan = async (req, res) => {
     const jsonString = extractJson(reply);
     const workoutJSON = JSON.parse(jsonString);
 
+    // In gpt.controller.js
+    console.log("Raw GPT response:", jsonString);
+    console.log("Parsed workout JSON:", workoutJSON);
+
+    // Normalize workouts to use 'name' instead of 'exercise'
+    if (workoutJSON.workouts) {
+      workoutJSON.workouts.forEach(workout => {
+        if (Array.isArray(workout.exercises)) {
+          workout.exercises.forEach(exercise => {
+            // If exercise has 'exercise' field but no 'name' field
+            if (exercise.exercise && !exercise.name) {
+              exercise.name = exercise.exercise; // Copy value to 'name'
+              // Delete original field to avoid duplication
+              delete exercise.exercise;
+            }
+          });
+        }
+      });
+    }
+
     res.status(200).json({ success: true, workoutPlan: workoutJSON });
 
   } catch (error) {

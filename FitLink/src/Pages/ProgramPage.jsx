@@ -70,7 +70,7 @@ const ProgramPage = () => {
   useEffect(() => {
     console.log("🧠 selectedClient updated:", selectedClient);
   }, [selectedClient]);
-  
+
   useEffect(() => {
     console.log("📋 selectedWorkoutPlan updated:", selectedWorkoutPlan);
   }, [selectedWorkoutPlan]);
@@ -84,7 +84,7 @@ const ProgramPage = () => {
     }
 
     try {
-      console.log("Getting workout for", {clientId})
+      console.log("Getting workout for", { clientId })
       const response = await fetch(
         `http://localhost:7000/api/accounts/workouts/client/${clientId}`,
         {
@@ -114,7 +114,7 @@ const ProgramPage = () => {
     try {
       const workoutPlan = await getWorkout(clientId);
       setSelectedWorkoutPlan(workoutPlan);
-      return 
+      return
     } catch (error) {
       console.error("Error fetching workout:", error);
       setSelectedWorkoutPlan(null);
@@ -202,26 +202,35 @@ const ProgramPage = () => {
       return;
     }
 
+    // Get the workout ID (either from program or selectedWorkoutPlan)
+    const workoutId = program._id || (selectedWorkoutPlan && selectedWorkoutPlan._id);
+
+    if (!workoutId) {
+      console.error("No workout ID found for deletion");
+      return;
+    }
+
     console.log("Saving new program", { program });
 
     try {
       const response = await fetch(
-        "http://localhost:7000/api/accounts/workouts",
+        `http://localhost:7000/api/accounts/workouts/${workoutId}`,
         {
           method: "DELETE",
           headers: {
             "Content-Type": "application/json",
             Authorization: token,
-          },
-          body: JSON.stringify({
-            workoutId: workoutId,
-          }),
+          }
         }
       );
 
       if (!response.ok) throw new Error("Failed to delete program");
 
       console.log("Program deleted successfully");
+
+      // Close the edit modal after deletion
+      setSelectedClient(null);
+      setShowEditProgram(false);
     } catch (err) {
       console.error("Delete error:", err.message);
     }
@@ -318,10 +327,10 @@ const ProgramPage = () => {
         workoutPlan: data.workoutPlan.workouts, // <- HAS TO CALL THE NESTED STRUCTURE SINCE ITS DIFFERENT WHEN GENERATED}
       };
 
-      {/*Try to save workout but fail due to existing workout-> get the workoutId -> using workoutId to update instead*/}
+      {/*Try to save workout but fail due to existing workout-> get the workoutId -> using workoutId to update instead*/ }
       const result = await saveWorkout(program);
       if (result === 409) {
-        
+
         let data = await getWorkout(program.clientId);
         let workoutId = data._id;
         await editWorkout(program, workoutId);
@@ -405,7 +414,7 @@ const ProgramPage = () => {
                           setSelectedClient(null);
                           setShowEditProgram(false);
                         }}
-                        onSave={saveWorkout}
+                        onSave={(formData) => editWorkout(formData, selectedWorkoutPlan._id)}
                         onEdit={editWorkout}
                         onDelete={deleteWorkout}
                       />
