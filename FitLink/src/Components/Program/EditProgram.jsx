@@ -1,91 +1,57 @@
 import React, { useEffect, useState } from "react";
 import WorkoutCard from "./WorkoutCard";
+import { set } from "mongoose";
 
 const EditProgram = (props) => {
   const [formData, setFormData] = useState({
     clientId: props.clientId,
     goal: props.goal,
     experience: props.experience,
-    days: 0,
+    days: props.days,
     style: props.style,
     workoutPlan: props.workoutPlan,
   });
 
-  // const sampleProgram = {
-  //   clientId: "67faf81ba8e8c4f2815d5fe8",
-  //   goal: "Strength",
-  //   experience: "Beginner",
-  //   days: ["Monday", "Wednesday", "Friday"],
-  //   style: "Split",
-  //   workoutPlan: {
-  //     workouts: [
-  //       {
-  //         day: "Monday",
-  //         focus: "Full Body Strength",
-  //         notes: "Focus on form and full range of motion. Rest 1 minute between sets.",
-  //         exercises: [
-  //           { name: "Squat", sets: 3, reps: "10" },
-  //           { name: "Push-up", sets: 3, reps: "15" },
-  //           { name: "Bent-over Row", sets: 3, reps: "12" },
-  //           { name: "Plank", sets: 3, reps: "60s" },
-  //         ],
-  //       },
-  //       {
-  //         day: "Wednesday",
-  //         focus: "Cardio and Core",
-  //         notes: "Maintain a steady cardio pace and focus on engaging core muscles throughout exercises.",
-  //         exercises: [
-  //           { name: "Jump Rope", sets: 5, reps: "60s" },
-  //           { name: "Sit-up", sets: 3, reps: "20" },
-  //           { name: "Mountain Climber", sets: 4, reps: "30" },
-  //           { name: "Bicycle Crunch", sets: 3, reps: "20" },
-  //         ],
-  //       },
-  //       {
-  //         day: "Friday",
-  //         focus: "Upper Body Strength",
-  //         notes: "Use weights that are challenging but allow maintaining good form. Rest 60–90 seconds between sets.",
-  //         exercises: [
-  //           { name: "Bench Press", sets: 3, reps: "10" },
-  //           { name: "Shoulder Press", sets: 3, reps: "10" },
-  //           { name: "Lat Pulldown", sets: 3, reps: "12" },
-  //           { name: "Bicep Curl", sets: 3, reps: "15" },
-  //         ],
-  //       },
-  //     ],
-  //   },
-  // };
-
   const workoutSchedule = props.client.workoutSchedule;
   const workoutPlan = props.workoutPlan;
-  const [activeDay, setActiveDay] = useState(props.workoutPlan[0].day);
-
   const [cards, setCards] = useState(() => {
-
-    const planByDay = props.workoutPlan.reduce((acc, entry) => {
-      acc[entry.day] = {
-        focus: entry.focus,
-        exercises: entry.exercises.map((ex) => ({ ...ex })),
-        notes: entry.notes
+    return workoutSchedule.map((entry, index) => {
+      const plan = workoutPlan[index] || {};
+      return {
+        id: index + 1,
+        day: entry.day,
+        startTime: entry.startTime,
+        endTime: entry.endTime,
+        focus: plan.focus,
+        exercises: (plan.exercises || []).map((ex) => ({ ...ex })),
+        notes: plan.notes,
       };
-      return acc;
-    }, {});
-    
-    return workoutSchedule.map((entry, index) => ({
-      id: index + 1,
-      day: entry.day,
-      startTime: entry.startTime,
-      endTime: entry.endTime,
-      focus: planByDay[entry.day].focus || "TBD",
-      exercises: planByDay[entry.day].exercises,
-      notes: planByDay[entry.day].notes,
-    }));
+    });
   });
+  const [activeDay, setActiveDay] = useState(cards[0].day);
 
-  console.log("cards",cards)
+  const updateCard = (cardId, updates) => {
+    setCards((prevCards) =>
+      prevCards.map((card) =>
+        card.id === cardId ? { ...card, ...updates } : card
+      )
+    );
+  };
 
-  const handleDeleteCard = (id) => {
-    setCards((prev) => prev.filter((card) => card.id !== id));
+  const onConfirm = () => {
+    const updatedWorkoutPlan = cards.map(({ focus, notes, exercises }) => ({
+      focus,
+      notes,
+      exercises,
+    }));
+
+    const updatedFormData = {
+      ...formData,
+      workoutPlan: updatedWorkoutPlan,
+    };
+
+    setFormData(updatedFormData);
+    console.log("✅ Confirmed updated form data:", updatedFormData);
   };
 
   return (
@@ -101,12 +67,14 @@ const EditProgram = (props) => {
 
         {/* Title */}
         <div className="font-bold text-4xl text-gray-800 mb-8">
-          {props.client.firstName ? `${props.client.firstName}'s Program` : "Guest Program"}
+          {props.client.firstName
+            ? `${props.client.firstName}'s Program`
+            : "Guest Program"}
         </div>
 
         {/* Day Tabbing */}
         <div className="rounded-md flex gap-2 mb-4 p-1 w-full bg-[#F4F4F5] justify-between">
-          {workoutPlan.map((entry) => (
+          {cards.map((entry) => (
             <button
               key={entry.day}
               onClick={() => setActiveDay(entry.day)}
@@ -136,25 +104,45 @@ const EditProgram = (props) => {
                 notes={card.notes}
                 exercises={card.exercises}
                 onDelete={() => handleDeleteCard(card.id)}
+                onUpdate={(id, updates) => updateCard(id, updates)}
+                onConfirm={onConfirm}
                 color={props.client.color}
               />
             ))}
         </div>
 
         {/* Action Buttons */}
-        <div className="flex justify-end align-r gap-4">
+        <div className="flex justify-between align-r gap-4">
           <button
-            onClick={props.onClose}
-            className="btn bg-gray-300 hover:bg-gray-400 text-gray-800"
+            onClick={() => {
+              console.log(props.workoutId);
+              if (
+                window.confirm("Are you sure you want to delete this program?")
+              ) {
+                props.onDelete(props.workoutId);
+              }
+            }}
+            className="btn bg-red-400 hover:bg-gray-400 text-gray-800"
           >
-            Cancel
+            Delete Program
           </button>
-          <button
-            onClick={() => props.onSave(formData)}
-            className="btn bg-accent hover:bg-blue-700 text-white"
-          >
-            Save
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={props.onClose}
+              className="btn bg-gray-300 hover:bg-gray-400 text-gray-800"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={() => {
+                console.log(formData, props.workoutId);
+                props.onEdit(formData, props.workoutId);
+              }}
+              className="btn bg-accent hover:bg-blue-700 text-white"
+            >
+              Save
+            </button>
+          </div>
         </div>
       </div>
     </div>
