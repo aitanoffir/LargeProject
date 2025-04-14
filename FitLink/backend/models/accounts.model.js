@@ -4,9 +4,7 @@ const accountSchema = new mongoose.Schema({
   email: {
     type: String,
     required: true,
-    unique: true, // Ensure each email is only used once
-    lowercase: true,
-    trim: true
+    unique: true // Ensure each email is only used once
   },
   username: {
     type: String, // Optional, can be shown in UI
