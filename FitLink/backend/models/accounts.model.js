@@ -1,17 +1,20 @@
 import mongoose from "mongoose";
 
-const accountSignUp = mongoose.Schema({
-  username: {
+const accountSchema = new mongoose.Schema({
+  email: {
     type: String,
+    required: true,
+    unique: true // Ensure each email is only used once
+  },
+  username: {
+    type: String, // Optional, can be shown in UI
     required: false
   },
   password: {
     type: String,
-    required: true
-  },
-  email: {
-    type: String,
-    required: true
+    required: function () {
+      return this.authType === 'fitlink';
+    }
   },
   firstName: {
     type: String,
@@ -29,20 +32,30 @@ const accountSignUp = mongoose.Schema({
     type: String,
     required: false
   },
+
+  // Auth-related fields
   authType: {
     type: String,
     enum: ['google', 'fitlink'],
     default: 'fitlink'
   },
+  googleId: {
+    type: String,
+    unique: true,
+    sparse: true // allows multiple nulls (only indexed if present)
+  },
   googleAccessToken: {
-    type: String
+    type: String,
+    required: false
   },
   googleRefreshToken: {
-    type: String
+    type: String,
+    required: false
   }
+
 }, {
   timestamps: true
 });
 
-const Account = mongoose.model('Account', accountSignUp);
+const Account = mongoose.model('Account', accountSchema);
 export default Account;

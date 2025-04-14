@@ -4,6 +4,7 @@ import { set } from "mongoose";
 
 const EditProgram = (props) => {
   const [formData, setFormData] = useState({
+    _id: props.workoutPlan._id,
     clientId: props.clientId,
     goal: props.goal,
     experience: props.experience,

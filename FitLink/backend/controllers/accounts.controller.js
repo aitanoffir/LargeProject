@@ -17,6 +17,16 @@ export const login = async (req, res) => {
                 message: "Invalid credentials" 
             });
         }
+
+        //if account is linked with google, return message to use google login
+        if (account.authType === 'google') {
+            return res.status(403).json({
+              success: false,
+              message: "This account is linked with Google. Please log in with Google instead.",
+              redirectToGoogle: true // frontend can use this flag to redirect
+            });
+          }
+
         //check hashed passwords against each other
         const isMatch = await bcrypt.compare(password, account.password);
         if (!isMatch) {

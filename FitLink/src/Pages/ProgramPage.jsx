@@ -153,15 +153,13 @@ const ProgramPage = () => {
     try {
       const response = await fetch(
         `http://localhost:7000/api/accounts/workouts/${workoutId}`,
+        `http://localhost:7000/api/accounts/workouts/${workoutId}`,
         {
           method: "DELETE",
           headers: {
             "Content-Type": "application/json",
             Authorization: token,
-          },
-          body: JSON.stringify({
-            workoutId: workoutId,
-          }),
+          }
         }
       );
 
