@@ -14,6 +14,7 @@ import {
   parseISO
 } from "date-fns";
 import NavBar from "../Components/NavBar";
+import { useNavigate } from "react-router-dom";
 
 const Calendar = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -26,11 +27,22 @@ const Calendar = () => {
   const [newEventLocation, setNewEventLocation] = useState("");
   const [newEventDescription, setNewEventDescription] = useState("");
   const [editingEvent, setEditingEvent] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
+    const query = new URLSearchParams(location.search);
+    const token = query.get("token");
+    console.log("Token from URL:", token);
+    if (token) {
+
+      localStorage.setItem("token", token);
+
+      // Clean the URL
+      navigate("/Calendar", { replace: true });
+    }
     const fetchEvents = async () => {
       try {
-        const jwt = localStorage.getItem("jwt");
+        const jwt = localStorage.getItem("token");
         const res = await fetch("http://localhost:7000/api/accounts/calendar/events", {
           headers: {
             Authorization: `Bearer ${jwt}`
@@ -68,7 +80,7 @@ const Calendar = () => {
   }, []);
 
   const addEvent = async () => {
-    const jwt = localStorage.getItem("jwt");
+    const jwt = localStorage.getItem("token");
     const localStart = new Date(`${format(selectedDate, "yyyy-MM-dd")}T${newEventTime}`);
     const localEnd = new Date(`${format(selectedDate, "yyyy-MM-dd")}T${newEventEndTime}`);
     const estStart = new Date(localStart.toLocaleString("en-US", { timeZone: "America/New_York" }));
@@ -116,7 +128,7 @@ const Calendar = () => {
   };
 
   const updateEvent = async () => {
-    const jwt = localStorage.getItem("jwt");
+    const jwt = localStorage.getItem("token");
     const localStart = new Date(`${format(selectedDate, "yyyy-MM-dd")}T${newEventTime}`);
     const localEnd = new Date(`${format(selectedDate, "yyyy-MM-dd")}T${newEventEndTime}`);
     const estStart = new Date(localStart.toLocaleString("en-US", { timeZone: "America/New_York" }));
@@ -161,7 +173,7 @@ const Calendar = () => {
   
 
   const deleteEvent = async (eventId) => {
-    const jwt = localStorage.getItem("jwt");
+    const jwt = localStorage.getItem("token");
     await fetch(`http://localhost:7000/api/accounts/calendar/event/${eventId}`, {
       method: "DELETE",
       headers: {
@@ -272,10 +284,10 @@ const Calendar = () => {
         <div className="max-w-5xl mx-auto mt-4 shadow rounded bg-white">
           {showPrompt ? (
             <div className="p-4 text-center text-red-600">
-              <p>You must log in with Google to use the calendar.</p>
+              <p>You must log in with Google to use the calendar.  Our calendar links to your Google calendar therefore you must login with a valid Google account for this feature to work.</p>
               <button
                 onClick={async () => {
-                  const jwt = localStorage.getItem("jwt");
+                  const jwt = localStorage.getItem("token");
                   const res = await fetch("http://localhost:7000/api/accounts/link/google/init", {
                     headers: {
                       Authorization: `${jwt}`,

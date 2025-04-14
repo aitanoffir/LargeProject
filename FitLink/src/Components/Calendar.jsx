@@ -58,7 +58,7 @@ const Calendar = () => {
   }, []);
 
   const addEvent = async () => {
-    const jwt = localStorage.getItem("jwt");
+    const jwt = localStorage.getItem("token");
     const newEvent = {
       summary: newEventTitle,
       start: { date: format(selectedDate, "yyyy-MM-dd") },
@@ -84,7 +84,7 @@ const Calendar = () => {
   };
 
   const deleteEvent = async (eventId) => {
-    const jwt = localStorage.getItem("jwt");
+    const jwt = localStorage.getItem("token");
     await fetch(`http://localhost:7000/api/accounts/calendar/event/${eventId}`, {
       method: "DELETE",
       headers: {
@@ -180,7 +180,7 @@ const Calendar = () => {
             <p>You must log in with Google to use the calendar.</p>
             <button
               onClick={async () => {
-                const jwt = localStorage.getItem("jwt");
+                const jwt = localStorage.getItem("token");
                 const res = await fetch("http://localhost:7000/api/accounts/link/google/init", {
                   headers: {
                     Authorization: `Bearer ${jwt}`,

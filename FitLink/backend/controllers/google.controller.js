@@ -168,7 +168,6 @@ export const linkGoogleAccountInit = (req, res) => {
         id: account._id
       };
       const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
-      console.log("Google token: ", token)
       // 7. Redirect with token to frontend Calendar
       res.redirect(`http://localhost:5173/Calendar?token=${token}`);
   
