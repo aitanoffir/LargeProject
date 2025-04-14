@@ -15,6 +15,7 @@ import EditProfile from './Pages/EditProfile';
 import EditProgram from './Components/Program/EditProgram';
 import EmailVerifyPage from './Pages/EmailVerificationPage';
 import PasswordResetPage from './Pages/PasswordResetPage';
+import CalendarPage from './Pages/CalendarPage'; 
 
 
 function App() {
@@ -33,10 +34,12 @@ function App() {
         <Route path="/MyProgram" element={<ProgramPage />} /> 
         <Route path="/Notes" element={<Notes />} />
         <Route path="/ViewNote/:id" element={<ViewNote />} />
-        <Route path="*" element={<Navigate to="/" />} />
         <Route path="/EditProfile" element={<EditProfile />} />
         <Route path="/Email-Verify" element={<EmailVerifyPage />} />
         <Route path="/Password-Reset" element={<PasswordResetPage />} />
+        <Route path="/Calendar" element={<CalendarPage />} />
+        //<Route path="*" element={<Navigate to="/" />} />
+
         
         {/*dev work routes*/}
         <Route path="/test-edit-program" element={<EditProgram />} />
