@@ -278,7 +278,7 @@ const Calendar = () => {
                   const jwt = localStorage.getItem("jwt");
                   const res = await fetch("http://localhost:7000/api/accounts/link/google/init", {
                     headers: {
-                      Authorization: `Bearer ${jwt}`,
+                      Authorization: `${jwt}`,
                     },
                   });
                   const data = await res.json();

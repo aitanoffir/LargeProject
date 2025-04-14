@@ -24,7 +24,7 @@ const Calendar = () => {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const jwt = localStorage.getItem("jwt");
+        const jwt = localStorage.getItem("token");
         const res = await fetch("http://localhost:7000/api/accounts/calendar/events", {
           headers: {
             Authorization: `Bearer ${jwt}`
