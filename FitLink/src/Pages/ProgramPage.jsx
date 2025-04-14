@@ -10,7 +10,7 @@ import { BsPlusLg } from "react-icons/bs";
 import { useNavigate } from "react-router-dom";
 
 const ProgramPage = () => {
-  const [customPrograms, setCustomPrograms] = useState([]);
+
   const [showModal, setShowModal] = useState(false);
   const [clients, setClients] = useState([]);
   const [selectedClient, setSelectedClient] = useState(null);
@@ -67,6 +67,14 @@ const ProgramPage = () => {
     },
   };
 
+  useEffect(() => {
+    console.log("🧠 selectedClient updated:", selectedClient);
+  }, [selectedClient]);
+  
+  useEffect(() => {
+    console.log("📋 selectedWorkoutPlan updated:", selectedWorkoutPlan);
+  }, [selectedWorkoutPlan]);
+
   const getWorkout = async (clientId) => {
     const token = localStorage.getItem("token");
     const trainerId = localStorage.getItem("userId");
@@ -105,8 +113,8 @@ const ProgramPage = () => {
   const getWorkoutFromClient = async (clientId) => {
     try {
       const workoutPlan = await getWorkout(clientId);
-      console.log(workoutPlan);
       setSelectedWorkoutPlan(workoutPlan);
+      return 
     } catch (error) {
       console.error("Error fetching workout:", error);
       setSelectedWorkoutPlan(null);
@@ -129,11 +137,9 @@ const ProgramPage = () => {
             clientId: program.clientId,
             goal: program.goal,
             experience: program.experience,
-            days: Array.isArray(program.days)
-              ? program.days.length
-              : program.days,
+            days: program.days,
             style: program.style,
-            workoutPlan: program.workoutPlan?.workouts || program.workoutPlan,
+            workoutPlan: program.workoutPlan
           }),
         }
       );
@@ -170,11 +176,9 @@ const ProgramPage = () => {
             clientId: program.clientId,
             goal: program.goal,
             experience: program.experience,
-            days: Array.isArray(program.days)
-              ? program.days.length
-              : program.days,
+            days: program.days,
             style: program.style,
-            workoutPlan: program.workoutPlan?.workoutPlan?.workouts,
+            workoutPlan: program.workoutPlan
           }),
         }
       );
@@ -305,14 +309,13 @@ const ProgramPage = () => {
 
       const data = await response.json();
 
-      console.log(data);
       const program = {
         clientId: formData.clientId,
         goal: formData.goal,
         experience: formData.experience,
         days: formData.days,
         style: formData.style,
-        workoutPlan: data.workoutPlan,
+        workoutPlan: data.workoutPlan.workouts, // <- HAS TO CALL THE NESTED STRUCTURE SINCE ITS DIFFERENT WHEN GENERATED}
       };
 
       {/*Try to save workout but fail due to existing workout-> get the workoutId -> using workoutId to update instead*/}
@@ -321,11 +324,8 @@ const ProgramPage = () => {
         
         let data = await getWorkout(program.clientId);
         let workoutId = data._id;
-        console.log(workoutId)
         await editWorkout(program, workoutId);
       }
-
-      console.log("Generated Program", program);
 
       setShowModal(false);
     } catch (error) {
@@ -347,10 +347,6 @@ const ProgramPage = () => {
 
     fetchClients();
   }, []);
-
-  const clientsWithPrograms = clients.filter((client) =>
-    customPrograms.some((program) => program.clientId === client._id)
-  );
 
   return (
     <div className="flex h-screen bg-gray-100">
@@ -385,19 +381,24 @@ const ProgramPage = () => {
                       key={client._id}
                       title={`${client.firstName} ${client.lastName}`}
                       color={client.color}
-                      onClick={() => {
+                      onClick={async () => {
                         setSelectedClient(client);
-                        getWorkoutFromClient(client._id);
-                        setShowEditProgram(true);
+                        const workout = await getWorkout(client._id);
+                        console.log("Setting workout to", workout)
+                        if (workout) {
+                          setSelectedWorkoutPlan(workout);
+                          setShowEditProgram(true);
+                        }
                       }}
                     />
 
-                    {showEditProgram && selectedClient && selectedProgram && (
+                    {showEditProgram && selectedClient && selectedWorkoutPlan && (
                       <EditProgram
                         key={selectedClient._id}
+                        client={selectedClient}
                         clientId={selectedClient._id}
                         goal={selectedWorkoutPlan.goal}
-                        days={customPrograms}
+                        days={selectedWorkoutPlan.days}
                         style={selectedWorkoutPlan.style}
                         workoutPlan={selectedWorkoutPlan.workoutPlan}
                         onClose={() => {

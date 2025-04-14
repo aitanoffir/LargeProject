@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import WorkoutCard from "./WorkoutCard";
 
 const EditProgram = (props) => {
-
   const [formData, setFormData] = useState({
     clientId: props.clientId,
     goal: props.goal,
@@ -11,75 +10,79 @@ const EditProgram = (props) => {
     style: props.style,
     workoutPlan: props.workoutPlan,
   });
-  
-  
-  const sampleProgram = {
-    clientId: "67faf81ba8e8c4f2815d5fe8",
-    goal: "Strength",
-    experience: "Beginner",
-    days: ["Monday", "Wednesday", "Friday"],
-    style: "Split",
-    workoutPlan: {
-      workouts: [
-        {
-          day: "Monday",
-          focus: "Full Body Strength",
-          notes: "Focus on form and full range of motion. Rest 1 minute between sets.",
-          exercises: [
-            { name: "Squat", sets: 3, reps: "10" },
-            { name: "Push-up", sets: 3, reps: "15" },
-            { name: "Bent-over Row", sets: 3, reps: "12" },
-            { name: "Plank", sets: 3, reps: "60s" },
-          ],
-        },
-        {
-          day: "Wednesday",
-          focus: "Cardio and Core",
-          notes: "Maintain a steady cardio pace and focus on engaging core muscles throughout exercises.",
-          exercises: [
-            { name: "Jump Rope", sets: 5, reps: "60s" },
-            { name: "Sit-up", sets: 3, reps: "20" },
-            { name: "Mountain Climber", sets: 4, reps: "30" },
-            { name: "Bicycle Crunch", sets: 3, reps: "20" },
-          ],
-        },
-        {
-          day: "Friday",
-          focus: "Upper Body Strength",
-          notes: "Use weights that are challenging but allow maintaining good form. Rest 60–90 seconds between sets.",
-          exercises: [
-            { name: "Bench Press", sets: 3, reps: "10" },
-            { name: "Shoulder Press", sets: 3, reps: "10" },
-            { name: "Lat Pulldown", sets: 3, reps: "12" },
-            { name: "Bicep Curl", sets: 3, reps: "15" },
-          ],
-        },
-      ],
-    },
-  };
 
-  const client = props.client;
-  const workouts = sampleProgram.workoutPlan.workouts;
-  const [activeDay, setActiveDay] = useState(client.workoutSchedule[0].day);
+  // const sampleProgram = {
+  //   clientId: "67faf81ba8e8c4f2815d5fe8",
+  //   goal: "Strength",
+  //   experience: "Beginner",
+  //   days: ["Monday", "Wednesday", "Friday"],
+  //   style: "Split",
+  //   workoutPlan: {
+  //     workouts: [
+  //       {
+  //         day: "Monday",
+  //         focus: "Full Body Strength",
+  //         notes: "Focus on form and full range of motion. Rest 1 minute between sets.",
+  //         exercises: [
+  //           { name: "Squat", sets: 3, reps: "10" },
+  //           { name: "Push-up", sets: 3, reps: "15" },
+  //           { name: "Bent-over Row", sets: 3, reps: "12" },
+  //           { name: "Plank", sets: 3, reps: "60s" },
+  //         ],
+  //       },
+  //       {
+  //         day: "Wednesday",
+  //         focus: "Cardio and Core",
+  //         notes: "Maintain a steady cardio pace and focus on engaging core muscles throughout exercises.",
+  //         exercises: [
+  //           { name: "Jump Rope", sets: 5, reps: "60s" },
+  //           { name: "Sit-up", sets: 3, reps: "20" },
+  //           { name: "Mountain Climber", sets: 4, reps: "30" },
+  //           { name: "Bicycle Crunch", sets: 3, reps: "20" },
+  //         ],
+  //       },
+  //       {
+  //         day: "Friday",
+  //         focus: "Upper Body Strength",
+  //         notes: "Use weights that are challenging but allow maintaining good form. Rest 60–90 seconds between sets.",
+  //         exercises: [
+  //           { name: "Bench Press", sets: 3, reps: "10" },
+  //           { name: "Shoulder Press", sets: 3, reps: "10" },
+  //           { name: "Lat Pulldown", sets: 3, reps: "12" },
+  //           { name: "Bicep Curl", sets: 3, reps: "15" },
+  //         ],
+  //       },
+  //     ],
+  //   },
+  // };
 
-  const workoutsByDay = workouts.reduce((acc, entry) => {
-    acc[entry.day] = entry.exercises;
-    return acc;
-  }, {});
+  const workoutSchedule = props.client.workoutSchedule;
+  const workoutPlan = props.workoutPlan;
+  const [activeDay, setActiveDay] = useState(props.workoutPlan[0].day);
 
-  
-  console.log("Workouts is", workoutsByDay)
-  const [cards, setCards] = useState(
-    client.workoutSchedule.map((entry, index) => ({
+  const [cards, setCards] = useState(() => {
+
+    const planByDay = props.workoutPlan.reduce((acc, entry) => {
+      acc[entry.day] = {
+        focus: entry.focus,
+        exercises: entry.exercises.map((ex) => ({ ...ex })),
+        notes: entry.notes
+      };
+      return acc;
+    }, {});
+    
+    return workoutSchedule.map((entry, index) => ({
       id: index + 1,
       day: entry.day,
       startTime: entry.startTime,
       endTime: entry.endTime,
-      focus: entry.focus || "TBD",
-      exercises: (workoutsByDay[entry.day] || []).map((w) => ({ ...w })),
-    }))
-    // Add more as needed
-  );
+      focus: planByDay[entry.day].focus || "TBD",
+      exercises: planByDay[entry.day].exercises,
+      notes: planByDay[entry.day].notes,
+    }));
+  });
+
+  console.log("cards",cards)
 
   const handleDeleteCard = (id) => {
     setCards((prev) => prev.filter((card) => card.id !== id));
@@ -98,12 +101,12 @@ const EditProgram = (props) => {
 
         {/* Title */}
         <div className="font-bold text-4xl text-gray-800 mb-8">
-          {client.firstName ? `${client.firstName}'s Program` : "Guest Program"}
+          {props.client.firstName ? `${props.client.firstName}'s Program` : "Guest Program"}
         </div>
 
         {/* Day Tabbing */}
         <div className="rounded-md flex gap-2 mb-4 p-1 w-full bg-[#F4F4F5] justify-between">
-          {client.workoutSchedule.map((entry) => (
+          {workoutPlan.map((entry) => (
             <button
               key={entry.day}
               onClick={() => setActiveDay(entry.day)}
@@ -130,6 +133,7 @@ const EditProgram = (props) => {
                 startTime={card.startTime}
                 endTime={card.endTime}
                 focus={card.focus}
+                notes={card.notes}
                 exercises={card.exercises}
                 onDelete={() => handleDeleteCard(card.id)}
                 color={props.client.color}
@@ -146,7 +150,7 @@ const EditProgram = (props) => {
             Cancel
           </button>
           <button
-            onClick={onSave(formData)}
+            onClick={() => props.onSave(formData)}
             className="btn bg-accent hover:bg-blue-700 text-white"
           >
             Save

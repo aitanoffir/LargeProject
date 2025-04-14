@@ -4,6 +4,7 @@ import { ImCross } from "react-icons/im";
 import { FaCheck } from "react-icons/fa";
 import { FaRegTrashAlt } from "react-icons/fa";
 import { IoMdAddCircleOutline } from "react-icons/io";
+import { SlCalender } from "react-icons/sl";
 
 const WorkoutCard = (props) => {
   const [exercises, setExercises] = useState(
@@ -72,10 +73,14 @@ const WorkoutCard = (props) => {
         <h2 className="font-bold text-2xl text-gray-800">
           {props.day || "Day"}
         </h2>
-        <h4 className="text-gray-500">{props.focus || "focusName"}</h4>
-        <h4 className="text-gray-500">
+        <div className="flex items-center mt-1 gap-1">
+          <SlCalender />
+          <h4 className="text-gray-500">
           {props.startTime} - {props.endTime}
-        </h4>
+          </h4>
+        </div>
+        <h4 className="text-gray-500">{props.focus} - {props.notes}</h4>
+        
       </div>
 
       {/* Table */}
