@@ -41,10 +41,6 @@ export const generateWorkoutPlan = async (req, res) => {
     const jsonString = extractJson(reply);
     const workoutJSON = JSON.parse(jsonString);
 
-    // In gpt.controller.js
-    console.log("Raw GPT response:", jsonString);
-    console.log("Parsed workout JSON:", workoutJSON);
-
     // Normalize workouts to use 'name' instead of 'exercise'
     if (workoutJSON.workouts) {
       workoutJSON.workouts.forEach(workout => {
