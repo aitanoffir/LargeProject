@@ -3,7 +3,7 @@ import express from "express";
 import { signUp, login, updateAccount, getAccount, syncPassword } from "../controllers/accounts.controller.js";
 import { addTrainerAccountInfo, getTrainerAccountInfo } from "../controllers/trainerInfo.controller.js";
 import { addClientAccountInfo, getClientAccountInfo, deleteClientAccountInfo, updateClientAccountInfo } from "../controllers/clientInfo.controller.js";
-import { googleLoginResponse, googleLoginCallback, googleLogout } from "../controllers/google.controller.js";
+import { googleLoginResponse, googleLoginCallback, googleLogout, linkGoogleAccountInit, linkGoogleAccountCallback, verifyJWTLink } from "../controllers/google.controller.js";
 import { addSessionNotesInfo, getSessionNotesInfo, deleteSessionNotesInfo, updateSessionNotesInfo } from "../controllers/sessionNotes.controller.js";
 import { generateWorkoutPlan } from "../controllers/gpt.controller.js";
 import { createWorkout, updateWorkout, getWorkoutByClientId, deleteWorkout } from "../controllers/workout.controller.js";
@@ -44,6 +44,10 @@ router.put("/session/:id", updateSessionNotesInfo); //updates a session by _id
 router.get("/auth/google", googleLoginResponse);
 router.get("/auth/google/callback", googleLoginCallback);
 router.get("/auth/google/logout", googleLogout);
+
+//in-session Google account linking
+router.get("/link/google/init", verifyJWTLink, linkGoogleAccountInit); // Link Google Account
+router.get("/link/google/callback", linkGoogleAccountCallback); // Callback after linking Google Account
 
 // Add this route to handle GPT-based workout plan generation
 router.post("/generate-workout", generateWorkoutPlan);

@@ -19,6 +19,7 @@ export const googleLoginResponse = (req, res) => {
   console.log("Attempting to login with Google");
   res.redirect(url);
 };
+
 export const googleLoginCallback = async (req, res) => {
     const { code } = req.query;
   
@@ -42,13 +43,12 @@ export const googleLoginCallback = async (req, res) => {
       const { email, name } = profile;
   
       // Check if user exists, otherwise create new one
-      let account = await Account.findOne({ username: email });
+      let account = await Account.findOne({ email });
   
       if (!account) {
         account = new Account({
           username: email,
           email: email,
-          password: 'google-oauth-placeholder', // This is just a placeholder
           firstName: name.split(' ')[0],
           lastName: name.split(' ')[1] || '',
           authType: 'google',
@@ -67,8 +67,8 @@ export const googleLoginCallback = async (req, res) => {
   
       // Create JWT
       const payload = {
-        name: account.username,
-        loginType: 'google',
+        name: account.email,
+        loginType: account.authType,
         id: account._id
       };
   
@@ -91,6 +91,82 @@ export const googleLoginCallback = async (req, res) => {
   };
   
   
+export const verifyJWTLink = async (req, res, next) => {
+  const token = req.headers.authorization;
+
+  if (!token) return res.status(401).json({ success: false, message: "Missing token" });
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await Account.findOne({ email: decoded.name });
+    if (!user) return res.status(404).json({ success: false, message: "User not found" });
+
+    req.user = user; // attach user to request
+    next();
+  } catch (err) {
+    console.error(err);
+    return res.status(403).json({ success: false, message: "Invalid token" });
+  }
+};
+
+export const linkGoogleAccountInit = (req, res) => {
+    const scope = encodeURIComponent('openid profile email https://www.googleapis.com/auth/calendar');
+    const state = encodeURIComponent(req.user._id.toString()); // pass user ID securely in state param
+
+    const url = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code&scope=${scope}&access_type=offline&prompt=consent&state=${state}`;
+    
+    res.redirect(url);
+  };
+
+  export const linkGoogleAccountCallback = async (req, res) => {
+    const { code, state } = req.query;
+  
+    try {
+      // Exchange code for tokens
+      const tokenRes = await axios.post('https://oauth2.googleapis.com/token', {
+        client_id: CLIENT_ID,
+        client_secret: CLIENT_SECRET,
+        code,
+        redirect_uri: REDIRECT_URI,
+        grant_type: 'authorization_code',
+      });
+  
+      const { access_token, refresh_token } = tokenRes.data;
+  
+      // Fetch user profile from Google
+      const profileRes = await axios.get('https://www.googleapis.com/oauth2/v1/userinfo', {
+        headers: { Authorization: `Bearer ${access_token}` }
+      });
+  
+      const { email, id: googleId, name } = profileRes.data;
+  
+      // Lookup user using state (which we encoded as _id)
+      const account = await Account.findById(state);
+  
+      if (!account) {
+        return res.status(404).json({ success: false, message: "User not found" });
+      }
+  
+      // Prevent re-linking or hijack attempts
+      if (account.googleId && account.googleId !== googleId) {
+        return res.status(400).json({ success: false, message: "This account is already linked to a different Google account." });
+      }
+  
+      // Save Google info
+      account.authType = 'google'; // or keep as 'fitlink' if supporting dual login
+      account.googleId = googleId;
+      account.googleAccessToken = access_token;
+      if (refresh_token) account.googleRefreshToken = refresh_token;
+  
+      await account.save();
+  
+      res.status(200).json({ success: true, message: "Google account linked successfully." });
+  
+    } catch (error) {
+      console.error('Google linking error:', error?.response?.data || error.message);
+      res.status(500).json({ success: false, message: "Failed to link Google account" });
+    }
+  };
 
 
   
