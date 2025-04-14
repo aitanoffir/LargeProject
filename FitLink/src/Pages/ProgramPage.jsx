@@ -8,10 +8,11 @@ import EditProgram from "../Components/Program/EditProgram";
 import NavBar from "../Components/NavBar";
 import { BsPlusLg } from "react-icons/bs";
 import { useNavigate } from "react-router-dom";
+import Popup from "../Components/Program/Popup";
 
 const ProgramPage = () => {
-
   const [showModal, setShowModal] = useState(false);
+
   const [clients, setClients] = useState([]);
   const [selectedClient, setSelectedClient] = useState(null);
   const [selectedWorkoutPlan, setSelectedWorkoutPlan] = useState(null);
@@ -19,60 +20,22 @@ const ProgramPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
 
-  const sampleProgram = {
-    clientId: "67faf81ba8e8c4f2815d5fe8",
-    goal: "Strength",
-    experience: "Beginner",
-    days: ["Monday", "Wednesday", "Friday"],
-    style: "Split",
-    workoutPlan: {
-      workouts: [
-        {
-          day: "Monday",
-          focus: "Full Body Strength",
-          notes:
-            "Focus on form and full range of motion. Rest 1 minute between sets.",
-          exercises: [
-            { name: "Squat", sets: 3, reps: "10" },
-            { name: "Push-up", sets: 3, reps: "15" },
-            { name: "Bent-over Row", sets: 3, reps: "12" },
-            { name: "Plank", sets: 3, reps: "60s" },
-          ],
-        },
-        {
-          day: "Wednesday",
-          focus: "Cardio and Core",
-          notes:
-            "Maintain a steady cardio pace and focus on engaging core muscles throughout exercises.",
-          exercises: [
-            { name: "Jump Rope", sets: 5, reps: "60s" },
-            { name: "Sit-up", sets: 3, reps: "20" },
-            { name: "Mountain Climber", sets: 4, reps: "30" },
-            { name: "Bicycle Crunch", sets: 3, reps: "20" },
-          ],
-        },
-        {
-          day: "Friday",
-          focus: "Upper Body Strength",
-          notes:
-            "Use weights that are challenging but allow maintaining good form. Rest 60–90 seconds between sets.",
-          exercises: [
-            { name: "Bench Press", sets: 3, reps: "10" },
-            { name: "Shoulder Press", sets: 3, reps: "10" },
-            { name: "Lat Pulldown", sets: 3, reps: "12" },
-            { name: "Bicep Curl", sets: 3, reps: "15" },
-          ],
-        },
-      ],
-    },
-  };
+  const [pendingProgram, setPendingProgram] = useState(null);
+  const [pendingWorkoutId, setPendingWorkoutId] = useState(null);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+
+  const [showPopup, setShowPopup] = useState(false);
+  const [popupInput, setPopUpInput] = useState({
+    title: "",
+    message: "",
+    type: "", // can be "success", "error", etc. if you're styling it
+    onClose: () => setShowPopup(false),
+  });
 
   useEffect(() => {
-    console.log("🧠 selectedClient updated:", selectedClient);
-  }, [selectedClient]);
-  
-  useEffect(() => {
-    console.log("📋 selectedWorkoutPlan updated:", selectedWorkoutPlan);
+    if (selectedWorkoutPlan) {
+      console.log("📋 selectedWorkoutPlan updated:", selectedWorkoutPlan);
+    }
   }, [selectedWorkoutPlan]);
 
   const getWorkout = async (clientId) => {
@@ -84,7 +47,7 @@ const ProgramPage = () => {
     }
 
     try {
-      console.log("Getting workout for", {clientId})
+      console.log("Getting workout for", { clientId });
       const response = await fetch(
         `http://localhost:7000/api/accounts/workouts/client/${clientId}`,
         {
@@ -102,22 +65,11 @@ const ProgramPage = () => {
       }
 
       const data = await response.json(); // <-- must call as a function
-      console.log("Got data", { data: data.data })
+      console.log("Got data", { data: data.data });
       return data.data;
     } catch (error) {
       console.error(`Network error for ${clientId}:`, error);
       return null;
-    }
-  };
-
-  const getWorkoutFromClient = async (clientId) => {
-    try {
-      const workoutPlan = await getWorkout(clientId);
-      setSelectedWorkoutPlan(workoutPlan);
-      return 
-    } catch (error) {
-      console.error("Error fetching workout:", error);
-      setSelectedWorkoutPlan(null);
     }
   };
 
@@ -139,7 +91,7 @@ const ProgramPage = () => {
             experience: program.experience,
             days: program.days,
             style: program.style,
-            workoutPlan: program.workoutPlan
+            workoutPlan: program.workoutPlan,
           }),
         }
       );
@@ -178,7 +130,7 @@ const ProgramPage = () => {
             experience: program.experience,
             days: program.days,
             style: program.style,
-            workoutPlan: program.workoutPlan
+            workoutPlan: program.workoutPlan,
           }),
         }
       );
@@ -187,41 +139,34 @@ const ProgramPage = () => {
         const errorText = await response.text();
         throw new Error(errorText || "Failed to edit program");
       }
-
-      console.log("Program edited successfully", { program });
+      console.log("Edit Success");
+      return true;
     } catch (err) {
       console.error("Edit error:", err.message);
     }
   };
 
-  const deleteWorkout = async (program) => {
+  const deleteWorkout = async (workoutId) => {
     const token = localStorage.getItem("token");
-    const trainerId = localStorage.getItem("userId");
-    if (!token || !trainerId) {
-      console.error("Token or Trainer ID not found.");
-      return;
-    }
-
-    console.log("Saving new program", { program });
+    console.log("Deleting program");
 
     try {
       const response = await fetch(
-        "http://localhost:7000/api/accounts/workouts",
+        `http://localhost:7000/api/accounts/workouts/${workoutId}`,
         {
           method: "DELETE",
           headers: {
             "Content-Type": "application/json",
             Authorization: token,
-          },
-          body: JSON.stringify({
-            workoutId: workoutId,
-          }),
+          }
         }
       );
 
-      if (!response.ok) throw new Error("Failed to delete program");
-
+      if (!response.ok) {
+        throw new Error("Failed to delete program");
+      }
       console.log("Program deleted successfully");
+      return true;
     } catch (err) {
       console.error("Delete error:", err.message);
     }
@@ -318,13 +263,16 @@ const ProgramPage = () => {
         workoutPlan: data.workoutPlan.workouts, // <- HAS TO CALL THE NESTED STRUCTURE SINCE ITS DIFFERENT WHEN GENERATED}
       };
 
-      {/*Try to save workout but fail due to existing workout-> get the workoutId -> using workoutId to update instead*/}
+      {
+        /*Try to save workout but fail due to existing workout-> get the workoutId -> using workoutId to update instead*/
+      }
       const result = await saveWorkout(program);
       if (result === 409) {
-        
-        let data = await getWorkout(program.clientId);
-        let workoutId = data._id;
-        await editWorkout(program, workoutId);
+        const existing = await getWorkout(program.clientId);
+        setPendingProgram(program);
+        setPendingWorkoutId(existing._id);
+        setShowConfirmModal(true);
+        return;
       }
 
       setShowModal(false);
@@ -338,6 +286,19 @@ const ProgramPage = () => {
 
   const navigate = useNavigate();
 
+  const displayPopup = ({ title, message, type }) => {
+    setPopUpInput((prev) => ({
+      ...prev,
+      title: title,
+      message: message,
+      type: type,
+    }));
+    setShowPopup(true);
+
+    setTimeout(() => {
+      setShowPopup(false);
+    }, 3000);
+  };
   useEffect(() => {
     //Check email verification
     const verified = localStorage.getItem("verified");
@@ -352,7 +313,15 @@ const ProgramPage = () => {
     <div className="flex h-screen bg-gray-100">
       <NavBar />
       <div className="flex-1 flex flex-col overflow-hidden">
-        {" "}
+        {showPopup && (
+          <Popup
+            title={popupInput.title}
+            message={popupInput.message}
+            type={popupInput.type}
+            onClose={() => setShowPopup(false)}
+          />
+        )}
+
         {/* Main content area */}
         <header className="bg-white shadow-sm">
           <div className="px-6 py-5 flex justify-between items-center">
@@ -384,32 +353,80 @@ const ProgramPage = () => {
                       onClick={async () => {
                         setSelectedClient(client);
                         const workout = await getWorkout(client._id);
-                        console.log("Setting workout to", workout)
                         if (workout) {
                           setSelectedWorkoutPlan(workout);
                           setShowEditProgram(true);
+                        } else {
+                          displayPopup({
+                            title: "Warning",
+                            message:
+                              "The client does not have an assigned program yet. Please make one",
+                            type: "warning",
+                          });
                         }
                       }}
                     />
 
-                    {showEditProgram && selectedClient && selectedWorkoutPlan && (
-                      <EditProgram
-                        key={selectedClient._id}
-                        client={selectedClient}
-                        clientId={selectedClient._id}
-                        goal={selectedWorkoutPlan.goal}
-                        days={selectedWorkoutPlan.days}
-                        style={selectedWorkoutPlan.style}
-                        workoutPlan={selectedWorkoutPlan.workoutPlan}
-                        onClose={() => {
-                          setSelectedClient(null);
-                          setShowEditProgram(false);
-                        }}
-                        onSave={saveWorkout}
-                        onEdit={editWorkout}
-                        onDelete={deleteWorkout}
-                      />
-                    )}
+                    {showEditProgram &&
+                      selectedClient &&
+                      selectedWorkoutPlan && (
+                        <EditProgram
+                          key={selectedClient._id}
+                          client={selectedClient}
+                          clientId={selectedClient._id}
+                          workoutId={selectedWorkoutPlan._id}
+                          workoutPlan={selectedWorkoutPlan.workoutPlan}
+                          goal={selectedWorkoutPlan.goal}
+                          days={selectedWorkoutPlan.days}
+                          experience={selectedWorkoutPlan.experience}
+                          style={selectedWorkoutPlan.style}
+                          onClose={() => {
+                            setSelectedClient(null);
+                            setShowEditProgram(false);
+                          }}
+                          onEdit={async (formData, workoutId) => {
+                            const response = await editWorkout(
+                              formData,
+                              workoutId
+                            );
+                            setShowEditProgram(false);
+                            if (response) {
+                              displayPopup({
+                                title: "Success",
+                                message:
+                                  "The program has been updated successfully.",
+                                type: "success",
+                              });
+                            } else {
+                              displayPopup({
+                                title: "Failed",
+                                message:
+                                  "The program could not be saved. Please try again.",
+                                type: "error",
+                              });
+                            }
+                          }}
+                          onDelete={async (workoutId) => {
+                            const response = await deleteWorkout(workoutId);
+                            setShowEditProgram(false);
+                            if (response) {
+                              displayPopup({
+                                title: "Success",
+                                message:
+                                  "The program has been deleted successfully.",
+                                type: "success",
+                              });
+                            } else {
+                              displayPopup({
+                                title: "Failed",
+                                message:
+                                  "The program could not be deleted. Please try again.",
+                                type: "error",
+                              });
+                            }
+                          }}
+                        />
+                      )}
                   </>
                 );
               })}
@@ -442,6 +459,29 @@ const ProgramPage = () => {
                     onClose={() => setShowModal(false)}
                   />
                 )
+              )}
+              {showConfirmModal && (
+                <ConfirmModal
+                  title="This client has an existing program"
+                  message="Would you like to replace it?"
+                  onClose={() => {
+                    setShowConfirmModal(false);
+                    setPendingProgram(null);
+                  }}
+                  onConfirm={async () => {
+                    await editWorkout(pendingProgram, pendingWorkoutId);
+                    setShowConfirmModal(false);
+                    setShowConfirmModal(false);
+                    setPendingProgram(null);
+                    setShowModal(false);
+
+                    displayPopup(
+                      (title = "Success"),
+                      (message = "Updated workout plan"),
+                      (type = "success")
+                    );
+                  }}
+                />
               )}
             </Suspense>
           </Section>

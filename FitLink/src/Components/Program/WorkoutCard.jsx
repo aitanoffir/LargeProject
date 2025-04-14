@@ -21,15 +21,19 @@ const WorkoutCard = (props) => {
     const updated = [...exercises];
     updated[index][field] = value;
     setExercises(updated);
+    props.onUpdate(props.id, { exercises: updated });
   };
 
   const handleAdd = () => {
-    setExercises([...exercises, { name: "", sets: "", reps: "" }]);
+    const updated = [...exercises, { name: "", sets: "", reps: "" }];
+    setExercises(updated);
+    props.onUpdate(props.id, { exercises: updated });
   };
 
   const handleDelete = (index) => {
     const updated = exercises.filter((_, i) => i !== index);
     setExercises(updated);
+    props.onUpdate(props.id, { exercises: updated });
   };
 
   const handleDeleteCard = (id) => {
@@ -43,7 +47,10 @@ const WorkoutCard = (props) => {
           <div className="flex gap-2">
             <button
               className="flex items-center gap-1 px-3 py-2 rounded-md text-sm font-medium text-green-700 bg-green-100 hover:bg-green-200 transition"
-              onClick={() => setIsEditing(false)}
+              onClick={() => {
+                props.onConfirm();
+                setIsEditing(false);
+              }}
             >
               <FaCheck size={14} />
               Confirm
@@ -76,11 +83,32 @@ const WorkoutCard = (props) => {
         <div className="flex items-center mt-1 gap-1">
           <SlCalender />
           <h4 className="text-gray-500">
-          {props.startTime} - {props.endTime}
+            {props.startTime} - {props.endTime}
           </h4>
         </div>
-        <h4 className="text-gray-500">{props.focus} - {props.notes}</h4>
-        
+        {isEditing ? (
+          <>
+            <input
+              type="text"
+              className="mt-2 w-full px-3 py-1.5 border border-gray-300 rounded-md focus:outline-none text-sm"
+              value={props.focus}
+              onChange={(e) =>
+                props.onUpdate(props.id, { focus: e.target.value })
+              }
+            />
+            <textarea
+              value={props.notes}
+              className="mt-2 w-full px-3 py-1.5 border border-gray-300 rounded-md focus:outline-none text-sm"
+              onChange={(e) =>
+                props.onUpdate(props.id, { notes: e.target.value })
+              }
+            />
+          </>
+        ) : (
+          <h4 className="text-gray-500">
+            {props.focus} - {props.notes}
+          </h4>
+        )}
       </div>
 
       {/* Table */}
