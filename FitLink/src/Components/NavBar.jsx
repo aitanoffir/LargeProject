@@ -16,6 +16,10 @@ const NavBar = () => {
   const navigate = useNavigate();
 
   const handleSignOut = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("userId");
+    localStorage.removeItem("verified");
+
     navigate("/SignIn");
     setShowConfirmation(false);
   }
