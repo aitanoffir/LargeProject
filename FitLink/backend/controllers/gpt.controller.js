@@ -90,7 +90,6 @@ export const generateWorkoutPlan = async (req, res) => {
       });
     }
 
-    console.log("Final workout plan:", JSON.stringify(workoutJSON, null, 2));
     res.status(200).json({ success: true, workoutPlan: workoutJSON });
 
   } catch (error) {

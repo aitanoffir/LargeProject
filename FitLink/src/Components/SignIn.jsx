@@ -109,7 +109,7 @@ const SignIn = () => {
         if (errorData.redirectToGoogle) {
           // Optional: you can show a quick message first, or just redirect:
           console.log("Redirecting to Google login...");
-          window.location.href = "http://localhost:7000/api/accounts/auth/google";
+          window.location.href = apiUrl("/api/accounts/auth/google");
           return;
         }
 
