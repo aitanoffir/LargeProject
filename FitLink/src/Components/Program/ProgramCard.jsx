@@ -6,7 +6,7 @@ const ProgramCard = (props) => {
     return (
         <div
             onClick={props.onClick}
-            className="w-75 h-55 rounded-2xl flex-shrink-0 shadow-md flex justify-center items-center text-white text-xl font-semibold cursor-pointer "
+            className="w-55 h-35 rounded-2xl flex-shrink-0 shadow-md flex justify-center items-center text-white text-xl font-semibold cursor-pointer "
             style={{ backgroundColor: bgColor }}
         >
             {props.title}
