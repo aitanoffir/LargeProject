@@ -4,9 +4,10 @@ import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from "fire
 import { auth } from "../firebase";
 import sign_up_picture from "../assets/jonathan-borba-R0y_bEUjiOM-unsplash.jpg";
 import { FcGoogle } from 'react-icons/fc';
+import { apiUrl } from '../../api';
 
 const handleGoogleSignIn = () => {
-  window.location.href = "http://localhost:7000/api/accounts/auth/google";
+  window.location.href = apiUrl("/api/accounts/auth/google");
 };
 
 const SignIn = () => {
@@ -43,8 +44,6 @@ const SignIn = () => {
         console.error('Error parsing token:', error);
         setErrorMessage("Authentication failed. Please try again.");
       }
-
-      fetchUserDetails();
     }
   }, [navigate]); // Include navigate in dependencies
 
@@ -61,7 +60,7 @@ const SignIn = () => {
     setErrorMessage("");
 
     try {
-      const response = await fetch("http://localhost:7000/api/accounts/login", {
+      const response = await fetch(apiUrl("/api/accounts/login"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: formData.email, password: formData.password }),
@@ -116,7 +115,7 @@ const SignIn = () => {
           console.log("Firebase auth successful - syncing password with backend");
 
           // Firebase login worked; call sync endpoint.
-          const syncResponse = await fetch("http://localhost:7000/api/accounts/sync-password", {
+          const syncResponse = await fetch(apiUrl("/api/accounts/sync-password"), {
             method: "POST",
             headers: {
               "Content-Type": "application/json",

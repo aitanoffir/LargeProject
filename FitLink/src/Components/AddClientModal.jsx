@@ -3,6 +3,7 @@ import { FaPlus, FaTimes, FaArrowLeft } from 'react-icons/fa';
 import pencil_icon from "../assets/Pencil Icon.png";
 import plus_circle from "../assets/plusCircleWhite.png";
 import left_arrow from "../assets/leftArrowWhite.png";
+import { apiUrl } from "../../api";
 
 const AddClientModal = ({ onClose }) => {
   const [form, setForm] = useState({
@@ -159,7 +160,7 @@ const AddClientModal = ({ onClose }) => {
     }
   
     try {
-      const response = await fetch("http://localhost:7000/api/accounts/client", {
+      const response = await fetch(apiUrl("/api/accounts/client"), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

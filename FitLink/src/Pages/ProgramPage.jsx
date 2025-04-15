@@ -9,6 +9,7 @@ import NavBar from "../Components/NavBar";
 import { BsPlusLg } from "react-icons/bs";
 import { useNavigate } from "react-router-dom";
 import Popup from "../Components/Program/Popup";
+import { apiUrl } from "../../api";
 
 const ProgramPage = () => {
   const [showModal, setShowModal] = useState(false);
@@ -49,7 +50,7 @@ const ProgramPage = () => {
     try {
       console.log("Getting workout for", { clientId });
       const response = await fetch(
-        `http://localhost:7000/api/accounts/workouts/client/${clientId}`,
+        apiUrl(`/api/accounts/workouts/client/${clientId}`),
         {
           method: "GET",
           headers: {
@@ -78,7 +79,7 @@ const ProgramPage = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:7000/api/accounts/workouts`,
+        apiUrl(`/api/accounts/workouts`),
         {
           method: "POST",
           headers: {
@@ -117,7 +118,7 @@ const ProgramPage = () => {
     try {
       console.log("Editing Program", { program });
       const response = await fetch(
-        `http://localhost:7000/api/accounts/workouts/${workoutId}`, // assume RESTful
+        apiUrl(`/api/accounts/workouts/${workoutId}`), // assume RESTful
         {
           method: "PUT",
           headers: {
@@ -152,7 +153,7 @@ const ProgramPage = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:7000/api/accounts/workouts/${workoutId}`,
+        apiUrl(`/api/accounts/workouts/${workoutId}`),
         {
           method: "DELETE",
           headers: {
@@ -182,7 +183,7 @@ const ProgramPage = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:7000/api/accounts/client?trainer=${trainerId}`,
+        apiUrl(`/api/accounts/client?trainer=${trainerId}`),
         {
           headers: { Authorization: `${token}` },
         }
@@ -232,7 +233,7 @@ const ProgramPage = () => {
     try {
       console.log("Generating Program", { formData });
       const response = await fetch(
-        "http://localhost:7000/api/accounts/generate-workout",
+        apiUrl("/api/accounts/generate-workout"),
         {
           method: "POST",
           headers: {
@@ -260,7 +261,7 @@ const ProgramPage = () => {
         experience: formData.experience,
         days: formData.days,
         style: formData.style,
-        workoutPlan: data.workoutPlan.workouts, // <- HAS TO CALL THE NESTED STRUCTURE SINCE ITS DIFFERENT WHEN GENERATED}
+        workoutPlan: data.workoutPlan.workoutPlan, // <- HAS TO CALL THE NESTED STRUCTURE SINCE ITS DIFFERENT WHEN GENERATED}
       };
 
       {

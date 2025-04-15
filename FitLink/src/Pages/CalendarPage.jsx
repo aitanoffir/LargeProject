@@ -17,6 +17,7 @@ import NavBar from "../Components/NavBar";
 import { useNavigate } from "react-router-dom";
 import { FaAngleLeft, FaAngleRight, FaPlus, FaTimes, FaRegTrashAlt, FaGoogle } from "react-icons/fa";
 import { FaArrowsRotate } from "react-icons/fa6";
+import { apiUrl } from "../../api";
 
 
 const Calendar = () => {
@@ -47,7 +48,7 @@ const Calendar = () => {
     const fetchEvents = async () => {
       try {
         const jwt = localStorage.getItem("token");
-        const res = await fetch("http://localhost:7000/api/accounts/calendar/events", {
+        const res = await fetch(apiUrl("/api/accounts/calendar/events"), {
           headers: {
             Authorization: `Bearer ${jwt}`
           }
@@ -99,7 +100,7 @@ const Calendar = () => {
       extendedProperties: { private: { appId: "fitlink" } }
     };
 
-    const res = await fetch("http://localhost:7000/api/accounts/calendar/event", {
+    const res = await fetch(apiUrl("/api/accounts/calendar/event"), {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -146,7 +147,7 @@ const Calendar = () => {
       end: { dateTime: estEnd.toISOString(), timeZone: "America/New_York" },
     };
 
-    const res = await fetch(`http://localhost:7000/api/accounts/calendar/event/${editingEvent.id}`, {
+    const res = await fetch(apiUrl(`/api/accounts/calendar/event/${editingEvent.id}`), {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -178,7 +179,7 @@ const Calendar = () => {
 
   const deleteEvent = async (eventId) => {
     const jwt = localStorage.getItem("token");
-    await fetch(`http://localhost:7000/api/accounts/calendar/event/${eventId}`, {
+    await fetch(apiUrl(`/api/accounts/calendar/event/${eventId}`), {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${jwt}`
@@ -300,7 +301,7 @@ const Calendar = () => {
                 <button
                   onClick={async () => {
                     const jwt = localStorage.getItem("token");
-                    const res = await fetch("http://localhost:7000/api/accounts/link/google/init", {
+                    const res = await fetch(apiUrl("/api/accounts/link/google/init"), {
                       headers: {
                         Authorization: `${jwt}`,
                       },

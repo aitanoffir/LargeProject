@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { FaRegSave, FaPen } from "react-icons/fa";
 import NavBar from '../Components/NavBar';
 import { useNavigate } from 'react-router-dom';
+import { apiUrl } from "../../api";
 
 
 const EditProfile = () => {
@@ -77,7 +78,7 @@ const EditProfile = () => {
 
         try {
             // Call the update API
-            const response = await fetch("http://localhost:7000/api/accounts/update", {
+            const response = await fetch(apiUrl("/api/accounts/update"), {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
@@ -111,7 +112,7 @@ const EditProfile = () => {
     const fetchUserProfile = async (token) => {
         try {
           setLoading(true);
-          const response = await fetch("http://localhost:7000/api/accounts/get", {
+          const response = await fetch(apiUrl("/api/accounts/get"), {
             headers: { "Authorization": token }
           });
           

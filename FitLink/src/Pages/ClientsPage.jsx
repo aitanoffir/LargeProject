@@ -6,6 +6,7 @@ import UpdateClientModal from '../Components/updateClientModal';
 import DeleteConfirm from '../Components/deleteConfirm';
 import ViewClientNotes from '../Components/ViewClientNotes';
 import { useNavigate } from 'react-router-dom';
+import { apiUrl } from "../../api";
 
 const ClientsList = () => {
   const [clients, setClients] = useState([]);
@@ -32,7 +33,7 @@ const ClientsList = () => {
     }
   
     try {
-      const response = await fetch(`http://localhost:7000/api/accounts/client?trainer=${trainerId}`, {
+      const response = await fetch(apiUrl(`/api/accounts/client?trainer=${trainerId}`), {
         headers: { Authorization: `${token}` },
       });
   
@@ -215,7 +216,7 @@ const ClientsList = () => {
   const handleDelete = async () => {
     const token = localStorage.getItem("token");
     try {
-      const response = await fetch(`http://localhost:7000/api/accounts/client/${clientToDelete}`, {
+      const response = await fetch(apiUrl(`/api/accounts/client/${clientToDelete}`), {
         method: 'DELETE',
         headers: { Authorization: `${token}` },
       });
@@ -248,8 +249,8 @@ const ClientsList = () => {
     const token = localStorage.getItem("token");
     try {
       const url = noteData.noteId 
-        ? `http://localhost:7000/api/accounts/client/${noteData.clientId}/notes/${noteData.noteId}`
-        : `http://localhost:7000/api/accounts/client/${noteData.clientId}/notes`;
+        ? apiUrl(`/api/accounts/client/${noteData.clientId}/notes/${noteData.noteId}`)
+        : apiUrl(`/api/accounts/client/${noteData.clientId}/notes`);
   
       const response = await fetch(url, {
         method: noteData.noteId ? 'PUT' : 'POST',
@@ -291,7 +292,7 @@ const ClientsList = () => {
     const token = localStorage.getItem("token");
     try {
       const response = await fetch(
-        `http://localhost:7000/api/accounts/client/${clientId}/notes/${noteId}`, 
+        apiUrl(`/api/accounts/client/${clientId}/notes/${noteId}`), 
         {
           method: 'DELETE',
           headers: { Authorization: `${token}` },

@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebase";
 import sign_up_picture from "../assets/jonathan-borba-R0y_bEUjiOM-unsplash.jpg";
+import { apiUrl } from "../../api";
 
 const SignUp = () => {
   const [formData, setFormData] = useState({
@@ -49,7 +50,7 @@ const SignUp = () => {
     }
   
     try {
-      const response = await fetch("http://localhost:7000/api/accounts/", {
+      const response = await fetch(apiUrl("/api/accounts/"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: formData.email, password: formData.password }),

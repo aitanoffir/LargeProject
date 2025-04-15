@@ -13,6 +13,7 @@ import {
   isSameDay
 } from "date-fns";
 import NavBar from "../Components/NavBar";
+import { apiUrl } from "../../api";
 
 const Calendar = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -25,7 +26,7 @@ const Calendar = () => {
     const fetchEvents = async () => {
       try {
         const jwt = localStorage.getItem("token");
-        const res = await fetch("http://localhost:7000/api/accounts/calendar/events", {
+        const res = await fetch(apiUrl("/api/accounts/calendar/events"), {
           headers: {
             Authorization: `Bearer ${jwt}`
           }
@@ -66,7 +67,7 @@ const Calendar = () => {
       extendedProperties: { private: { appId: "fitlink" } }
     };
 
-    const res = await fetch("http://localhost:7000/api/accounts/calendar/event", {
+    const res = await fetch(apiUrl("/api/accounts/calendar/event"), {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -85,7 +86,7 @@ const Calendar = () => {
 
   const deleteEvent = async (eventId) => {
     const jwt = localStorage.getItem("token");
-    await fetch(`http://localhost:7000/api/accounts/calendar/event/${eventId}`, {
+    await fetch(apiUrl(`/api/accounts/calendar/event/${eventId}`), {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${jwt}`
@@ -181,7 +182,7 @@ const Calendar = () => {
             <button
               onClick={async () => {
                 const jwt = localStorage.getItem("token");
-                const res = await fetch("http://localhost:7000/api/accounts/link/google/init", {
+                const res = await fetch(apiUrl("/api/accounts/link/google/init"), {
                   headers: {
                     Authorization: `Bearer ${jwt}`,
                   },
