@@ -41,7 +41,7 @@ const HomePage = () => {
   }, [navigate]);
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex h-screen bg-gray-100">
       {/* NavBar on the left */}
       <NavBar />
 

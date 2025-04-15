@@ -327,7 +327,7 @@ const ClientsList = () => {
         <header className="bg-white shadow-sm">
           <div className="px-6 py-4">
             <div className="flex justify-between items-center">
-              <h1 className="text-2xl font-bold text-gray-800">My Clients</h1>
+              <h1 className="text-2xl font-semibold text-gray-800">My Clients</h1>
               <button 
                 onClick={() => setShowAddModal(true)} 
                 className="bg-purple-600 hover:bg-purple-700 text-white px-5 py-2 rounded-lg text-sm font-bold flex items-center border-2 border-purple-700"
