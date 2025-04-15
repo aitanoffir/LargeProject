@@ -29,30 +29,20 @@ const SignIn = () => {
       localStorage.setItem('token', token);
 
       // Get user details
-      const fetchUserDetails = async () => {
-        try {
-          const response = await fetch('http://localhost:7000/api/accounts/me', {
-            headers: {
-              Authorization: token
-            }
-          });
-
-          if (response.ok) {
-            const userData = await response.json();
-            localStorage.setItem('userId', userData.data._id);
-            localStorage.setItem('verified', 'true'); // Google accounts are pre-verified
-
-            // Navigate to home
-            navigate('/Home');
-          } else {
-            console.error('Failed to fetch user details with token');
-            setErrorMessage("Authentication failed. Please try again.");
-          }
-        } catch (error) {
-          console.error('Error fetching user details:', error);
-          setErrorMessage("Authentication failed. Please try again.");
+      try {
+        const tokenParts = token.split('.');
+        if (tokenParts.length === 3) {
+          const payload = JSON.parse(atob(tokenParts[1]));
+          localStorage.setItem('userId', payload.id);
+          localStorage.setItem('verified', 'true');
+          navigate('/Home');
+        } else {
+          throw new Error("Invalid token format");
         }
-      };
+      } catch (error) {
+        console.error('Error parsing token:', error);
+        setErrorMessage("Authentication failed. Please try again.");
+      }
 
       fetchUserDetails();
     }
