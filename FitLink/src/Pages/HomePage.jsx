@@ -9,36 +9,61 @@ const HomePage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Retrieve token from localStorage (assuming it was stored during sign-in)
-    const token = localStorage.getItem('token');
-
-    // Check email verification
-    const verified = localStorage.getItem('verified');
-    if (verified === "false") {
-      navigate("/email-verify");
-    }
-
-    if (token) {
+    const urlParams = new URLSearchParams(window.location.search);
+    const urlToken = urlParams.get('token');
+  
+    if (urlToken) {
       try {
-        // Decode the token to get user information
-        const [header, payload, signature] = token.split('.');
+        // Save the token to localStorage
+        localStorage.setItem("token", urlToken);
+  
+        // Decode the payload to get user info
+        const [header, payload, signature] = urlToken.split('.');
         const decodedPayload = JSON.parse(atob(payload));
-        const email = decodedPayload.name;
-
-        if (email) {
-          setUserEmail(email);
+  
+        localStorage.setItem("userId", decodedPayload.id || decodedPayload._id);
+        localStorage.setItem("verified", "true");
+  
+        if (decodedPayload.name) {
+          setUserEmail(decodedPayload.name);
         }
+  
+        // Clean up the URL by removing the token param
+        const cleanUrl = window.location.origin + "/Home";
+        window.history.replaceState({}, document.title, cleanUrl);
       } catch (error) {
-        console.error('Error decoding token:', error);
-        // If token is invalid, redirect to sign-in
+        console.error("Error decoding token from URL:", error);
         navigate('/signin');
       }
     } else {
-      // If no token exists, redirect to sign-in
-      console.log("Error no token at Home page");
-      navigate('/signin');
+      // No token in URL — use token from localStorage
+      const token = localStorage.getItem('token');
+      const verified = localStorage.getItem('verified');
+  
+      if (verified === "false") {
+        navigate("/email-verify");
+      }
+  
+      if (token) {
+        try {
+          const [header, payload, signature] = token.split('.');
+          const decodedPayload = JSON.parse(atob(payload));
+          const email = decodedPayload.name;
+  
+          if (email) {
+            setUserEmail(email);
+          }
+        } catch (error) {
+          console.error("Error decoding local token:", error);
+          navigate('/signin');
+        }
+      } else {
+        console.log("No token found in localStorage");
+        navigate('/signin');
+      }
     }
   }, [navigate]);
+  
 
   return (
     <div className="flex h-screen bg-gray-100">
