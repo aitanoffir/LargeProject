@@ -106,6 +106,13 @@ const SignIn = () => {
         const errorData = await response.json();
         console.log("Backend login failed:", errorData);
 
+        if (errorData.redirectToGoogle) {
+          // Optional: you can show a quick message first, or just redirect:
+          console.log("Redirecting to Google login...");
+          window.location.href = "http://localhost:7000/api/accounts/auth/google";
+          return;
+        }
+
         // Try Firebase login
         try {
           console.log("Trying Firebase authentication...");
