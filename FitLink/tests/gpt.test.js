@@ -31,9 +31,12 @@ describe('GPT Controller', () => {
     expect(res.json).toHaveBeenCalledWith(
       expect.objectContaining({
         success: true,
-        workoutPlan: expect.any(Array)
+        workoutPlan: expect.objectContaining({
+          workoutPlan: expect.any(Array)
+        })
       })
     );
+    
 
     // Optional: Log output to see actual response format
     // console.log(res.json.mock.calls[0][0]);
